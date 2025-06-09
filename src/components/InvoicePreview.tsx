@@ -70,7 +70,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
   // ELEGANT TEMPLATE - Sophisticated serif design with ornate elements
   if (invoice.template === 'elegant') {
     return (
-      <div className="p-12 bg-white" style={{ 
+      <div className="p-12 bg-white\" style={{ 
         fontFamily: 'Playfair Display, serif',
         minHeight: '297mm',
         width: '210mm',
