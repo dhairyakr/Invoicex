@@ -15,6 +15,12 @@ const fonts: FontType[] = [
   { id: 'playfair', name: 'Playfair Display' },
   { id: 'opensans', name: 'Open Sans' },
   { id: 'lato', name: 'Lato' },
+  { id: 'poppins', name: 'Poppins' },
+  { id: 'sourcesans', name: 'Source Sans Pro' },
+  { id: 'nunito', name: 'Nunito' },
+  { id: 'merriweather', name: 'Merriweather' },
+  { id: 'raleway', name: 'Raleway' },
+  { id: 'crimson', name: 'Crimson Text' },
 ];
 
 const InvoiceForm: React.FC = () => {
@@ -357,7 +363,12 @@ const InvoiceForm: React.FC = () => {
               { id: 'creative', name: 'Creative', description: 'Unique layout' },
               { id: 'boutique', name: 'Boutique', description: 'Premium feel' },
               { id: 'minimal', name: 'Minimal', description: 'Clean design' },
-              { id: 'dynamic', name: 'Dynamic', description: 'Bold style' }
+              { id: 'dynamic', name: 'Dynamic', description: 'Bold style' },
+              { id: 'tech', name: 'Tech', description: 'Futuristic design' },
+              { id: 'vintage', name: 'Vintage', description: 'Classic retro' },
+              { id: 'artistic', name: 'Artistic', description: 'Creative flair' },
+              { id: 'professional', name: 'Professional', description: 'Executive style' },
+              { id: 'startup', name: 'Startup', description: 'Modern casual' }
             ].map((template) => (
               <div
                 key={template.id}

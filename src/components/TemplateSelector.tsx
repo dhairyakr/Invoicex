@@ -36,39 +36,34 @@ const templates: TemplateType[] = [
     description: 'Stylish template with premium feel',
   },
   {
-    id: 'borderless',
-    name: 'Borderless',
-    description: 'Clean template without distracting borders',
-  },
-  {
-    id: 'ultra-minimal',
-    name: 'Ultra Minimal',
-    description: 'Extremely simplified for maximum clarity',
-  },
-  {
     id: 'dynamic',
     name: 'Dynamic',
     description: 'Bold design with striking typography',
   },
   {
-    id: 'aesthetic',
-    name: 'Aesthetic',
-    description: 'Modern minimalist with subtle gradients',
+    id: 'tech',
+    name: 'Tech',
+    description: 'Futuristic design for technology companies',
   },
   {
-    id: 'print-friendly',
-    name: 'Print Friendly',
-    description: 'Monochrome design optimized for printing',
+    id: 'vintage',
+    name: 'Vintage',
+    description: 'Classic retro design with timeless appeal',
   },
   {
-    id: 'invoice-plus',
-    name: 'Invoice Plus',
-    description: 'Professional structured design with clear sections',
+    id: 'artistic',
+    name: 'Artistic',
+    description: 'Creative template with artistic flair',
   },
   {
-    id: 'business-pro',
-    name: 'Business Pro',
-    description: 'Formal business layout with dark header',
+    id: 'professional',
+    name: 'Professional',
+    description: 'Executive-level design for formal business',
+  },
+  {
+    id: 'startup',
+    name: 'Startup',
+    description: 'Modern casual design for new businesses',
   },
 ];
 
