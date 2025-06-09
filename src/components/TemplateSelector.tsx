@@ -133,7 +133,7 @@ const templates: (TemplateType & {
     popular: true,
   },
 
-  // NEW CREATIVE TEMPLATES
+  // NEW CREATIVE TEMPLATES - Each completely unique
   {
     id: 'photography',
     name: 'Photography',
@@ -143,6 +143,66 @@ const templates: (TemplateType & {
     category: 'Creative',
     features: ['Visual Focus', 'Portfolio Style', 'Image-Centric'],
     popular: true,
+  },
+  {
+    id: 'innovation',
+    name: 'Innovation',
+    description: 'Forward-thinking design for innovative companies',
+    icon: <Lightbulb className="w-6 h-6" />,
+    gradient: 'from-yellow-400 via-amber-500 to-orange-500',
+    category: 'Innovation',
+    features: ['Forward Thinking', 'Innovative', 'Bright Ideas'],
+    popular: true,
+  },
+  {
+    id: 'lunar',
+    name: 'Lunar',
+    description: 'Mysterious design with cool moonlight tones',
+    icon: <Moon className="w-6 h-6" />,
+    gradient: 'from-slate-400 via-blue-500 to-indigo-600',
+    category: 'Mysterious',
+    features: ['Cool Tones', 'Mysterious', 'Night Theme'],
+    premium: true,
+  },
+  {
+    id: 'crystal',
+    name: 'Crystal',
+    description: 'Luxurious design with crystalline elements',
+    icon: <Diamond className="w-6 h-6" />,
+    gradient: 'from-purple-400 via-pink-500 to-rose-500',
+    category: 'Luxury',
+    features: ['Crystalline', 'Luxury Feel', 'Prismatic Colors'],
+    premium: true,
+  },
+  {
+    id: 'cosmic',
+    name: 'Cosmic',
+    description: 'Space-inspired design with stellar elements',
+    icon: <Telescope className="w-6 h-6" />,
+    gradient: 'from-indigo-600 via-purple-600 to-pink-600',
+    category: 'Space',
+    features: ['Space Theme', 'Stellar Design', 'Cosmic Elements'],
+    premium: true,
+  },
+  {
+    id: 'gem',
+    name: 'Gem',
+    description: 'Precious design with gemstone brilliance',
+    icon: <Gem className="w-6 h-6" />,
+    gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
+    category: 'Precious',
+    features: ['Gemstone Theme', 'Brilliant Colors', 'Precious Feel'],
+    premium: true,
+  },
+  {
+    id: 'magic',
+    name: 'Magic',
+    description: 'Enchanting design with mystical elements',
+    icon: <Wand2 className="w-6 h-6" />,
+    gradient: 'from-purple-500 via-violet-500 to-fuchsia-500',
+    category: 'Mystical',
+    features: ['Enchanting', 'Mystical Elements', 'Magic Touch'],
+    premium: true,
   },
   {
     id: 'music',
@@ -199,16 +259,6 @@ const templates: (TemplateType & {
     features: ['Warm Tones', 'Energetic', 'Bright Design'],
   },
   {
-    id: 'lunar',
-    name: 'Lunar',
-    description: 'Mysterious design with cool moonlight tones',
-    icon: <Moon className="w-6 h-6" />,
-    gradient: 'from-slate-400 via-blue-500 to-indigo-600',
-    category: 'Mysterious',
-    features: ['Cool Tones', 'Mysterious', 'Night Theme'],
-    premium: true,
-  },
-  {
     id: 'botanical',
     name: 'Botanical',
     description: 'Fresh design inspired by botanical gardens',
@@ -216,16 +266,6 @@ const templates: (TemplateType & {
     gradient: 'from-pink-400 via-rose-500 to-red-500',
     category: 'Fresh',
     features: ['Botanical Theme', 'Fresh Colors', 'Garden Style'],
-  },
-  {
-    id: 'crystal',
-    name: 'Crystal',
-    description: 'Luxurious design with crystalline elements',
-    icon: <Diamond className="w-6 h-6" />,
-    gradient: 'from-purple-400 via-pink-500 to-rose-500',
-    category: 'Luxury',
-    features: ['Crystalline', 'Luxury Feel', 'Prismatic Colors'],
-    premium: true,
   },
   {
     id: 'fire',
@@ -273,16 +313,6 @@ const templates: (TemplateType & {
     features: ['Global Appeal', 'International', 'Worldwide Style'],
   },
   {
-    id: 'cosmic',
-    name: 'Cosmic',
-    description: 'Space-inspired design with stellar elements',
-    icon: <Telescope className="w-6 h-6" />,
-    gradient: 'from-indigo-600 via-purple-600 to-pink-600',
-    category: 'Space',
-    features: ['Space Theme', 'Stellar Design', 'Cosmic Elements'],
-    premium: true,
-  },
-  {
     id: 'feather',
     name: 'Feather',
     description: 'Light and airy design with delicate touches',
@@ -292,26 +322,6 @@ const templates: (TemplateType & {
     features: ['Light Airy', 'Delicate Touch', 'Soft Design'],
   },
   {
-    id: 'gem',
-    name: 'Gem',
-    description: 'Precious design with gemstone brilliance',
-    icon: <Gem className="w-6 h-6" />,
-    gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-    category: 'Precious',
-    features: ['Gemstone Theme', 'Brilliant Colors', 'Precious Feel'],
-    premium: true,
-  },
-  {
-    id: 'innovation',
-    name: 'Innovation',
-    description: 'Forward-thinking design for innovative companies',
-    icon: <Lightbulb className="w-6 h-6" />,
-    gradient: 'from-yellow-400 via-amber-500 to-orange-500',
-    category: 'Innovation',
-    features: ['Forward Thinking', 'Innovative', 'Bright Ideas'],
-    popular: true,
-  },
-  {
     id: 'target',
     name: 'Target',
     description: 'Goal-oriented design for focused businesses',
@@ -319,16 +329,6 @@ const templates: (TemplateType & {
     gradient: 'from-red-500 via-pink-500 to-rose-500',
     category: 'Focused',
     features: ['Goal Oriented', 'Focused Design', 'Target Driven'],
-  },
-  {
-    id: 'magic',
-    name: 'Magic',
-    description: 'Enchanting design with mystical elements',
-    icon: <Wand2 className="w-6 h-6" />,
-    gradient: 'from-purple-500 via-violet-500 to-fuchsia-500',
-    category: 'Mystical',
-    features: ['Enchanting', 'Mystical Elements', 'Magic Touch'],
-    premium: true,
   },
 ];
 
@@ -352,16 +352,10 @@ const TemplateSelector: React.FC = () => {
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
   const creativeTemplates = templates.filter(t => 
-    ['Creative', 'Entertainment', 'Gaming', 'Travel', 'Organic', 'Fluid', 'Energy', 'Mysterious', 'Fresh', 'Passionate', 'Cool', 'Space', 'Delicate', 'Mystical'].includes(t.category)
+    ['Creative', 'Entertainment', 'Gaming', 'Travel', 'Organic', 'Fluid', 'Energy', 'Fresh', 'Passionate', 'Cool', 'Strong', 'Navigation', 'International', 'Delicate', 'Focused'].includes(t.category)
   );
   const businessTemplates = templates.filter(t => 
-    ['Business', 'Executive', 'Professional', 'Contemporary', 'Modern', 'Clean', 'Premium'].includes(t.category) && !t.popular && !t.premium
-  );
-  const specialtyTemplates = templates.filter(t => 
-    !popularTemplates.includes(t) && 
-    !premiumTemplates.includes(t) && 
-    !creativeTemplates.includes(t) && 
-    !businessTemplates.includes(t)
+    ['Business', 'Executive', 'Contemporary', 'Clean', 'Artistic', 'Bold', 'Technology', 'Classic', 'Modern', 'Luxury'].includes(t.category) && !t.popular && !t.premium
   );
 
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
@@ -418,7 +412,7 @@ const TemplateSelector: React.FC = () => {
           {template.features.map((feature, index) => (
             <div key={index} className="flex items-center text-sm text-gray-500">
               <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} mr-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300`}></div>
-              {feature}
+              <span>{feature}</span>
             </div>
           ))}
         </div>
@@ -554,28 +548,6 @@ const TemplateSelector: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {businessTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Specialty Templates */}
-        {specialtyTemplates.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center mb-8">
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center mr-4">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Specialty Templates</h2>
-                  <p className="text-gray-600">Unique designs for specific industries and purposes</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {specialtyTemplates.map((template) => (
                 <TemplateCard key={template.id} template={template} />
               ))}
             </div>
