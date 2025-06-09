@@ -80,7 +80,7 @@ const InvoiceForm: React.FC = () => {
   return (
     <div className="flex h-[calc(100vh-64px)]">
       {/* Left Section - Company Details */}
-      <div className="w-[35%] bg-white border-r border-gray-200 overflow-y-auto">
+      <div className="w-[30%] bg-white border-r border-gray-200 overflow-y-auto">
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-6">Company Details</h2>
           
@@ -340,7 +340,7 @@ const InvoiceForm: React.FC = () => {
       </div>
 
       {/* Middle Section - Preview */}
-      <div className="w-[45%] bg-gray-50 border-r border-gray-200 overflow-y-auto">
+      <div className="w-[55%] bg-gray-50 border-r border-gray-200 overflow-y-auto">
         <div className="p-6">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             <div id="invoice-preview">
@@ -351,11 +351,11 @@ const InvoiceForm: React.FC = () => {
       </div>
 
       {/* Right Section - Template Selection */}
-      <div className="w-[20%] bg-white overflow-y-auto">
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-3">Choose Template</h2>
+      <div className="w-[15%] bg-white overflow-y-auto">
+        <div className="p-3">
+          <h2 className="text-sm font-semibold mb-3">Choose Template</h2>
           
-          <div className="space-y-2">
+          <div className="space-y-1">
             {[
               { id: 'elegant', name: 'Elegant', description: 'Serif typography' },
               { id: 'modern', name: 'Modern', description: 'Two-column layout' },
@@ -372,14 +372,14 @@ const InvoiceForm: React.FC = () => {
             ].map((template) => (
               <div
                 key={template.id}
-                className={`p-2 rounded-lg cursor-pointer transition-all ${
+                className={`p-1.5 rounded cursor-pointer transition-all ${
                   currentInvoice.template === template.id
                     ? 'bg-black text-white'
                     : 'bg-gray-50 hover:bg-gray-100'
                 }`}
                 onClick={() => updateInvoiceField('template', template.id)}
               >
-                <h3 className="font-medium text-sm">{template.name}</h3>
+                <h3 className="font-medium text-xs">{template.name}</h3>
                 <p className={`text-xs ${
                   currentInvoice.template === template.id
                     ? 'text-gray-300'
@@ -391,23 +391,23 @@ const InvoiceForm: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
                 Accent Color
               </label>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1">
                 <input
                   type="color"
                   value={currentInvoice.accentColor}
                   onChange={(e) => updateInvoiceField('accentColor', e.target.value)}
-                  className="h-6 w-6 border-0 p-0 rounded"
+                  className="h-5 w-5 border-0 p-0 rounded"
                 />
                 <input
                   type="text"
                   value={currentInvoice.accentColor}
                   onChange={(e) => updateInvoiceField('accentColor', e.target.value)}
-                  className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-md"
+                  className="flex-1 px-1 py-1 text-xs border border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -419,7 +419,7 @@ const InvoiceForm: React.FC = () => {
               <select
                 value={currentInvoice.font}
                 onChange={(e) => updateInvoiceField('font', e.target.value)}
-                className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md"
+                className="w-full px-1 py-1 text-xs border border-gray-300 rounded-md"
               >
                 {fonts.map((font) => (
                   <option key={font.id} value={font.id}>
@@ -430,18 +430,18 @@ const InvoiceForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 space-y-2">
+          <div className="mt-3 space-y-1">
             <button
               type="button"
               onClick={handleSave}
-              className="w-full px-3 py-1.5 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-sm"
+              className="w-full px-2 py-1.5 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-xs"
             >
               Save Invoice
             </button>
             <button
               type="button"
               onClick={handleExportPDF}
-              className="w-full px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+              className="w-full px-2 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs"
             >
               Export PDF
             </button>
