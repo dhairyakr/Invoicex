@@ -48,7 +48,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
   // Quantum Nexus Template
   if (invoice.template === 'quantum') {
     return (
-      <div className="relative min-h-[297mm] w-[210mm] bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 text-white overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div className="relative min-h-[297mm] w-[210mm] bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 text-white overflow-hidden\" style={{ fontFamily: 'Inter, sans-serif' }}>
         {/* Quantum Field Background */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
