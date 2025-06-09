@@ -450,7 +450,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               <div className="space-y-8">
                 {invoice.company.logo && (
                   <div className="relative">
-                    <div className="absolute inset-0 bg-cyan-400 rounded-none blur-2xl opacity-60 animate-pulse" style={{ boxShadow: '0 0 40px #00ffff, 0 0 80px #00ffff' }}></div>
+                    <div className="absolute inset-0 bg-cyan-400 rounded-none blur-2xl opacity-60 animate-pulse\" style={{ boxShadow: '0 0 40px #00ffff, 0 0 80px #00ffff' }}></div>
                     <img src={invoice.company.logo} alt="Logo" className="relative h-24 w-auto rounded-none shadow-2xl border-4 border-cyan-400" style={{ boxShadow: '0 0 20px #00ffff' }} />
                   </div>
                 )}
