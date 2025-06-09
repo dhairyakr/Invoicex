@@ -25,6 +25,12 @@ export interface TaxRate {
   rate: number; // percentage
 }
 
+export interface PaymentInfo {
+  method: string;
+  details: string;
+  qrCode?: string;
+}
+
 export interface Invoice {
   id: string;
   number: string;
@@ -43,6 +49,12 @@ export interface Invoice {
   discountValue: number;
   taxRates: TaxRate[];
   currency: string;
+  // New fields for enhanced features
+  paymentInfo?: PaymentInfo;
+  status: 'draft' | 'sent' | 'paid' | 'overdue';
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type TemplateType = {
@@ -54,4 +66,14 @@ export type TemplateType = {
 export type FontType = {
   id: string;
   name: string;
+}
+
+export interface InvoiceFilters {
+  search: string;
+  status: string;
+  dateRange: {
+    start: string;
+    end: string;
+  };
+  tags: string[];
 }

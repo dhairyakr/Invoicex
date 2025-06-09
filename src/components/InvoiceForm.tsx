@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload, Percent, DollarSign } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
 import { v4 as uuidv4 } from 'uuid';
 import { FontType } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
+import { generatePaymentQR } from '../utils/qrCode';
+import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
 
 const fonts: FontType[] = [
   { id: 'inter', name: 'Inter' },
@@ -52,6 +54,9 @@ const InvoiceForm: React.FC = () => {
     calculateTotals
   } = useInvoice();
 
+  const [newTag, setNewTag] = useState('');
+  const [qrCodeData, setQrCodeData] = useState<string>('');
+
   useEffect(() => {
     if (id) {
       const invoice = invoices.find(inv => inv.id === id);
@@ -77,6 +82,30 @@ const InvoiceForm: React.FC = () => {
     }
   };
 
+  const handleGenerateQR = async () => {
+    if (!currentInvoice) return;
+    
+    const totals = calculateTotals();
+    try {
+      const qrCode = await generatePaymentQR({
+        amount: totals.total,
+        currency: currentInvoice.currency,
+        recipient: currentInvoice.company.name,
+        reference: currentInvoice.number
+      });
+      
+      updateInvoiceField('paymentInfo', {
+        method: 'QR Code',
+        details: `Payment for Invoice ${currentInvoice.number}`,
+        qrCode: qrCode
+      });
+      
+      setQrCodeData(qrCode);
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+    }
+  };
+
   const handleExportPDF = () => {
     if (!currentInvoice) return;
     const fileName = `invoice-${currentInvoice.number}.pdf`;
@@ -87,6 +116,37 @@ const InvoiceForm: React.FC = () => {
     if (!currentInvoice) return;
     saveInvoice(currentInvoice);
     navigate('/');
+  };
+
+  const handleEmailSend = () => {
+    if (!currentInvoice) return;
+    sendEmailInvoice(currentInvoice, currentInvoice.client.email);
+  };
+
+  const handleWhatsAppSend = () => {
+    if (!currentInvoice) return;
+    const phone = prompt('Enter WhatsApp number (with country code):');
+    if (phone) {
+      sendWhatsAppInvoice(currentInvoice, phone);
+    }
+  };
+
+  const addTag = () => {
+    if (!currentInvoice || !newTag.trim()) return;
+    
+    const tags = [...(currentInvoice.tags || [])];
+    if (!tags.includes(newTag.trim())) {
+      tags.push(newTag.trim());
+      updateInvoiceField('tags', tags);
+    }
+    setNewTag('');
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    if (!currentInvoice) return;
+    
+    const tags = (currentInvoice.tags || []).filter(tag => tag !== tagToRemove);
+    updateInvoiceField('tags', tags);
   };
 
   const getCurrencySymbol = () => {
@@ -254,6 +314,24 @@ const InvoiceForm: React.FC = () => {
               </div>
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={currentInvoice.status}
+                  onChange={(e) => updateInvoiceField('status', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="sent">Sent</option>
+                  <option value="paid">Paid</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Currency
                 </label>
                 <select
@@ -292,6 +370,48 @@ const InvoiceForm: React.FC = () => {
                   onChange={(e) => updateInvoiceField('dueDate', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div>
+            </div>
+
+            {/* Tags Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tags
+              </label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {(currentInvoice.tags || []).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  >
+                    <Tag size={12} className="mr-1" />
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="ml-1 text-blue-600 hover:text-blue-800"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add tag..."
+                />
+                <button
+                  type="button"
+                  onClick={addTag}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Add
+                </button>
               </div>
             </div>
 
@@ -428,6 +548,31 @@ const InvoiceForm: React.FC = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Payment QR Code Section */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Payment QR Code
+                </label>
+                <button
+                  type="button"
+                  onClick={handleGenerateQR}
+                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none"
+                >
+                  <QrCode size={16} className="mr-1" /> Generate QR
+                </button>
+              </div>
+              {currentInvoice.paymentInfo?.qrCode && (
+                <div className="flex justify-center p-4 bg-gray-50 rounded-md">
+                  <img
+                    src={currentInvoice.paymentInfo.qrCode}
+                    alt="Payment QR Code"
+                    className="w-32 h-32"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Totals Display */}
@@ -590,6 +735,22 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs"
             >
               Export PDF
+            </button>
+            <button
+              type="button"
+              onClick={handleEmailSend}
+              className="w-full px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs flex items-center justify-center"
+            >
+              <Mail size={12} className="mr-1" />
+              Send Email
+            </button>
+            <button
+              type="button"
+              onClick={handleWhatsAppSend}
+              className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
+            >
+              <MessageCircle size={12} className="mr-1" />
+              WhatsApp
             </button>
           </div>
         </div>

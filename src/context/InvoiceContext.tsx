@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Invoice, InvoiceItem, TaxRate } from '../types';
+import { Invoice, InvoiceItem, TaxRate, InvoiceFilters } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface InvoiceContextType {
   invoices: Invoice[];
   currentInvoice: Invoice | null;
+  filters: InvoiceFilters;
+  filteredInvoices: Invoice[];
   setCurrentInvoice: (invoice: Invoice | null) => void;
+  setFilters: (filters: InvoiceFilters) => void;
   createInvoice: () => void;
+  duplicateInvoice: (id: string) => void;
   saveInvoice: (invoice: Invoice) => void;
   deleteInvoice: (id: string) => void;
   updateInvoiceField: (field: string, value: any) => void;
@@ -24,7 +28,7 @@ interface InvoiceContextType {
   };
 }
 
-const DEFAULT_INVOICE: Omit<Invoice, 'id'> = {
+const DEFAULT_INVOICE: Omit<Invoice, 'id' | 'createdAt' | 'updatedAt'> = {
   number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
   issueDate: new Date().toISOString().split('T')[0],
   dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -56,6 +60,18 @@ const DEFAULT_INVOICE: Omit<Invoice, 'id'> = {
   discountValue: 0,
   taxRates: [],
   currency: 'USD',
+  status: 'draft',
+  tags: [],
+};
+
+const DEFAULT_FILTERS: InvoiceFilters = {
+  search: '',
+  status: '',
+  dateRange: {
+    start: '',
+    end: '',
+  },
+  tags: [],
 };
 
 const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
@@ -63,6 +79,7 @@ const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
 export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
+  const [filters, setFilters] = useState<InvoiceFilters>(DEFAULT_FILTERS);
 
   // Load invoices from localStorage
   useEffect(() => {
@@ -77,6 +94,10 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           discountValue: invoice.discountValue || 0,
           taxRates: invoice.taxRates || [],
           currency: invoice.currency || 'USD',
+          status: invoice.status || 'draft',
+          tags: invoice.tags || [],
+          createdAt: invoice.createdAt || new Date().toISOString(),
+          updatedAt: invoice.updatedAt || new Date().toISOString(),
         }));
         setInvoices(migratedInvoices);
       } catch (error) {
@@ -91,25 +112,95 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem('invoices', JSON.stringify(invoices));
   }, [invoices]);
 
+  // Filter invoices based on current filters
+  const filteredInvoices = invoices.filter(invoice => {
+    // Search filter
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      const matchesSearch = 
+        invoice.number.toLowerCase().includes(searchLower) ||
+        invoice.client.name.toLowerCase().includes(searchLower) ||
+        invoice.company.name.toLowerCase().includes(searchLower);
+      if (!matchesSearch) return false;
+    }
+
+    // Status filter
+    if (filters.status && invoice.status !== filters.status) {
+      return false;
+    }
+
+    // Date range filter
+    if (filters.dateRange.start && invoice.issueDate < filters.dateRange.start) {
+      return false;
+    }
+    if (filters.dateRange.end && invoice.issueDate > filters.dateRange.end) {
+      return false;
+    }
+
+    // Tags filter
+    if (filters.tags.length > 0) {
+      const hasMatchingTag = filters.tags.some(tag => 
+        invoice.tags.includes(tag)
+      );
+      if (!hasMatchingTag) return false;
+    }
+
+    return true;
+  });
+
   const createInvoice = () => {
+    const now = new Date().toISOString();
     const newInvoice: Invoice = {
       id: uuidv4(),
       ...DEFAULT_INVOICE,
+      createdAt: now,
+      updatedAt: now,
     };
     setCurrentInvoice(newInvoice);
   };
 
+  const duplicateInvoice = (id: string) => {
+    const originalInvoice = invoices.find(inv => inv.id === id);
+    if (!originalInvoice) return;
+
+    const now = new Date().toISOString();
+    const duplicatedInvoice: Invoice = {
+      ...originalInvoice,
+      id: uuidv4(),
+      number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      status: 'draft',
+      createdAt: now,
+      updatedAt: now,
+      items: originalInvoice.items.map(item => ({
+        ...item,
+        id: uuidv4(),
+      })),
+      taxRates: originalInvoice.taxRates.map(tax => ({
+        ...tax,
+        id: uuidv4(),
+      })),
+    };
+    
+    setCurrentInvoice(duplicatedInvoice);
+  };
+
   const saveInvoice = (invoice: Invoice) => {
+    const now = new Date().toISOString();
+    const updatedInvoice = {
+      ...invoice,
+      updatedAt: now,
+    };
+
     const existingIndex = invoices.findIndex(inv => inv.id === invoice.id);
     
     if (existingIndex >= 0) {
       // Update existing invoice
       const updatedInvoices = [...invoices];
-      updatedInvoices[existingIndex] = invoice;
+      updatedInvoices[existingIndex] = updatedInvoice;
       setInvoices(updatedInvoices);
     } else {
       // Add new invoice
-      setInvoices([...invoices, invoice]);
+      setInvoices([...invoices, updatedInvoice]);
     }
     
     setCurrentInvoice(null);
@@ -258,8 +349,12 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const value = {
     invoices,
     currentInvoice,
+    filters,
+    filteredInvoices,
     setCurrentInvoice,
+    setFilters,
     createInvoice,
+    duplicateInvoice,
     saveInvoice,
     deleteInvoice,
     updateInvoiceField,
