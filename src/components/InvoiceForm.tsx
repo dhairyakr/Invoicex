@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag, X } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
+import PaymentQRGenerator from './PaymentQRGenerator';
 import { v4 as uuidv4 } from 'uuid';
 import { FontType } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
-import { generatePaymentQR } from '../utils/qrCode';
 import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
 
 const fonts: FontType[] = [
@@ -55,7 +55,7 @@ const InvoiceForm: React.FC = () => {
   } = useInvoice();
 
   const [newTag, setNewTag] = useState('');
-  const [qrCodeData, setQrCodeData] = useState<string>('');
+  const [showQRGenerator, setShowQRGenerator] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -82,28 +82,13 @@ const InvoiceForm: React.FC = () => {
     }
   };
 
-  const handleGenerateQR = async () => {
-    if (!currentInvoice) return;
-    
-    const totals = calculateTotals();
-    try {
-      const qrCode = await generatePaymentQR({
-        amount: totals.total,
-        currency: currentInvoice.currency,
-        recipient: currentInvoice.company.name,
-        reference: currentInvoice.number
-      });
-      
-      updateInvoiceField('paymentInfo', {
-        method: 'QR Code',
-        details: `Payment for Invoice ${currentInvoice.number}`,
-        qrCode: qrCode
-      });
-      
-      setQrCodeData(qrCode);
-    } catch (error) {
-      console.error('Error generating QR code:', error);
-    }
+  const handleQRGenerated = (qrCode: string, provider: string) => {
+    updateInvoiceField('paymentInfo', {
+      method: provider,
+      details: `Payment via ${provider}`,
+      qrCode: qrCode
+    });
+    setShowQRGenerator(false);
   };
 
   const handleExportPDF = () => {
@@ -558,7 +543,7 @@ const InvoiceForm: React.FC = () => {
                 </label>
                 <button
                   type="button"
-                  onClick={handleGenerateQR}
+                  onClick={() => setShowQRGenerator(true)}
                   className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none"
                 >
                   <QrCode size={16} className="mr-1" /> Generate QR
@@ -566,11 +551,23 @@ const InvoiceForm: React.FC = () => {
               </div>
               {currentInvoice.paymentInfo?.qrCode && (
                 <div className="flex justify-center p-4 bg-gray-50 rounded-md">
-                  <img
-                    src={currentInvoice.paymentInfo.qrCode}
-                    alt="Payment QR Code"
-                    className="w-32 h-32"
-                  />
+                  <div className="text-center">
+                    <img
+                      src={currentInvoice.paymentInfo.qrCode}
+                      alt="Payment QR Code"
+                      className="w-32 h-32 mx-auto mb-2"
+                    />
+                    <p className="text-sm text-gray-600">
+                      {currentInvoice.paymentInfo.method} Payment
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => updateInvoiceField('paymentInfo', null)}
+                      className="mt-2 text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Remove QR Code
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -755,6 +752,31 @@ const InvoiceForm: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* QR Generator Modal */}
+      {showQRGenerator && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Generate Payment QR Code</h3>
+              <button
+                onClick={() => setShowQRGenerator(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <PaymentQRGenerator
+              amount={totals.total}
+              currency={currentInvoice.currency}
+              recipient={currentInvoice.company.name}
+              reference={currentInvoice.number}
+              onQRGenerated={handleQRGenerated}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
