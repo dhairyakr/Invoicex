@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Hexagon, Triangle, Circle, Square, Diamond, Flame, Snowflake, Sun, Moon } from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Hexagon, Triangle, Circle, Square, Diamond, Flame, Snowflake, Sun, Moon, Atom, Waves, Orbit, Sparkle } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 
@@ -131,23 +131,23 @@ const templates: (TemplateType & {
   // TRULY EXCEPTIONAL NEW TEMPLATES
   {
     id: 'quantum',
-    name: 'Quantum',
-    description: 'Revolutionary multi-dimensional design with particle effects and quantum-inspired layouts that shift and morph',
-    icon: <Hexagon className="w-6 h-6" />,
-    gradient: 'from-violet-500 via-purple-500 via-fuchsia-500 via-pink-500 to-rose-500',
+    name: 'Quantum Nexus',
+    description: 'Revolutionary multi-dimensional design with quantum particle effects, morphing geometric patterns, and reality-bending visual elements that create an otherworldly invoice experience',
+    icon: <Atom className="w-6 h-6" />,
+    gradient: 'from-violet-400 via-purple-500 via-fuchsia-500 via-pink-500 via-rose-500 to-orange-400',
     category: 'Revolutionary',
-    features: ['Particle Effects', 'Morphing Layouts', 'Quantum Physics Inspired', 'Multi-Dimensional Design', 'Reality-Bending Visuals'],
+    features: ['Quantum Particle Effects', 'Morphing Geometry', 'Reality-Bending Visuals', 'Multi-Dimensional Layout', 'Otherworldly Experience'],
     exceptional: true,
     new: true,
   },
   {
     id: 'aurora',
-    name: 'Aurora',
-    description: 'Breathtaking northern lights inspired design with flowing gradients, ethereal animations, and celestial beauty',
-    icon: <Sun className="w-6 h-6" />,
-    gradient: 'from-emerald-400 via-cyan-400 via-blue-500 via-purple-500 via-pink-500 to-rose-400',
+    name: 'Aurora Celestialis',
+    description: 'Breathtaking cosmic design inspired by celestial phenomena with flowing aurora gradients, stellar particle systems, constellation patterns, and ethereal cosmic animations',
+    icon: <Sparkle className="w-6 h-6" />,
+    gradient: 'from-indigo-900 via-purple-600 via-pink-500 via-emerald-400 via-cyan-300 to-blue-400',
     category: 'Celestial',
-    features: ['Northern Lights Effect', 'Flowing Gradients', 'Ethereal Animations', 'Celestial Beauty', 'Atmospheric Design'],
+    features: ['Cosmic Aurora Effects', 'Stellar Particles', 'Constellation Patterns', 'Ethereal Animations', 'Celestial Beauty'],
     exceptional: true,
     new: true,
   },
@@ -196,18 +196,88 @@ const TemplateSelector: React.FC = () => {
             <div className="absolute top-8 right-8 w-1 h-1 bg-pink-400 rounded-full animate-ping opacity-40"></div>
             <div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse opacity-50"></div>
             <div className="absolute bottom-4 right-4 w-1 h-1 bg-fuchsia-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-cyan-400 rounded-full animate-ping opacity-30" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute top-6 right-6 w-0.5 h-0.5 bg-yellow-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1.5s' }}></div>
           </div>
           
-          {/* Aurora Effect for Aurora Template */}
-          {template.id === 'aurora' && (
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-cyan-400/10 via-blue-500/10 via-purple-500/10 via-pink-500/10 to-rose-400/10 animate-pulse rounded-3xl"></div>
-          )}
-          
-          {/* Quantum Effect for Quantum Template */}
+          {/* Quantum Nexus Effects */}
           {template.id === 'quantum' && (
             <>
-              <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 via-purple-500/5 via-fuchsia-500/5 via-pink-500/5 to-rose-500/5 animate-pulse rounded-3xl"></div>
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-purple-100/20 to-transparent transform rotate-45 animate-pulse"></div>
+              {/* Quantum Field Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-purple-500/5 via-fuchsia-500/5 via-pink-500/5 to-rose-500/5 animate-pulse rounded-3xl"></div>
+              
+              {/* Quantum Particles */}
+              <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                <div className="absolute top-8 left-12 w-3 h-3 bg-gradient-to-r from-violet-400 to-purple-500 rounded-full opacity-60 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+                <div className="absolute top-16 right-16 w-2 h-2 bg-gradient-to-r from-fuchsia-400 to-pink-500 rounded-full opacity-50 animate-pulse" style={{ animationDelay: '1s', animationDuration: '2s' }}></div>
+                <div className="absolute bottom-12 left-20 w-1.5 h-1.5 bg-gradient-to-r from-purple-400 to-violet-500 rounded-full opacity-70 animate-ping" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute bottom-20 right-8 w-2.5 h-2.5 bg-gradient-to-r from-pink-400 to-rose-500 rounded-full opacity-40 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '4s' }}></div>
+              </div>
+              
+              {/* Quantum Grid */}
+              <div className="absolute inset-0 opacity-10" style={{
+                backgroundImage: `
+                  radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.3) 2px, transparent 2px),
+                  radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.3) 2px, transparent 2px),
+                  radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.2) 1px, transparent 1px)
+                `,
+                backgroundSize: '40px 40px, 60px 60px, 20px 20px',
+                animation: 'quantumGrid 8s ease-in-out infinite'
+              }}></div>
+              
+              {/* Morphing Geometric Shapes */}
+              <div className="absolute top-6 right-6 w-8 h-8 bg-gradient-to-br from-violet-400/30 to-purple-500/30 transform rotate-45 rounded-lg animate-pulse" style={{ animationDuration: '3s' }}></div>
+              <div className="absolute bottom-8 left-6 w-6 h-6 bg-gradient-to-br from-fuchsia-400/30 to-pink-500/30 transform rotate-12 rounded-full animate-spin" style={{ animationDuration: '8s' }}></div>
+              <div className="absolute top-1/2 left-4 w-4 h-4 bg-gradient-to-br from-purple-400/30 to-violet-500/30 transform -rotate-12 animate-pulse" style={{ animationDelay: '1s', animationDuration: '4s', clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}></div>
+            </>
+          )}
+
+          {/* Aurora Celestialis Effects */}
+          {template.id === 'aurora' && (
+            <>
+              {/* Cosmic Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-purple-600/10 via-pink-500/10 via-emerald-400/10 via-cyan-300/10 to-blue-400/10 animate-pulse rounded-3xl" style={{ animationDuration: '4s' }}></div>
+              
+              {/* Aurora Waves */}
+              <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                <div className="absolute top-0 left-0 w-full h-full opacity-20">
+                  <div className="absolute top-4 left-0 w-full h-8 bg-gradient-to-r from-transparent via-emerald-400/40 via-cyan-300/40 to-transparent transform -skew-y-2 animate-pulse" style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+                  <div className="absolute top-12 left-0 w-full h-6 bg-gradient-to-r from-transparent via-purple-500/30 via-pink-400/30 to-transparent transform skew-y-1 animate-pulse" style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+                  <div className="absolute top-20 left-0 w-full h-4 bg-gradient-to-r from-transparent via-indigo-400/25 via-blue-300/25 to-transparent transform -skew-y-1 animate-pulse" style={{ animationDelay: '4s', animationDuration: '10s' }}></div>
+                </div>
+              </div>
+              
+              {/* Stellar Particles */}
+              <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                <div className="absolute top-6 left-8 w-1 h-1 bg-cyan-300 rounded-full animate-ping opacity-80" style={{ animationDelay: '0s' }}></div>
+                <div className="absolute top-12 right-12 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse opacity-60" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-20 left-16 w-0.5 h-0.5 bg-purple-400 rounded-full animate-ping opacity-70" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute bottom-16 right-8 w-1 h-1 bg-pink-400 rounded-full animate-pulse opacity-50" style={{ animationDelay: '3s' }}></div>
+                <div className="absolute bottom-8 left-12 w-2 h-2 bg-indigo-400 rounded-full animate-ping opacity-40" style={{ animationDelay: '4s' }}></div>
+                <div className="absolute top-1/2 right-6 w-0.5 h-0.5 bg-blue-300 rounded-full animate-pulse opacity-80" style={{ animationDelay: '5s' }}></div>
+              </div>
+              
+              {/* Constellation Patterns */}
+              <div className="absolute inset-0 overflow-hidden rounded-3xl opacity-30">
+                <svg className="absolute top-8 right-8 w-16 h-16 text-cyan-300 animate-pulse" style={{ animationDuration: '5s' }}>
+                  <circle cx="4" cy="4" r="1" fill="currentColor" />
+                  <circle cx="12" cy="8" r="0.5" fill="currentColor" />
+                  <circle cx="8" cy="12" r="1" fill="currentColor" />
+                  <line x1="4" y1="4" x2="12" y2="8" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+                  <line x1="12" y1="8" x2="8" y2="12" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+                </svg>
+                <svg className="absolute bottom-12 left-8 w-12 h-12 text-purple-400 animate-pulse" style={{ animationDelay: '2s', animationDuration: '7s' }}>
+                  <circle cx="6" cy="3" r="0.5" fill="currentColor" />
+                  <circle cx="3" cy="9" r="1" fill="currentColor" />
+                  <circle cx="9" cy="9" r="0.5" fill="currentColor" />
+                  <line x1="6" y1="3" x2="3" y2="9" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
+                  <line x1="3" y1="9" x2="9" y2="9" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
+                </svg>
+              </div>
+              
+              {/* Cosmic Orbs */}
+              <div className="absolute top-16 left-6 w-6 h-6 bg-gradient-to-br from-emerald-400/20 to-cyan-300/20 rounded-full animate-pulse" style={{ animationDelay: '1s', animationDuration: '6s' }}></div>
+              <div className="absolute bottom-16 right-6 w-8 h-8 bg-gradient-to-br from-purple-500/15 to-pink-400/15 rounded-full animate-pulse" style={{ animationDelay: '3s', animationDuration: '8s' }}></div>
             </>
           )}
           
@@ -505,20 +575,41 @@ const TemplateSelector: React.FC = () => {
                 Ready to create something extraordinary?
               </h3>
               <p className="text-gray-600 mb-6">
-                Try our revolutionary Quantum template for an unforgettable invoice experience.
+                Try our revolutionary Quantum Nexus template for an unforgettable invoice experience.
               </p>
               <button
                 onClick={() => handleTemplateSelect('quantum')}
                 className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-violet-700 hover:via-purple-700 hover:to-fuchsia-700 hover:scale-105 transform shadow-lg hover:shadow-xl"
               >
                 <Lightning className="w-5 h-5 mr-2" />
-                Try Quantum Template
+                Try Quantum Nexus
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes quantumGrid {
+          0%, 100% { 
+            opacity: 0.1; 
+            transform: scale(1) rotate(0deg);
+          }
+          25% { 
+            opacity: 0.3; 
+            transform: scale(1.05) rotate(1deg);
+          }
+          50% { 
+            opacity: 0.2; 
+            transform: scale(0.95) rotate(-1deg);
+          }
+          75% { 
+            opacity: 0.4; 
+            transform: scale(1.02) rotate(0.5deg);
+          }
+        }
+      `}</style>
     </div>
   );
 };
