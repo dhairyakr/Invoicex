@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Hexagon, Triangle, Circle, Square, Diamond, Flame, Snowflake, Sun, Moon, Atom, Printer as Prism, Waves } from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Hexagon, Triangle, Circle, Square, Diamond, Flame, Snowflake, Sun, Moon } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 
@@ -151,39 +151,6 @@ const templates: (TemplateType & {
     exceptional: true,
     new: true,
   },
-  {
-    id: 'holographic',
-    name: 'Holographic',
-    description: 'Mind-bending 3D holographic design with futuristic grid patterns, holographic particles, and dimensional depth',
-    icon: <Prism className="w-6 h-6" />,
-    gradient: 'from-cyan-400 via-blue-500 via-purple-500 via-magenta-500 via-yellow-500 to-green-500',
-    category: 'Futuristic',
-    features: ['3D Holographic Effects', 'Grid Patterns', 'Dimensional Depth', 'Particle Systems', 'Mind-Bending Visuals'],
-    exceptional: true,
-    new: true,
-  },
-  {
-    id: 'crystalline',
-    name: 'Crystalline',
-    description: 'Stunning crystal-inspired design with prismatic effects, crystal formations, and refractive light patterns',
-    icon: <Diamond className="w-6 h-6" />,
-    gradient: 'from-indigo-500 via-purple-500 via-pink-500 via-blue-500 to-indigo-600',
-    category: 'Prismatic',
-    features: ['Crystal Formations', 'Prismatic Effects', 'Refractive Patterns', 'Crystalline Beauty', 'Light Refraction'],
-    exceptional: true,
-    new: true,
-  },
-  {
-    id: 'neon',
-    name: 'Neon Cyberpunk',
-    description: 'Futuristic cyberpunk design with neon glows, grid backgrounds, scanlines, and electric energy effects',
-    icon: <Lightning className="w-6 h-6" />,
-    gradient: 'from-cyan-400 via-magenta-500 via-yellow-400 via-green-400 to-blue-500',
-    category: 'Cyberpunk',
-    features: ['Neon Glows', 'Grid Backgrounds', 'Scanline Effects', 'Electric Energy', 'Cyberpunk Aesthetic'],
-    exceptional: true,
-    new: true,
-  },
 ];
 
 const TemplateSelector: React.FC = () => {
@@ -231,45 +198,16 @@ const TemplateSelector: React.FC = () => {
             <div className="absolute bottom-4 right-4 w-1 h-1 bg-fuchsia-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
           </div>
           
-          {/* Template-specific Effects */}
+          {/* Aurora Effect for Aurora Template */}
           {template.id === 'aurora' && (
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-cyan-400/10 via-blue-500/10 via-purple-500/10 via-pink-500/10 to-rose-400/10 animate-pulse rounded-3xl"></div>
           )}
           
+          {/* Quantum Effect for Quantum Template */}
           {template.id === 'quantum' && (
             <>
               <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 via-purple-500/5 via-fuchsia-500/5 via-pink-500/5 to-rose-500/5 animate-pulse rounded-3xl"></div>
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-purple-100/20 to-transparent transform rotate-45 animate-pulse"></div>
-            </>
-          )}
-
-          {template.id === 'holographic' && (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 via-magenta-500/5 via-yellow-400/5 to-green-400/5 animate-pulse rounded-3xl"></div>
-              <div className="absolute inset-0" style={{
-                backgroundImage: `
-                  linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px)
-                `,
-                backgroundSize: '20px 20px',
-                animation: 'holographicGrid 4s ease-in-out infinite'
-              }}></div>
-            </>
-          )}
-
-          {template.id === 'crystalline' && (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/5 via-purple-400/5 via-pink-400/5 to-blue-400/5 animate-pulse rounded-3xl"></div>
-              <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-br from-blue-400/20 to-purple-400/20 transform rotate-45 rounded-sm animate-pulse"></div>
-              <div className="absolute bottom-4 left-4 w-6 h-6 bg-gradient-to-br from-purple-400/20 to-pink-400/20 transform rotate-12 rounded-sm animate-pulse" style={{ animationDelay: '1s' }}></div>
-            </>
-          )}
-
-          {template.id === 'neon' && (
-            <>
-              <div className="absolute inset-0 bg-black/5 rounded-3xl"></div>
-              <div className="absolute top-2 left-2 w-1 h-1 bg-cyan-400 rounded-full animate-ping opacity-60" style={{ boxShadow: '0 0 10px #00ffff' }}></div>
-              <div className="absolute bottom-2 right-2 w-1 h-1 bg-magenta-400 rounded-full animate-ping opacity-60" style={{ boxShadow: '0 0 10px #ff00ff', animationDelay: '0.5s' }}></div>
             </>
           )}
           
@@ -581,13 +519,6 @@ const TemplateSelector: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes holographicGrid {
-          0%, 100% { opacity: 0.05; }
-          50% { opacity: 0.15; }
-        }
-      `}</style>
     </div>
   );
 };

@@ -658,10 +658,7 @@ const InvoiceForm: React.FC = () => {
               { id: 'professional', name: 'Professional', description: 'Executive style' },
               { id: 'startup', name: 'Startup', description: 'Modern casual' },
               { id: 'quantum', name: 'Quantum', description: 'Revolutionary', isNew: true },
-              { id: 'aurora', name: 'Aurora', description: 'Celestial beauty', isNew: true },
-              { id: 'holographic', name: 'Holographic', description: '3D Holographic', isNew: true },
-              { id: 'crystalline', name: 'Crystalline', description: 'Crystal-inspired', isNew: true },
-              { id: 'neon', name: 'Neon', description: 'Cyberpunk style', isNew: true }
+              { id: 'aurora', name: 'Aurora', description: 'Celestial beauty', isNew: true }
             ].map((template) => (
               <div
                 key={template.id}
