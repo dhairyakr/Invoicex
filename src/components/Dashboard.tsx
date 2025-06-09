@@ -5,7 +5,15 @@ import { formatDate } from '../utils/helpers';
 import { FileText, Plus, Trash2 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const { invoices, deleteInvoice } = useInvoice();
+  const { invoices, deleteInvoice, calculateTotals } = useInvoice();
+
+  const getCurrencySymbol = (currency: string) => {
+    const currencies = {
+      USD: '$', EUR: '€', GBP: '£', CAD: 'C$', 
+      AUD: 'A$', JPY: '¥', INR: '₹'
+    };
+    return currencies[currency as keyof typeof currencies] || '$';
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -58,11 +66,30 @@ const Dashboard: React.FC = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {invoices.map((invoice) => {
-                // Calculate total
-                const total = invoice.items.reduce(
-                  (sum, item) => sum + item.quantity * item.rate,
+                // Calculate total using the same logic as the context
+                const subtotal = invoice.items.reduce(
+                  (sum, item) => sum + (item.quantity * item.rate),
                   0
                 );
+
+                let discountAmount = 0;
+                if (invoice.discountValue > 0) {
+                  if (invoice.discountType === 'percentage') {
+                    discountAmount = (subtotal * invoice.discountValue) / 100;
+                  } else {
+                    discountAmount = invoice.discountValue;
+                  }
+                }
+
+                const afterDiscount = subtotal - discountAmount;
+
+                const taxAmount = (invoice.taxRates || []).reduce(
+                  (sum, tax) => sum + (afterDiscount * tax.rate) / 100,
+                  0
+                );
+
+                const total = afterDiscount + taxAmount;
+                const currencySymbol = getCurrencySymbol(invoice.currency || 'USD');
 
                 return (
                   <tr key={invoice.id} className="hover:bg-gray-50">
@@ -79,7 +106,7 @@ const Dashboard: React.FC = () => {
                       {formatDate(invoice.dueDate)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      ${total.toFixed(2)}
+                      {currencySymbol}{total.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">

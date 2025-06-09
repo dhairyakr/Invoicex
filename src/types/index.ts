@@ -19,6 +19,12 @@ export interface Client {
   address: string;
 }
 
+export interface TaxRate {
+  id: string;
+  name: string;
+  rate: number; // percentage
+}
+
 export interface Invoice {
   id: string;
   number: string;
@@ -32,6 +38,11 @@ export interface Invoice {
   accentColor: string;
   font: string;
   showFooter: boolean;
+  // New fields for tax and discount
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  taxRates: TaxRate[];
+  currency: string;
 }
 
 export type TemplateType = {

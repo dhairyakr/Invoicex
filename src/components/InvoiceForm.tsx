@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
 import { v4 as uuidv4 } from 'uuid';
 import { FontType } from '../types';
@@ -23,6 +23,16 @@ const fonts: FontType[] = [
   { id: 'crimson', name: 'Crimson Text' },
 ];
 
+const currencies = [
+  { code: 'USD', symbol: '$', name: 'US Dollar' },
+  { code: 'EUR', symbol: '€', name: 'Euro' },
+  { code: 'GBP', symbol: '£', name: 'British Pound' },
+  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+];
+
 const InvoiceForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -35,7 +45,11 @@ const InvoiceForm: React.FC = () => {
     updateInvoiceField,
     addInvoiceItem,
     updateInvoiceItem,
-    removeInvoiceItem
+    removeInvoiceItem,
+    addTaxRate,
+    updateTaxRate,
+    removeTaxRate,
+    calculateTotals
   } = useInvoice();
 
   useEffect(() => {
@@ -75,7 +89,14 @@ const InvoiceForm: React.FC = () => {
     navigate('/');
   };
 
+  const getCurrencySymbol = () => {
+    const currency = currencies.find(c => c.code === currentInvoice?.currency);
+    return currency?.symbol || '$';
+  };
+
   if (!currentInvoice) return <div className="p-8 text-center">Loading...</div>;
+
+  const totals = calculateTotals();
 
   return (
     <div className="flex h-[calc(100vh-64px)]">
@@ -219,16 +240,34 @@ const InvoiceForm: React.FC = () => {
           <h2 className="text-xl font-semibold mb-6 mt-8">Invoice Details</h2>
           
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Invoice Number
-              </label>
-              <input
-                type="text"
-                value={currentInvoice.number}
-                onChange={(e) => updateInvoiceField('number', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Invoice Number
+                </label>
+                <input
+                  type="text"
+                  value={currentInvoice.number}
+                  onChange={(e) => updateInvoiceField('number', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Currency
+                </label>
+                <select
+                  value={currentInvoice.currency}
+                  onChange={(e) => updateInvoiceField('currency', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {currencies.map((currency) => (
+                    <option key={currency.code} value={currency.code}>
+                      {currency.symbol} {currency.code}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="flex gap-4">
@@ -288,7 +327,7 @@ const InvoiceForm: React.FC = () => {
                       min="1"
                     />
                     <div className="relative">
-                      <span className="absolute left-3 top-2.5">$</span>
+                      <span className="absolute left-3 top-2.5">{getCurrencySymbol()}</span>
                       <input
                         type="number"
                         value={item.rate}
@@ -307,6 +346,113 @@ const InvoiceForm: React.FC = () => {
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Discount Section */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Discount
+                </label>
+              </div>
+              <div className="flex gap-2 items-center">
+                <select
+                  value={currentInvoice.discountType}
+                  onChange={(e) => updateInvoiceField('discountType', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="percentage">Percentage</option>
+                  <option value="fixed">Fixed Amount</option>
+                </select>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-2.5">
+                    {currentInvoice.discountType === 'percentage' ? '%' : getCurrencySymbol()}
+                  </span>
+                  <input
+                    type="number"
+                    value={currentInvoice.discountValue}
+                    onChange={(e) => updateInvoiceField('discountValue', Number(e.target.value))}
+                    className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    step="0.01"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Tax Section */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Tax Rates
+                </label>
+                <button
+                  type="button"
+                  onClick={addTaxRate}
+                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none"
+                >
+                  <Plus size={16} className="mr-1" /> Add Tax
+                </button>
+              </div>
+              
+              <div className="space-y-2">
+                {currentInvoice.taxRates.map((tax) => (
+                  <div key={tax.id} className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      value={tax.name}
+                      onChange={(e) => updateTaxRate(tax.id, 'name', e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Tax name (e.g., VAT, Sales Tax)"
+                    />
+                    <div className="relative">
+                      <span className="absolute right-3 top-2.5">%</span>
+                      <input
+                        type="number"
+                        value={tax.rate}
+                        onChange={(e) => updateTaxRate(tax.id, 'rate', Number(e.target.value))}
+                        className="w-20 px-3 pr-7 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTaxRate(tax.id)}
+                      className="text-red-600 hover:text-red-900 p-2"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Totals Display */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span>{getCurrencySymbol()}{totals.subtotal.toFixed(2)}</span>
+                </div>
+                {totals.discountAmount > 0 && (
+                  <div className="flex justify-between text-red-600">
+                    <span>Discount:</span>
+                    <span>-{getCurrencySymbol()}{totals.discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                {totals.taxAmount > 0 && (
+                  <div className="flex justify-between">
+                    <span>Tax:</span>
+                    <span>{getCurrencySymbol()}{totals.taxAmount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold text-lg border-t pt-2">
+                  <span>Total:</span>
+                  <span>{getCurrencySymbol()}{totals.total.toFixed(2)}</span>
+                </div>
               </div>
             </div>
 

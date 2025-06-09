@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Invoice, InvoiceItem } from '../types';
+import { Invoice, InvoiceItem, TaxRate } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface InvoiceContextType {
@@ -13,6 +13,15 @@ interface InvoiceContextType {
   addInvoiceItem: () => void;
   updateInvoiceItem: (id: string, field: string, value: any) => void;
   removeInvoiceItem: (id: string) => void;
+  addTaxRate: () => void;
+  updateTaxRate: (id: string, field: string, value: any) => void;
+  removeTaxRate: (id: string) => void;
+  calculateTotals: () => {
+    subtotal: number;
+    discountAmount: number;
+    taxAmount: number;
+    total: number;
+  };
 }
 
 const DEFAULT_INVOICE: Omit<Invoice, 'id'> = {
@@ -43,6 +52,10 @@ const DEFAULT_INVOICE: Omit<Invoice, 'id'> = {
   accentColor: '#223141',
   font: 'inter',
   showFooter: true,
+  discountType: 'percentage',
+  discountValue: 0,
+  taxRates: [],
+  currency: 'USD',
 };
 
 const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
@@ -55,7 +68,21 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const savedInvoices = localStorage.getItem('invoices');
     if (savedInvoices) {
-      setInvoices(JSON.parse(savedInvoices));
+      try {
+        const parsed = JSON.parse(savedInvoices);
+        // Migrate old invoices to new format
+        const migratedInvoices = parsed.map((invoice: any) => ({
+          ...invoice,
+          discountType: invoice.discountType || 'percentage',
+          discountValue: invoice.discountValue || 0,
+          taxRates: invoice.taxRates || [],
+          currency: invoice.currency || 'USD',
+        }));
+        setInvoices(migratedInvoices);
+      } catch (error) {
+        console.error('Error loading invoices:', error);
+        setInvoices([]);
+      }
     }
   }, []);
 
@@ -157,6 +184,77 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   };
 
+  const addTaxRate = () => {
+    if (!currentInvoice) return;
+    
+    const newTaxRate: TaxRate = {
+      id: uuidv4(),
+      name: 'Tax',
+      rate: 0,
+    };
+    
+    setCurrentInvoice({
+      ...currentInvoice,
+      taxRates: [...currentInvoice.taxRates, newTaxRate],
+    });
+  };
+
+  const updateTaxRate = (id: string, field: string, value: any) => {
+    if (!currentInvoice) return;
+    
+    const updatedTaxRates = currentInvoice.taxRates.map(tax => {
+      if (tax.id === id) {
+        return { ...tax, [field]: value };
+      }
+      return tax;
+    });
+    
+    setCurrentInvoice({
+      ...currentInvoice,
+      taxRates: updatedTaxRates,
+    });
+  };
+
+  const removeTaxRate = (id: string) => {
+    if (!currentInvoice) return;
+    
+    setCurrentInvoice({
+      ...currentInvoice,
+      taxRates: currentInvoice.taxRates.filter(tax => tax.id !== id),
+    });
+  };
+
+  const calculateTotals = () => {
+    if (!currentInvoice) {
+      return { subtotal: 0, discountAmount: 0, taxAmount: 0, total: 0 };
+    }
+
+    const subtotal = currentInvoice.items.reduce(
+      (sum, item) => sum + (item.quantity * item.rate),
+      0
+    );
+
+    let discountAmount = 0;
+    if (currentInvoice.discountValue > 0) {
+      if (currentInvoice.discountType === 'percentage') {
+        discountAmount = (subtotal * currentInvoice.discountValue) / 100;
+      } else {
+        discountAmount = currentInvoice.discountValue;
+      }
+    }
+
+    const afterDiscount = subtotal - discountAmount;
+
+    const taxAmount = currentInvoice.taxRates.reduce(
+      (sum, tax) => sum + (afterDiscount * tax.rate) / 100,
+      0
+    );
+
+    const total = afterDiscount + taxAmount;
+
+    return { subtotal, discountAmount, taxAmount, total };
+  };
+
   const value = {
     invoices,
     currentInvoice,
@@ -168,6 +266,10 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     addInvoiceItem,
     updateInvoiceItem,
     removeInvoiceItem,
+    addTaxRate,
+    updateTaxRate,
+    removeTaxRate,
+    calculateTotals,
   };
 
   return <InvoiceContext.Provider value={value}>{children}</InvoiceContext.Provider>;
