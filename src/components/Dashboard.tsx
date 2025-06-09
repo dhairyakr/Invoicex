@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
 import { formatDate } from '../utils/helpers';
 import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
@@ -27,20 +27,24 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
-  Zap
+  Zap,
+  ChevronDown
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { 
     filteredInvoices, 
     deleteInvoice, 
     duplicateInvoice, 
+    updateInvoiceStatus,
     filters, 
     setFilters,
     invoices
   } = useInvoice();
   
   const [showFilters, setShowFilters] = useState(false);
+  const [statusDropdowns, setStatusDropdowns] = useState<{[key: string]: boolean}>({});
 
   const getCurrencySymbol = (currency: string) => {
     const currencies = {
@@ -126,6 +130,7 @@ const Dashboard: React.FC = () => {
 
   const handleDuplicate = (id: string) => {
     duplicateInvoice(id);
+    navigate('/create');
   };
 
   const handleEmailSend = (invoice: any) => {
@@ -137,6 +142,21 @@ const Dashboard: React.FC = () => {
     if (phone) {
       sendWhatsAppInvoice(invoice, phone);
     }
+  };
+
+  const toggleStatusDropdown = (invoiceId: string) => {
+    setStatusDropdowns(prev => ({
+      ...prev,
+      [invoiceId]: !prev[invoiceId]
+    }));
+  };
+
+  const handleStatusChange = (invoiceId: string, newStatus: string) => {
+    updateInvoiceStatus(invoiceId, newStatus);
+    setStatusDropdowns(prev => ({
+      ...prev,
+      [invoiceId]: false
+    }));
   };
 
   // Get all unique tags from invoices
@@ -488,10 +508,35 @@ const Dashboard: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <span className={`inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(invoice.status)}`}>
-                            {getStatusIcon(invoice.status)}
-                            <span className="ml-1">{invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</span>
-                          </span>
+                          <div className="relative">
+                            <button
+                              onClick={() => toggleStatusDropdown(invoice.id)}
+                              className={`inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer hover:shadow-md transition-all duration-200 ${getStatusColor(invoice.status)}`}
+                            >
+                              {getStatusIcon(invoice.status)}
+                              <span className="ml-1">{invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}</span>
+                              <ChevronDown size={12} className="ml-1" />
+                            </button>
+                            
+                            {statusDropdowns[invoice.id] && (
+                              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+                                {['draft', 'sent', 'paid', 'overdue'].map(status => (
+                                  <button
+                                    key={status}
+                                    onClick={() => handleStatusChange(invoice.id, status)}
+                                    className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                                      invoice.status === status ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700'
+                                    }`}
+                                  >
+                                    <div className="flex items-center">
+                                      {getStatusIcon(status)}
+                                      <span className="ml-2">{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-6 text-sm">
                           <div className="space-y-1">
@@ -528,14 +573,14 @@ const Dashboard: React.FC = () => {
                             <button
                               onClick={() => handleEmailSend(invoice)}
                               className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-100 rounded-lg transition-all duration-200"
-                              title="Send Email"
+                              title="Send Email with PDF"
                             >
                               <Mail size={16} />
                             </button>
                             <button
                               onClick={() => handleWhatsAppSend(invoice)}
                               className="p-2 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-lg transition-all duration-200"
-                              title="Send WhatsApp"
+                              title="Send WhatsApp with PDF"
                             >
                               <MessageCircle size={16} />
                             </button>

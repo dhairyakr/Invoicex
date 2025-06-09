@@ -91,10 +91,15 @@ const InvoiceForm: React.FC = () => {
     setShowQRGenerator(false);
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     if (!currentInvoice) return;
-    const fileName = `invoice-${currentInvoice.number}.pdf`;
-    exportToPDF('invoice-preview', fileName);
+    try {
+      const fileName = `invoice-${currentInvoice.number}.pdf`;
+      await exportToPDF('invoice-preview', fileName);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
   };
 
   const handleSave = () => {
@@ -103,16 +108,26 @@ const InvoiceForm: React.FC = () => {
     navigate('/');
   };
 
-  const handleEmailSend = () => {
+  const handleEmailSend = async () => {
     if (!currentInvoice) return;
-    sendEmailInvoice(currentInvoice, currentInvoice.client.email);
+    try {
+      await sendEmailInvoice(currentInvoice, currentInvoice.client.email);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('Error sending email. Please try again.');
+    }
   };
 
-  const handleWhatsAppSend = () => {
+  const handleWhatsAppSend = async () => {
     if (!currentInvoice) return;
     const phone = prompt('Enter WhatsApp number (with country code):');
     if (phone) {
-      sendWhatsAppInvoice(currentInvoice, phone);
+      try {
+        await sendWhatsAppInvoice(currentInvoice, phone);
+      } catch (error) {
+        console.error('Error sending WhatsApp:', error);
+        alert('Error sending WhatsApp message. Please try again.');
+      }
     }
   };
 
@@ -741,7 +756,7 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs flex items-center justify-center"
             >
               <Mail size={12} className="mr-1" />
-              Send Email
+              Send Email + PDF
             </button>
             <button
               type="button"
@@ -749,7 +764,7 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
             >
               <MessageCircle size={12} className="mr-1" />
-              WhatsApp
+              WhatsApp + PDF
             </button>
           </div>
         </div>

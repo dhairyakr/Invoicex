@@ -13,6 +13,7 @@ interface InvoiceContextType {
   duplicateInvoice: (id: string) => void;
   saveInvoice: (invoice: Invoice) => void;
   deleteInvoice: (id: string) => void;
+  updateInvoiceStatus: (id: string, status: string) => void;
   updateInvoiceField: (field: string, value: any) => void;
   addInvoiceItem: () => void;
   updateInvoiceItem: (id: string, field: string, value: any) => void;
@@ -153,6 +154,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newInvoice: Invoice = {
       id: uuidv4(),
       ...DEFAULT_INVOICE,
+      number: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       createdAt: now,
       updatedAt: now,
     };
@@ -181,6 +183,8 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       })),
     };
     
+    // Add to invoices list immediately
+    setInvoices(prev => [...prev, duplicatedInvoice]);
     setCurrentInvoice(duplicatedInvoice);
   };
 
@@ -211,6 +215,15 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (currentInvoice?.id === id) {
       setCurrentInvoice(null);
     }
+  };
+
+  const updateInvoiceStatus = (id: string, status: string) => {
+    const now = new Date().toISOString();
+    setInvoices(prev => prev.map(invoice => 
+      invoice.id === id 
+        ? { ...invoice, status, updatedAt: now }
+        : invoice
+    ));
   };
 
   const updateInvoiceField = (field: string, value: any) => {
@@ -357,6 +370,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     duplicateInvoice,
     saveInvoice,
     deleteInvoice,
+    updateInvoiceStatus,
     updateInvoiceField,
     addInvoiceItem,
     updateInvoiceItem,

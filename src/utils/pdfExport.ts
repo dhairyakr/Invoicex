@@ -1,9 +1,15 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-export const exportToPDF = async (elementId: string, fileName: string = 'invoice.pdf') => {
+export const exportToPDF = async (
+  elementId: string, 
+  fileName: string = 'invoice.pdf',
+  returnBlob: boolean = false
+): Promise<Blob | void> => {
   const element = document.getElementById(elementId);
-  if (!element) return;
+  if (!element) {
+    throw new Error('Element not found');
+  }
 
   try {
     const canvas = await html2canvas(element, {
@@ -41,8 +47,15 @@ export const exportToPDF = async (elementId: string, fileName: string = 'invoice
       'FAST'
     );
     
-    pdf.save(fileName);
+    if (returnBlob) {
+      // Return blob for email/WhatsApp attachment
+      return pdf.output('blob');
+    } else {
+      // Download the PDF
+      pdf.save(fileName);
+    }
   } catch (error) {
     console.error('Error generating PDF:', error);
+    throw error;
   }
 };
