@@ -70,7 +70,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
   // TECH TEMPLATE - Enhanced futuristic design with advanced tech aesthetics
   if (invoice.template === 'tech') {
     return (
-      <div className="bg-black text-white relative overflow-hidden" style={{ 
+      <div className="bg-black text-white relative overflow-hidden\" style={{ 
         fontFamily: 'Inter, sans-serif',
         minHeight: '297mm',
         width: '210mm',
