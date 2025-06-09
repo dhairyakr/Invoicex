@@ -1,11 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, 
-  Rocket, Cpu, Clock, Brush, Shield, Coffee, Camera, Music, Gamepad2, Plane, 
-  Mountain, Waves, Sun, Moon, Flower, Diamond, Flame, Snowflake, TreePine, 
-  Compass, Globe, Telescope, Feather, Gem, Lightbulb, Target, Wand2
-} from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 
@@ -17,7 +12,6 @@ const templates: (TemplateType & {
   popular?: boolean;
   premium?: boolean;
 })[] = [
-  // Original Templates (keeping as is)
   {
     id: 'elegant',
     name: 'Elegant',
@@ -132,204 +126,6 @@ const templates: (TemplateType & {
     features: ['Modern Casual', 'Startup Friendly', 'Fresh Design'],
     popular: true,
   },
-
-  // NEW CREATIVE TEMPLATES
-  {
-    id: 'photography',
-    name: 'Photography',
-    description: 'Visual-focused design for creative professionals',
-    icon: <Camera className="w-6 h-6" />,
-    gradient: 'from-indigo-500 via-purple-500 to-pink-500',
-    category: 'Creative',
-    features: ['Visual Focus', 'Portfolio Style', 'Image-Centric'],
-    popular: true,
-  },
-  {
-    id: 'music',
-    name: 'Music',
-    description: 'Rhythmic design for entertainment industry',
-    icon: <Music className="w-6 h-6" />,
-    gradient: 'from-violet-500 via-fuchsia-500 to-pink-500',
-    category: 'Entertainment',
-    features: ['Rhythmic Layout', 'Creative Flow', 'Entertainment Style'],
-  },
-  {
-    id: 'gaming',
-    name: 'Gaming',
-    description: 'High-energy design for gaming companies',
-    icon: <Gamepad2 className="w-6 h-6" />,
-    gradient: 'from-green-500 via-cyan-500 to-blue-500',
-    category: 'Gaming',
-    features: ['High Energy', 'Gaming Aesthetic', 'Bold Colors'],
-  },
-  {
-    id: 'travel',
-    name: 'Travel',
-    description: 'Adventure-inspired design for travel businesses',
-    icon: <Plane className="w-6 h-6" />,
-    gradient: 'from-sky-400 via-blue-500 to-indigo-600',
-    category: 'Travel',
-    features: ['Adventure Theme', 'Global Appeal', 'Journey Style'],
-  },
-  {
-    id: 'nature',
-    name: 'Nature',
-    description: 'Organic design inspired by natural elements',
-    icon: <TreePine className="w-6 h-6" />,
-    gradient: 'from-green-600 via-emerald-500 to-teal-500',
-    category: 'Organic',
-    features: ['Natural Elements', 'Eco-Friendly', 'Organic Flow'],
-  },
-  {
-    id: 'ocean',
-    name: 'Ocean',
-    description: 'Fluid design with oceanic color palette',
-    icon: <Waves className="w-6 h-6" />,
-    gradient: 'from-blue-400 via-cyan-500 to-teal-600',
-    category: 'Fluid',
-    features: ['Oceanic Colors', 'Fluid Motion', 'Calming Design'],
-  },
-  {
-    id: 'solar',
-    name: 'Solar',
-    description: 'Bright and energetic design with warm tones',
-    icon: <Sun className="w-6 h-6" />,
-    gradient: 'from-yellow-400 via-orange-500 to-red-500',
-    category: 'Energy',
-    features: ['Warm Tones', 'Energetic', 'Bright Design'],
-  },
-  {
-    id: 'lunar',
-    name: 'Lunar',
-    description: 'Mysterious design with cool moonlight tones',
-    icon: <Moon className="w-6 h-6" />,
-    gradient: 'from-slate-400 via-blue-500 to-indigo-600',
-    category: 'Mysterious',
-    features: ['Cool Tones', 'Mysterious', 'Night Theme'],
-    premium: true,
-  },
-  {
-    id: 'botanical',
-    name: 'Botanical',
-    description: 'Fresh design inspired by botanical gardens',
-    icon: <Flower className="w-6 h-6" />,
-    gradient: 'from-pink-400 via-rose-500 to-red-500',
-    category: 'Fresh',
-    features: ['Botanical Theme', 'Fresh Colors', 'Garden Style'],
-  },
-  {
-    id: 'crystal',
-    name: 'Crystal',
-    description: 'Luxurious design with crystalline elements',
-    icon: <Diamond className="w-6 h-6" />,
-    gradient: 'from-purple-400 via-pink-500 to-rose-500',
-    category: 'Luxury',
-    features: ['Crystalline', 'Luxury Feel', 'Prismatic Colors'],
-    premium: true,
-  },
-  {
-    id: 'fire',
-    name: 'Fire',
-    description: 'Passionate design with fiery energy',
-    icon: <Flame className="w-6 h-6" />,
-    gradient: 'from-red-500 via-orange-500 to-yellow-500',
-    category: 'Passionate',
-    features: ['Fiery Energy', 'Passionate', 'Dynamic Heat'],
-  },
-  {
-    id: 'frost',
-    name: 'Frost',
-    description: 'Cool and crisp design with icy elegance',
-    icon: <Snowflake className="w-6 h-6" />,
-    gradient: 'from-blue-200 via-cyan-300 to-teal-400',
-    category: 'Cool',
-    features: ['Icy Elegance', 'Cool Crisp', 'Winter Theme'],
-  },
-  {
-    id: 'mountain',
-    name: 'Mountain',
-    description: 'Strong and stable design inspired by peaks',
-    icon: <Mountain className="w-6 h-6" />,
-    gradient: 'from-gray-500 via-slate-600 to-zinc-700',
-    category: 'Strong',
-    features: ['Mountain Theme', 'Strong Stable', 'Peak Design'],
-  },
-  {
-    id: 'compass',
-    name: 'Compass',
-    description: 'Navigation-inspired design for guidance',
-    icon: <Compass className="w-6 h-6" />,
-    gradient: 'from-amber-500 via-yellow-500 to-orange-500',
-    category: 'Navigation',
-    features: ['Navigation Theme', 'Guidance Style', 'Direction Focus'],
-  },
-  {
-    id: 'global',
-    name: 'Global',
-    description: 'International design for worldwide businesses',
-    icon: <Globe className="w-6 h-6" />,
-    gradient: 'from-blue-500 via-green-500 to-teal-500',
-    category: 'International',
-    features: ['Global Appeal', 'International', 'Worldwide Style'],
-  },
-  {
-    id: 'cosmic',
-    name: 'Cosmic',
-    description: 'Space-inspired design with stellar elements',
-    icon: <Telescope className="w-6 h-6" />,
-    gradient: 'from-indigo-600 via-purple-600 to-pink-600',
-    category: 'Space',
-    features: ['Space Theme', 'Stellar Design', 'Cosmic Elements'],
-    premium: true,
-  },
-  {
-    id: 'feather',
-    name: 'Feather',
-    description: 'Light and airy design with delicate touches',
-    icon: <Feather className="w-6 h-6" />,
-    gradient: 'from-gray-300 via-slate-400 to-gray-500',
-    category: 'Delicate',
-    features: ['Light Airy', 'Delicate Touch', 'Soft Design'],
-  },
-  {
-    id: 'gem',
-    name: 'Gem',
-    description: 'Precious design with gemstone brilliance',
-    icon: <Gem className="w-6 h-6" />,
-    gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-    category: 'Precious',
-    features: ['Gemstone Theme', 'Brilliant Colors', 'Precious Feel'],
-    premium: true,
-  },
-  {
-    id: 'innovation',
-    name: 'Innovation',
-    description: 'Forward-thinking design for innovative companies',
-    icon: <Lightbulb className="w-6 h-6" />,
-    gradient: 'from-yellow-400 via-amber-500 to-orange-500',
-    category: 'Innovation',
-    features: ['Forward Thinking', 'Innovative', 'Bright Ideas'],
-    popular: true,
-  },
-  {
-    id: 'target',
-    name: 'Target',
-    description: 'Goal-oriented design for focused businesses',
-    icon: <Target className="w-6 h-6" />,
-    gradient: 'from-red-500 via-pink-500 to-rose-500',
-    category: 'Focused',
-    features: ['Goal Oriented', 'Focused Design', 'Target Driven'],
-  },
-  {
-    id: 'magic',
-    name: 'Magic',
-    description: 'Enchanting design with mystical elements',
-    icon: <Wand2 className="w-6 h-6" />,
-    gradient: 'from-purple-500 via-violet-500 to-fuchsia-500',
-    category: 'Mystical',
-    features: ['Enchanting', 'Mystical Elements', 'Magic Touch'],
-    premium: true,
-  },
 ];
 
 const TemplateSelector: React.FC = () => {
@@ -351,18 +147,7 @@ const TemplateSelector: React.FC = () => {
 
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
-  const creativeTemplates = templates.filter(t => 
-    ['Creative', 'Entertainment', 'Gaming', 'Travel', 'Organic', 'Fluid', 'Energy', 'Mysterious', 'Fresh', 'Passionate', 'Cool', 'Space', 'Delicate', 'Mystical'].includes(t.category)
-  );
-  const businessTemplates = templates.filter(t => 
-    ['Business', 'Executive', 'Professional', 'Contemporary', 'Modern', 'Clean', 'Premium'].includes(t.category) && !t.popular && !t.premium
-  );
-  const specialtyTemplates = templates.filter(t => 
-    !popularTemplates.includes(t) && 
-    !premiumTemplates.includes(t) && 
-    !creativeTemplates.includes(t) && 
-    !businessTemplates.includes(t)
-  );
+  const allTemplates = templates.filter(t => !t.popular && !t.premium);
 
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
     <div 
@@ -444,8 +229,8 @@ const TemplateSelector: React.FC = () => {
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Select from our expanded collection of professionally designed invoice templates. 
-            Each template is uniquely crafted to make your business stand out with stunning visual appeal.
+            Select from our collection of professionally designed invoice templates. 
+            Each template is crafted to make your business look professional and trustworthy.
           </p>
           
           {/* Stats */}
@@ -463,11 +248,6 @@ const TemplateSelector: React.FC = () => {
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600">{popularTemplates.length}</div>
               <div className="text-sm text-gray-500">Popular</div>
-            </div>
-            <div className="w-px h-12 bg-gray-300"></div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-pink-600">{creativeTemplates.length}</div>
-              <div className="text-sm text-gray-500">Creative</div>
             </div>
           </div>
         </div>
@@ -516,71 +296,25 @@ const TemplateSelector: React.FC = () => {
           </div>
         )}
 
-        {/* Creative Templates */}
-        {creativeTemplates.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center mb-8">
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center mr-4">
-                  <Palette className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Creative Collection</h2>
-                  <p className="text-gray-600">Unique and artistic designs for creative businesses</p>
-                </div>
+        {/* All Templates */}
+        <div className="mb-16">
+          <div className="flex items-center mb-8">
+            <div className="flex items-center">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4">
+                <Palette className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">All Templates</h2>
+                <p className="text-gray-600">Complete collection of invoice designs</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {creativeTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
           </div>
-        )}
-
-        {/* Business Templates */}
-        {businessTemplates.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center mb-8">
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center mr-4">
-                  <Briefcase className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Business Templates</h2>
-                  <p className="text-gray-600">Professional designs for corporate environments</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {businessTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {allTemplates.map((template) => (
+              <TemplateCard key={template.id} template={template} />
+            ))}
           </div>
-        )}
-
-        {/* Specialty Templates */}
-        {specialtyTemplates.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center mb-8">
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center mr-4">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Specialty Templates</h2>
-                  <p className="text-gray-600">Unique designs for specific industries and purposes</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {specialtyTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
-          </div>
-        )}
+        </div>
 
         {/* Call to Action */}
         <div className="text-center">
