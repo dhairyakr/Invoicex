@@ -656,7 +656,9 @@ const InvoiceForm: React.FC = () => {
               { id: 'vintage', name: 'Vintage', description: 'Classic retro' },
               { id: 'artistic', name: 'Artistic', description: 'Creative flair' },
               { id: 'professional', name: 'Professional', description: 'Executive style' },
-              { id: 'startup', name: 'Startup', description: 'Modern casual' }
+              { id: 'startup', name: 'Startup', description: 'Modern casual' },
+              { id: 'luxe', name: 'Luxe', description: 'Ultra-premium' },
+              { id: 'nexus', name: 'Nexus', description: 'Next-generation' }
             ].map((template) => (
               <div
                 key={template.id}
