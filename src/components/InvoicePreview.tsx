@@ -62,7 +62,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
     switch (invoice.template) {
       case 'artistic':
         return (
-          <div className="p-12 bg-gradient-to-br from-purple-50 via-white to-pink-50" style={{ fontFamily: styles.fontFamily }}>
+          <div className="p-12 bg-gradient-to-br from-purple-50 via-white to-pink-50\" style={{ fontFamily: styles.fontFamily }}>
             {/* Artistic Header with Creative Elements */}
             <div className="relative mb-12">
               <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-20 -z-10"></div>
