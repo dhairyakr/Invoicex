@@ -98,7 +98,7 @@ const InvoiceForm: React.FC = () => {
       await exportToPDF('invoice-preview', fileName);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      alert('❌ Error generating PDF. Please try again.');
     }
   };
 
@@ -110,23 +110,27 @@ const InvoiceForm: React.FC = () => {
 
   const handleEmailSend = async () => {
     if (!currentInvoice) return;
+    if (!currentInvoice.client.email) {
+      alert('❌ No email address found for this client. Please add an email address first.');
+      return;
+    }
     try {
       await sendEmailInvoice(currentInvoice, currentInvoice.client.email);
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Error sending email. Please try again.');
+      alert('❌ Error sending email. Please try again.');
     }
   };
 
   const handleWhatsAppSend = async () => {
     if (!currentInvoice) return;
-    const phone = prompt('Enter WhatsApp number (with country code):');
+    const phone = prompt('📱 Enter WhatsApp number (with country code):\n\nExample: +1234567890');
     if (phone) {
       try {
         await sendWhatsAppInvoice(currentInvoice, phone);
       } catch (error) {
         console.error('Error sending WhatsApp:', error);
-        alert('Error sending WhatsApp message. Please try again.');
+        alert('❌ Error sending WhatsApp message. Please try again.');
       }
     }
   };
@@ -756,7 +760,7 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs flex items-center justify-center"
             >
               <Mail size={12} className="mr-1" />
-              Send Email + PDF
+              📧 Email + PDF
             </button>
             <button
               type="button"
@@ -764,7 +768,7 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
             >
               <MessageCircle size={12} className="mr-1" />
-              WhatsApp + PDF
+              📱 WhatsApp + PDF
             </button>
           </div>
         </div>
