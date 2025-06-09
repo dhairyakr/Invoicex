@@ -4,7 +4,8 @@ import {
   FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, 
   Rocket, Cpu, Clock, Brush, Shield, Coffee, Camera, Music, Gamepad2, Plane, 
   Mountain, Waves, Sun, Moon, Flower, Diamond, Flame, Snowflake, TreePine, 
-  Compass, Globe, Telescope, Feather, Gem, Lightbulb, Target, Wand2
+  Compass, Globe, Telescope, Feather, Gem, Lightbulb, Target, Wand2, Eye, 
+  Aperture, Focus, Image, Layers, Lens, Frame, Play, Pause
 } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
@@ -16,6 +17,7 @@ const templates: (TemplateType & {
   features: string[];
   popular?: boolean;
   premium?: boolean;
+  special?: boolean;
 })[] = [
   // Original Templates (keeping as is)
   {
@@ -133,7 +135,7 @@ const templates: (TemplateType & {
     popular: true,
   },
 
-  // NEW CREATIVE TEMPLATES - Each completely unique
+  // SPECIAL UNIQUE TEMPLATES - Completely different designs
   {
     id: 'photography',
     name: 'Photography',
@@ -143,6 +145,7 @@ const templates: (TemplateType & {
     category: 'Creative',
     features: ['Visual Focus', 'Portfolio Style', 'Image-Centric'],
     popular: true,
+    special: true,
   },
   {
     id: 'innovation',
@@ -153,7 +156,10 @@ const templates: (TemplateType & {
     category: 'Innovation',
     features: ['Forward Thinking', 'Innovative', 'Bright Ideas'],
     popular: true,
+    special: true,
   },
+
+  // OTHER CREATIVE TEMPLATES
   {
     id: 'lunar',
     name: 'Lunar',
@@ -351,13 +357,182 @@ const TemplateSelector: React.FC = () => {
 
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
+  const specialTemplates = templates.filter(t => t.special);
   const creativeTemplates = templates.filter(t => 
-    ['Creative', 'Entertainment', 'Gaming', 'Travel', 'Organic', 'Fluid', 'Energy', 'Fresh', 'Passionate', 'Cool', 'Strong', 'Navigation', 'International', 'Delicate', 'Focused'].includes(t.category)
+    ['Creative', 'Entertainment', 'Gaming', 'Travel', 'Organic', 'Fluid', 'Energy', 'Fresh', 'Passionate', 'Cool', 'Strong', 'Navigation', 'International', 'Delicate', 'Focused'].includes(t.category) && !t.special
   );
   const businessTemplates = templates.filter(t => 
     ['Business', 'Executive', 'Contemporary', 'Clean', 'Artistic', 'Bold', 'Technology', 'Classic', 'Modern', 'Luxury'].includes(t.category) && !t.popular && !t.premium
   );
 
+  // Special Photography Template Card
+  const PhotographyCard = ({ template }: { template: typeof templates[0] }) => (
+    <div 
+      onClick={() => handleTemplateSelect(template.id)}
+      className="group relative bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 rounded-3xl overflow-hidden shadow-2xl hover:shadow-4xl transition-all duration-700 cursor-pointer transform hover:-translate-y-4 hover:scale-105 border border-purple-500/30"
+    >
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+      
+      {/* Floating Elements */}
+      <div className="absolute top-4 left-4 w-3 h-3 bg-white/30 rounded-full animate-pulse"></div>
+      <div className="absolute top-8 right-8 w-2 h-2 bg-pink-400/50 rounded-full animate-bounce"></div>
+      <div className="absolute bottom-8 left-8 w-4 h-4 bg-purple-400/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+      {/* Popular Badge */}
+      <div className="absolute top-6 right-6 z-10">
+        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-pink-400 to-purple-500 text-white shadow-xl animate-pulse">
+          <Star size={14} className="mr-2" />
+          Popular
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="relative p-10 text-white">
+        {/* Icon Section */}
+        <div className="relative mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-pink-400 rounded-3xl blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-500"></div>
+          <div className="relative w-20 h-20 bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+            <Camera className="w-10 h-10 text-white" />
+          </div>
+          
+          {/* Camera Elements */}
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center group-hover:animate-spin">
+            <Aperture className="w-4 h-4 text-white" />
+          </div>
+          <div className="absolute -bottom-2 -left-2 w-5 h-5 bg-pink-400/30 rounded-full flex items-center justify-center">
+            <Focus className="w-3 h-3 text-white" />
+          </div>
+        </div>
+
+        {/* Template Info */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-white via-pink-200 to-purple-200 bg-clip-text text-transparent">
+              Photography
+            </h3>
+            <div className="flex space-x-2">
+              <Eye className="w-6 h-6 text-white/60 group-hover:text-white transition-colors duration-300" />
+              <Image className="w-6 h-6 text-white/60 group-hover:text-white transition-colors duration-300" />
+              <Layers className="w-6 h-6 text-white/60 group-hover:text-white transition-colors duration-300" />
+            </div>
+          </div>
+          <p className="text-purple-100 text-lg leading-relaxed mb-6">
+            Visual-focused design for creative professionals who want to showcase their work with stunning visual appeal
+          </p>
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-purple-100 border border-white/20">
+            <Lens className="w-4 h-4 mr-2" />
+            Creative Portfolio
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="space-y-4">
+          {['Visual Focus', 'Portfolio Style', 'Image-Centric'].map((feature, index) => (
+            <div key={index} className="flex items-center text-lg text-purple-100">
+              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-purple-400 mr-4 group-hover:animate-pulse"></div>
+              <span className="group-hover:text-white transition-colors duration-300">{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Visual Elements */}
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-pink-500/20 to-transparent rounded-tl-full"></div>
+        <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-transparent rounded-br-full"></div>
+      </div>
+
+      {/* Bottom Gradient Line */}
+      <div className="h-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+    </div>
+  );
+
+  // Special Innovation Template Card
+  const InnovationCard = ({ template }: { template: typeof templates[0] }) => (
+    <div 
+      onClick={() => handleTemplateSelect(template.id)}
+      className="group relative bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-600 rounded-3xl overflow-hidden shadow-2xl hover:shadow-4xl transition-all duration-700 cursor-pointer transform hover:-translate-y-4 hover:scale-105 border border-yellow-400/50"
+    >
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/30 via-amber-300/30 to-orange-300/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+      
+      {/* Floating Light Bulbs */}
+      <div className="absolute top-6 left-6 w-4 h-4 bg-white/40 rounded-full animate-ping"></div>
+      <div className="absolute top-12 right-12 w-3 h-3 bg-yellow-200/60 rounded-full animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-12 left-12 w-5 h-5 bg-orange-200/50 rounded-full animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+
+      {/* Popular Badge */}
+      <div className="absolute top-6 right-6 z-10">
+        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-xl animate-pulse">
+          <Star size={14} className="mr-2" />
+          Popular
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="relative p-10 text-white">
+        {/* Icon Section */}
+        <div className="relative mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-3xl blur-xl opacity-60 group-hover:opacity-90 transition-opacity duration-500"></div>
+          <div className="relative w-20 h-20 bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500">
+            <Lightbulb className="w-10 h-10 text-white animate-pulse" />
+          </div>
+          
+          {/* Innovation Elements */}
+          <div className="absolute -top-3 -right-3 w-8 h-8 bg-white/30 rounded-full flex items-center justify-center group-hover:animate-bounce">
+            <Zap className="w-5 h-5 text-white" />
+          </div>
+          <div className="absolute -bottom-3 -left-3 w-6 h-6 bg-orange-300/40 rounded-full flex items-center justify-center group-hover:animate-spin">
+            <Rocket className="w-4 h-4 text-white" />
+          </div>
+        </div>
+
+        {/* Template Info */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-4xl font-bold bg-gradient-to-r from-white via-yellow-100 to-orange-100 bg-clip-text text-transparent">
+              Innovation
+            </h3>
+            <div className="flex space-x-2">
+              <Target className="w-6 h-6 text-white/70 group-hover:text-white transition-colors duration-300" />
+              <Cpu className="w-6 h-6 text-white/70 group-hover:text-white transition-colors duration-300" />
+              <Rocket className="w-6 h-6 text-white/70 group-hover:text-white transition-colors duration-300" />
+            </div>
+          </div>
+          <p className="text-orange-100 text-lg leading-relaxed mb-6">
+            Forward-thinking design for innovative companies that want to showcase their bright ideas and cutting-edge solutions
+          </p>
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm text-orange-100 border border-white/30">
+            <Lightbulb className="w-4 h-4 mr-2 animate-pulse" />
+            Innovation Hub
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="space-y-4">
+          {['Forward Thinking', 'Innovative', 'Bright Ideas'].map((feature, index) => (
+            <div key={index} className="flex items-center text-lg text-orange-100">
+              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400 mr-4 group-hover:animate-ping"></div>
+              <span className="group-hover:text-white transition-colors duration-300">{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Visual Elements */}
+        <div className="absolute bottom-0 right-0 w-36 h-36 bg-gradient-to-tl from-orange-400/20 to-transparent rounded-tl-full"></div>
+        <div className="absolute top-0 left-0 w-28 h-28 bg-gradient-to-br from-yellow-400/20 to-transparent rounded-br-full"></div>
+        
+        {/* Animated Rays */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent transform rotate-45 animate-spin" style={{ animationDuration: '8s' }}></div>
+        </div>
+      </div>
+
+      {/* Bottom Gradient Line */}
+      <div className="h-2 bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center"></div>
+    </div>
+  );
+
+  // Regular Template Card
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
     <div 
       onClick={() => handleTemplateSelect(template.id)}
@@ -466,8 +641,36 @@ const TemplateSelector: React.FC = () => {
           </div>
         </div>
 
+        {/* Special Featured Templates */}
+        {specialTemplates.length > 0 && (
+          <div className="mb-20">
+            <div className="flex items-center mb-12">
+              <div className="flex items-center">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-4xl font-bold text-gray-900">Featured Showcase</h2>
+                  <p className="text-gray-600">Completely unique designs with stunning visual appeal</p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {specialTemplates.map((template) => (
+                template.id === 'photography' ? (
+                  <PhotographyCard key={template.id} template={template} />
+                ) : template.id === 'innovation' ? (
+                  <InnovationCard key={template.id} template={template} />
+                ) : (
+                  <TemplateCard key={template.id} template={template} />
+                )
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Popular Templates */}
-        {popularTemplates.length > 0 && (
+        {popularTemplates.filter(t => !t.special).length > 0 && (
           <div className="mb-16">
             <div className="flex items-center mb-8">
               <div className="flex items-center">
@@ -481,7 +684,7 @@ const TemplateSelector: React.FC = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {popularTemplates.map((template) => (
+              {popularTemplates.filter(t => !t.special).map((template) => (
                 <TemplateCard key={template.id} template={template} />
               ))}
             </div>
