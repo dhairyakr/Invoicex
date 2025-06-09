@@ -1,12 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, 
-  Rocket, Cpu, Clock, Brush, Shield, Coffee, Camera, Music, Gamepad2, Plane, 
-  Mountain, Waves, Sun, Moon, Flower, Diamond, Flame, Snowflake, TreePine, 
-  Compass, Globe, Telescope, Feather, Gem, Lightbulb, Target, Wand2, Eye, 
-  Aperture, Focus, Image, Layers, Lens, Frame, Play, Pause
-} from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Camera, Music, Gamepad2, Plane, Mountain, Waves, Sun, Moon, Flower, Diamond, Flame, Snowflake, TreePine, Compass, Globe, Telescope, Feather, Gem, Lightbulb, Target, Wand2, Eye, Aperture, Focus, Image, Layers, Pen as Lens, Frame, Play, Pause } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 
