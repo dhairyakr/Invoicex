@@ -15,13 +15,13 @@ export interface PaymentRequest {
   };
 }
 
-// Google Pay UPI Payment URL Generator
+// Google Pay UPI Payment URL Generator - CONFIGURED WITH YOUR UPI ID
 export const generateGooglePayUPI = (paymentRequest: PaymentRequest): string => {
   const { amount, currency, description, reference, merchantInfo } = paymentRequest;
   
-  // UPI Payment URL format for Google Pay
+  // UPI Payment URL format for Google Pay - Using your UPI ID
   const upiParams = new URLSearchParams({
-    pa: 'your-upi-id@bank', // Replace with your UPI ID
+    pa: 'dhairya.dhanbad@oksbi', // YOUR UPI ID
     pn: merchantInfo.name,
     am: amount.toString(),
     cu: currency,
@@ -57,7 +57,7 @@ export const createGooglePayRequest = (paymentRequest: PaymentRequest) => {
       {
         type: 'UPI',
         parameters: {
-          payeeVpa: 'your-upi-id@bank', // Replace with your UPI ID
+          payeeVpa: 'dhairya.dhanbad@oksbi', // YOUR UPI ID
           payeeName: merchantInfo.name,
           referenceUrl: window.location.origin,
           mcc: '5411', // Merchant Category Code
@@ -74,14 +74,14 @@ export const createGooglePayRequest = (paymentRequest: PaymentRequest) => {
       totalPriceLabel: 'Total',
       totalPrice: amount.toString(),
       currencyCode: currency,
-      countryCode: 'IN' // Change based on your country
+      countryCode: 'IN' // Set to India for UPI
     }
   };
 };
 
 // Generate Google Pay QR Code Data
 export const generateGooglePayQRData = (paymentRequest: PaymentRequest): string => {
-  // For UPI-based payments (India)
+  // For UPI-based payments (India) - Using your UPI ID
   if (paymentRequest.currency === 'INR') {
     return generateGooglePayUPI(paymentRequest);
   }

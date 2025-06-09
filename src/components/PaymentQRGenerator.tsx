@@ -17,33 +17,34 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
   reference,
   onQRGenerated,
 }) => {
-  const [selectedProvider, setSelectedProvider] = useState<'googlepay' | 'upi' | 'paypal' | 'stripe' | 'generic'>('googlepay');
+  const [selectedProvider, setSelectedProvider] = useState<'googlepay' | 'upi' | 'paypal' | 'stripe' | 'generic'>('upi');
   const [isGenerating, setIsGenerating] = useState(false);
   const [merchantConfig, setMerchantConfig] = useState({
     merchantId: '',
-    upiId: '',
+    upiId: 'dhairya.dhanbad@oksbi', // Pre-filled with your UPI ID
     paypalMerchantId: '',
     stripePaymentLinkId: '',
   });
 
   const paymentProviders = [
     {
+      id: 'upi' as const,
+      name: 'UPI Direct',
+      icon: <CreditCard className="w-5 h-5" />,
+      description: 'Direct UPI payments (India only) - Pre-configured',
+      configField: 'upiId',
+      placeholder: 'UPI ID (pre-filled with yours)',
+      supported: ['INR'],
+      recommended: true,
+    },
+    {
       id: 'googlepay' as const,
       name: 'Google Pay',
       icon: <Smartphone className="w-5 h-5" />,
       description: 'UPI & Card payments via Google Pay',
       configField: 'merchantId',
-      placeholder: 'Enter Merchant ID',
+      placeholder: 'Enter Merchant ID (optional)',
       supported: ['INR', 'USD', 'EUR', 'GBP'],
-    },
-    {
-      id: 'upi' as const,
-      name: 'UPI Direct',
-      icon: <CreditCard className="w-5 h-5" />,
-      description: 'Direct UPI payments (India only)',
-      configField: 'upiId',
-      placeholder: 'Enter UPI ID (e.g., merchant@paytm)',
-      supported: ['INR'],
     },
     {
       id: 'paypal' as const,
@@ -91,7 +92,7 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
         recipient,
         reference,
         merchantId: merchantConfig.merchantId || undefined,
-        upiId: merchantConfig.upiId || undefined,
+        upiId: merchantConfig.upiId || 'dhairya.dhanbad@oksbi', // Always use your UPI ID as fallback
         paypalMerchantId: merchantConfig.paypalMerchantId || undefined,
         stripePaymentLinkId: merchantConfig.stripePaymentLinkId || undefined,
       });
@@ -126,7 +127,7 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
                 selectedProvider === provider.id
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+              } ${provider.recommended ? 'ring-2 ring-green-200' : ''}`}
               onClick={() => setSelectedProvider(provider.id)}
             >
               <div className="flex items-center space-x-3">
@@ -138,6 +139,11 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
                     <h3 className="font-medium text-gray-900">{provider.name}</h3>
+                    {provider.recommended && (
+                      <span className="px-2 py-1 text-xs bg-green-100 text-green-600 rounded-full">
+                        Recommended
+                      </span>
+                    )}
                     {!provider.supported.includes(currency) && (
                       <span className="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full">
                         Not supported for {currency}
@@ -168,24 +174,25 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
             placeholder={selectedProviderInfo.placeholder}
           />
           
-          {selectedProvider === 'googlepay' && (
-            <div className="mt-2 p-3 bg-blue-50 rounded-md">
-              <h4 className="font-medium text-blue-900 mb-2">Google Pay Setup:</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Get your Merchant ID from Google Pay Business Console</li>
-                <li>• For UPI: Use your UPI ID (e.g., merchant@paytm)</li>
-                <li>• For cards: Configure payment gateway integration</li>
+          {selectedProvider === 'upi' && (
+            <div className="mt-2 p-3 bg-green-50 rounded-md border border-green-200">
+              <h4 className="font-medium text-green-900 mb-2">✅ UPI Ready to Use!</h4>
+              <ul className="text-sm text-green-800 space-y-1">
+                <li>• Your UPI ID: <strong>dhairya.dhanbad@oksbi</strong></li>
+                <li>• Works with all UPI apps (PhonePe, Paytm, Google Pay, etc.)</li>
+                <li>• Instant bank-to-bank transfers</li>
+                <li>• Only works for INR currency</li>
               </ul>
             </div>
           )}
           
-          {selectedProvider === 'upi' && (
-            <div className="mt-2 p-3 bg-green-50 rounded-md">
-              <h4 className="font-medium text-green-900 mb-2">UPI Setup:</h4>
-              <ul className="text-sm text-green-800 space-y-1">
-                <li>• Use your UPI ID (e.g., yourname@paytm)</li>
-                <li>• Only works for INR currency</li>
-                <li>• Compatible with all UPI apps</li>
+          {selectedProvider === 'googlepay' && (
+            <div className="mt-2 p-3 bg-blue-50 rounded-md">
+              <h4 className="font-medium text-blue-900 mb-2">Google Pay Setup:</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Uses your UPI ID: <strong>dhairya.dhanbad@oksbi</strong></li>
+                <li>• Merchant ID is optional for basic UPI payments</li>
+                <li>• For advanced features, get Merchant ID from Google Pay Business Console</li>
               </ul>
             </div>
           )}
@@ -229,14 +236,20 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
             <span className="text-gray-600">Recipient:</span>
             <span className="ml-2 font-medium">{recipient}</span>
           </div>
+          {selectedProvider === 'upi' && (
+            <div className="col-span-2">
+              <span className="text-gray-600">UPI ID:</span>
+              <span className="ml-2 font-medium text-green-600">dhairya.dhanbad@oksbi</span>
+            </div>
+          )}
         </div>
       </div>
 
       <button
         onClick={handleGenerateQR}
-        disabled={isGenerating || !isCurrencySupported || (selectedProviderInfo?.configField && !merchantConfig[selectedProviderInfo.configField as keyof typeof merchantConfig])}
+        disabled={isGenerating || !isCurrencySupported}
         className={`w-full px-4 py-3 rounded-md font-medium transition-colors flex items-center justify-center ${
-          isGenerating || !isCurrencySupported || (selectedProviderInfo?.configField && !merchantConfig[selectedProviderInfo.configField as keyof typeof merchantConfig])
+          isGenerating || !isCurrencySupported
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
             : 'bg-blue-600 text-white hover:bg-blue-700'
         }`}

@@ -51,20 +51,23 @@ export const generateGooglePayQR = async (paymentInfo: {
   return generateQRCode(googlePayData);
 };
 
-// Generate UPI QR Code (for Indian payments)
+// Generate UPI QR Code (for Indian payments) - CONFIGURED WITH YOUR UPI ID
 export const generateUPIQR = async (paymentInfo: {
   amount: number;
   currency: string;
   recipient: string;
   reference: string;
-  upiId: string;
+  upiId?: string;
 }): Promise<string> => {
   if (paymentInfo.currency !== 'INR') {
     throw new Error('UPI payments are only supported for INR currency');
   }
 
+  // Use your UPI ID as default
+  const upiId = paymentInfo.upiId || 'dhairya.dhanbad@oksbi';
+
   const upiParams = new URLSearchParams({
-    pa: paymentInfo.upiId, // Payee UPI ID
+    pa: upiId, // Payee UPI ID - YOUR ID
     pn: paymentInfo.recipient, // Payee Name
     am: paymentInfo.amount.toString(), // Amount
     cu: paymentInfo.currency, // Currency
@@ -119,12 +122,11 @@ export const generateMultiProviderQR = async (
       return generateGooglePayQR(paymentInfo);
     
     case 'upi':
-      if (!paymentInfo.upiId) {
-        throw new Error('UPI ID is required for UPI payments');
-      }
+      // Use your UPI ID as default if not provided
+      const upiId = paymentInfo.upiId || 'dhairya.dhanbad@oksbi';
       return generateUPIQR({
         ...paymentInfo,
-        upiId: paymentInfo.upiId,
+        upiId: upiId,
       });
     
     case 'paypal':
