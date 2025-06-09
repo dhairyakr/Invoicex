@@ -657,8 +657,8 @@ const InvoiceForm: React.FC = () => {
               { id: 'artistic', name: 'Artistic', description: 'Creative flair' },
               { id: 'professional', name: 'Professional', description: 'Executive style' },
               { id: 'startup', name: 'Startup', description: 'Modern casual' },
-              { id: 'luxe', name: 'Luxe', description: 'Ultra-premium' },
-              { id: 'nexus', name: 'Nexus', description: 'Next-generation' }
+              { id: 'quantum', name: 'Quantum', description: 'Revolutionary', isNew: true },
+              { id: 'aurora', name: 'Aurora', description: 'Celestial beauty', isNew: true }
             ].map((template) => (
               <div
                 key={template.id}
@@ -666,10 +666,15 @@ const InvoiceForm: React.FC = () => {
                   currentInvoice.template === template.id
                     ? 'bg-black text-white'
                     : 'bg-gray-50 hover:bg-gray-100'
-                }`}
+                } ${template.isNew ? 'ring-2 ring-purple-200' : ''}`}
                 onClick={() => updateInvoiceField('template', template.id)}
               >
-                <h3 className="font-medium text-xs">{template.name}</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-xs">{template.name}</h3>
+                  {template.isNew && (
+                    <span className="text-xs bg-purple-500 text-white px-1 rounded">NEW</span>
+                  )}
+                </div>
                 <p className={`text-xs ${
                   currentInvoice.template === template.id
                     ? 'text-gray-300'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers } from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Hexagon, Triangle, Circle, Square, Diamond, Flame, Snowflake, Sun, Moon } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 
@@ -12,6 +12,7 @@ const templates: (TemplateType & {
   popular?: boolean;
   premium?: boolean;
   new?: boolean;
+  exceptional?: boolean;
 })[] = [
   {
     id: 'elegant',
@@ -127,26 +128,27 @@ const templates: (TemplateType & {
     features: ['Modern Casual', 'Startup Friendly', 'Fresh Design'],
     popular: true,
   },
-  // NEW STUNNING TEMPLATES
+  // TRULY EXCEPTIONAL NEW TEMPLATES
   {
-    id: 'luxe',
-    name: 'Luxe',
-    description: 'Ultra-premium design with gold accents and sophisticated typography',
-    icon: <Gem className="w-6 h-6" />,
-    gradient: 'from-yellow-400 via-yellow-500 to-amber-600',
-    category: 'Ultra-Premium',
-    features: ['Gold Accents', 'Luxury Typography', 'Premium Materials', 'Exclusive Design'],
-    premium: true,
+    id: 'quantum',
+    name: 'Quantum',
+    description: 'Revolutionary multi-dimensional design with particle effects and quantum-inspired layouts that shift and morph',
+    icon: <Hexagon className="w-6 h-6" />,
+    gradient: 'from-violet-500 via-purple-500 via-fuchsia-500 via-pink-500 to-rose-500',
+    category: 'Revolutionary',
+    features: ['Particle Effects', 'Morphing Layouts', 'Quantum Physics Inspired', 'Multi-Dimensional Design', 'Reality-Bending Visuals'],
+    exceptional: true,
     new: true,
   },
   {
-    id: 'nexus',
-    name: 'Nexus',
-    description: 'Next-generation design with holographic elements and 3D effects',
-    icon: <Layers className="w-6 h-6" />,
-    gradient: 'from-indigo-500 via-purple-500 to-pink-500',
-    category: 'Next-Gen',
-    features: ['3D Effects', 'Holographic Elements', 'Future Design', 'Interactive Layout'],
+    id: 'aurora',
+    name: 'Aurora',
+    description: 'Breathtaking northern lights inspired design with flowing gradients, ethereal animations, and celestial beauty',
+    icon: <Sun className="w-6 h-6" />,
+    gradient: 'from-emerald-400 via-cyan-400 via-blue-500 via-purple-500 via-pink-500 to-rose-400',
+    category: 'Celestial',
+    features: ['Northern Lights Effect', 'Flowing Gradients', 'Ethereal Animations', 'Celestial Beauty', 'Atmospheric Design'],
+    exceptional: true,
     new: true,
   },
 ];
@@ -171,32 +173,83 @@ const TemplateSelector: React.FC = () => {
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
   const newTemplates = templates.filter(t => t.new);
-  const allTemplates = templates.filter(t => !t.popular && !t.premium && !t.new);
+  const exceptionalTemplates = templates.filter(t => t.exceptional);
+  const allTemplates = templates.filter(t => !t.popular && !t.premium && !t.new && !t.exceptional);
 
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
     <div 
       onClick={() => handleTemplateSelect(template.id)}
-      className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 hover:scale-105 border border-gray-100"
+      className={`group relative bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 cursor-pointer transform hover:-translate-y-3 hover:scale-105 border border-gray-100 ${
+        template.exceptional ? 'ring-4 ring-purple-200 ring-opacity-50 hover:ring-purple-300 hover:ring-opacity-70' : ''
+      }`}
     >
-      {/* Background Gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+      {/* Exceptional Template Special Effects */}
+      {template.exceptional && (
+        <>
+          {/* Animated Gradient Border */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500 via-purple-500 via-fuchsia-500 via-pink-500 to-rose-500 opacity-30 animate-pulse"></div>
+          <div className="absolute inset-[3px] rounded-3xl bg-white"></div>
+          
+          {/* Floating Particles */}
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            <div className="absolute top-4 left-4 w-2 h-2 bg-purple-400 rounded-full animate-bounce opacity-60"></div>
+            <div className="absolute top-8 right-8 w-1 h-1 bg-pink-400 rounded-full animate-ping opacity-40"></div>
+            <div className="absolute bottom-6 left-8 w-1.5 h-1.5 bg-violet-400 rounded-full animate-pulse opacity-50"></div>
+            <div className="absolute bottom-4 right-4 w-1 h-1 bg-fuchsia-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
+          </div>
+          
+          {/* Aurora Effect for Aurora Template */}
+          {template.id === 'aurora' && (
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-cyan-400/10 via-blue-500/10 via-purple-500/10 via-pink-500/10 to-rose-400/10 animate-pulse rounded-3xl"></div>
+          )}
+          
+          {/* Quantum Effect for Quantum Template */}
+          {template.id === 'quantum' && (
+            <>
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-500/5 via-purple-500/5 via-fuchsia-500/5 via-pink-500/5 to-rose-500/5 animate-pulse rounded-3xl"></div>
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-purple-100/20 to-transparent transform rotate-45 animate-pulse"></div>
+            </>
+          )}
+          
+          {/* Multi-layer Shimmer Effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transform translate-x-[-200%] group-hover:translate-x-[300%] transition-transform duration-1500"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-200/40 to-transparent -skew-x-12 transform translate-x-[-250%] group-hover:translate-x-[350%] transition-transform duration-1700"></div>
+        </>
+      )}
+
+      {/* Regular Template Effects */}
+      {!template.exceptional && (
+        <>
+          {/* Background Gradient */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+          
+          {/* Shimmer Effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+        </>
+      )}
       
-      {/* Premium/Popular/New Badge */}
-      {(template.premium || template.popular || template.new) && (
-        <div className="absolute top-4 right-4 z-10">
-          {template.new && (
+      {/* Premium/Popular/New/Exceptional Badge */}
+      {(template.premium || template.popular || template.new || template.exceptional) && (
+        <div className="absolute top-4 right-4 z-20">
+          {template.exceptional && (
+            <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-violet-500 via-purple-500 via-fuchsia-500 to-pink-500 text-white shadow-2xl animate-pulse">
+              <Lightning size={14} className="mr-1 animate-bounce" />
+              EXCEPTIONAL
+            </span>
+          )}
+          {template.new && !template.exceptional && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 text-white shadow-lg animate-pulse">
               <Sparkles size={12} className="mr-1" />
               NEW
             </span>
           )}
-          {template.premium && !template.new && (
+          {template.premium && !template.new && !template.exceptional && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg">
               <Crown size={12} className="mr-1" />
               Premium
             </span>
           )}
-          {template.popular && !template.premium && !template.new && (
+          {template.popular && !template.premium && !template.new && !template.exceptional && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg">
               <Star size={12} className="mr-1" />
               Popular
@@ -205,61 +258,82 @@ const TemplateSelector: React.FC = () => {
         </div>
       )}
 
-      {/* Special Effects for New Templates */}
-      {template.new && (
-        <>
-          {/* Animated Border */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 opacity-20 animate-pulse"></div>
-          <div className="absolute inset-[2px] rounded-2xl bg-white"></div>
-          
-          {/* Shimmer Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-        </>
-      )}
-
       {/* Content */}
-      <div className="relative p-8">
+      <div className="relative p-8 z-10">
         {/* Icon */}
-        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${template.gradient} text-white mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300 ${template.new ? 'animate-pulse' : ''}`}>
+        <div className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br ${template.gradient} text-white mb-6 shadow-2xl group-hover:scale-110 transition-transform duration-500 ${
+          template.exceptional ? 'animate-pulse shadow-purple-500/50' : ''
+        } ${template.new ? 'animate-pulse' : ''}`}>
           {template.icon}
         </div>
 
         {/* Template Info */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className={`text-2xl font-bold text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-gray-900 group-hover:to-gray-600 transition-all duration-300 ${template.new ? 'bg-gradient-to-r bg-clip-text text-transparent from-emerald-600 to-blue-600' : ''}`}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className={`text-2xl font-bold transition-all duration-300 ${
+              template.exceptional 
+                ? 'bg-gradient-to-r bg-clip-text text-transparent from-violet-600 via-purple-600 via-fuchsia-600 to-pink-600 animate-pulse' 
+                : template.new 
+                  ? 'bg-gradient-to-r bg-clip-text text-transparent from-emerald-600 to-blue-600' 
+                  : 'text-gray-900 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-gray-900 group-hover:to-gray-600'
+            }`}>
               {template.name}
             </h3>
-            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
+            <ArrowRight className={`w-6 h-6 transition-all duration-300 ${
+              template.exceptional ? 'text-purple-500 animate-bounce' : 'text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1'
+            }`} />
           </div>
-          <p className="text-gray-600 text-sm leading-relaxed mb-4">
+          <p className={`text-sm leading-relaxed mb-4 ${
+            template.exceptional ? 'text-gray-700 font-medium' : 'text-gray-600'
+          }`}>
             {template.description}
           </p>
-          <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${
-            template.new 
-              ? 'bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-700 group-hover:from-emerald-200 group-hover:to-blue-200' 
-              : 'bg-gray-100 text-gray-700 group-hover:bg-gray-200'
+          <div className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-medium transition-colors duration-300 ${
+            template.exceptional
+              ? 'bg-gradient-to-r from-violet-100 via-purple-100 to-fuchsia-100 text-purple-700 group-hover:from-violet-200 group-hover:via-purple-200 group-hover:to-fuchsia-200'
+              : template.new 
+                ? 'bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-700 group-hover:from-emerald-200 group-hover:to-blue-200' 
+                : 'bg-gray-100 text-gray-700 group-hover:bg-gray-200'
           }`}>
             {template.category}
           </div>
         </div>
 
         {/* Features */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           {template.features.map((feature, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-500">
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} mr-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300 ${template.new ? 'animate-pulse' : ''}`}></div>
-              {feature}
+            <div key={index} className="flex items-center text-sm text-gray-600">
+              <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${template.gradient} mr-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300 ${
+                template.exceptional ? 'animate-pulse' : template.new ? 'animate-pulse' : ''
+              }`}></div>
+              <span className={template.exceptional ? 'font-medium text-gray-700' : ''}>{feature}</span>
             </div>
           ))}
         </div>
 
+        {/* Exceptional Template Extra Info */}
+        {template.exceptional && (
+          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50 rounded-2xl border border-purple-100">
+            <div className="flex items-center text-xs font-semibold text-purple-700 mb-2">
+              <Eye className="w-4 h-4 mr-2" />
+              REVOLUTIONARY DESIGN
+            </div>
+            <p className="text-xs text-purple-600 leading-relaxed">
+              This template pushes the boundaries of invoice design with cutting-edge visual effects and innovative layouts.
+            </p>
+          </div>
+        )}
+
         {/* Hover Effect Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl ${
+          template.exceptional ? 'from-purple-500/5 to-pink-500/5' : 'from-white/5 to-transparent'
+        }`}></div>
       </div>
 
       {/* Bottom Gradient Line */}
-      <div className={`h-1 bg-gradient-to-r ${template.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ${template.new ? 'animate-pulse' : ''}`}></div>
+      <div className={`h-2 bg-gradient-to-r ${template.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ${
+        template.exceptional ? 'animate-pulse h-3' : template.new ? 'animate-pulse' : ''
+      }`}></div>
     </div>
   );
 
@@ -287,7 +361,12 @@ const TemplateSelector: React.FC = () => {
             </div>
             <div className="w-px h-12 bg-gray-300"></div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">{premiumTemplates.length}</div>
+              <div className="text-3xl font-bold text-purple-600">{exceptionalTemplates.length}</div>
+              <div className="text-sm text-gray-500">Exceptional</div>
+            </div>
+            <div className="w-px h-12 bg-gray-300"></div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-yellow-600">{premiumTemplates.length}</div>
               <div className="text-sm text-gray-500">Premium</div>
             </div>
             <div className="w-px h-12 bg-gray-300"></div>
@@ -295,16 +374,42 @@ const TemplateSelector: React.FC = () => {
               <div className="text-3xl font-bold text-green-600">{popularTemplates.length}</div>
               <div className="text-sm text-gray-500">Popular</div>
             </div>
-            <div className="w-px h-12 bg-gray-300"></div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600">{newTemplates.length}</div>
-              <div className="text-sm text-gray-500">New</div>
-            </div>
           </div>
         </div>
 
+        {/* EXCEPTIONAL Templates Section */}
+        {exceptionalTemplates.length > 0 && (
+          <div className="mb-20">
+            <div className="flex items-center justify-center mb-12">
+              <div className="text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-500 via-purple-500 via-fuchsia-500 to-pink-500 flex items-center justify-center mr-4 animate-pulse shadow-2xl shadow-purple-500/50">
+                    <Lightning className="w-8 h-8 text-white animate-bounce" />
+                  </div>
+                  <div className="text-left">
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
+                      ⚡ EXCEPTIONAL TEMPLATES
+                    </h2>
+                    <p className="text-gray-600 text-lg">Revolutionary designs that redefine invoice aesthetics</p>
+                  </div>
+                </div>
+                <div className="bg-gradient-to-r from-violet-100 via-purple-100 via-fuchsia-100 to-pink-100 rounded-2xl p-6 border border-purple-200">
+                  <p className="text-purple-800 font-medium text-lg">
+                    🌟 These templates feature cutting-edge design elements, particle effects, and revolutionary layouts that will make your invoices truly unforgettable.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-12 max-w-6xl mx-auto">
+              {exceptionalTemplates.map((template) => (
+                <TemplateCard key={template.id} template={template} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* NEW Templates Section */}
-        {newTemplates.length > 0 && (
+        {newTemplates.filter(t => !t.exceptional).length > 0 && (
           <div className="mb-16">
             <div className="flex items-center mb-8">
               <div className="flex items-center">
@@ -320,7 +425,7 @@ const TemplateSelector: React.FC = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {newTemplates.map((template) => (
+              {newTemplates.filter(t => !t.exceptional).map((template) => (
                 <TemplateCard key={template.id} template={template} />
               ))}
             </div>
@@ -397,17 +502,17 @@ const TemplateSelector: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-xl opacity-30"></div>
             <div className="relative bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Can't decide? Start with our most popular template!
+                Ready to create something extraordinary?
               </h3>
               <p className="text-gray-600 mb-6">
-                The Minimal template is loved by thousands of businesses worldwide.
+                Try our revolutionary Quantum template for an unforgettable invoice experience.
               </p>
               <button
-                onClick={() => handleTemplateSelect('minimal')}
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:scale-105 transform shadow-lg hover:shadow-xl"
+                onClick={() => handleTemplateSelect('quantum')}
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-violet-700 hover:via-purple-700 hover:to-fuchsia-700 hover:scale-105 transform shadow-lg hover:shadow-xl"
               >
-                <Sparkles className="w-5 h-5 mr-2" />
-                Start with Minimal Template
+                <Lightning className="w-5 h-5 mr-2" />
+                Try Quantum Template
                 <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </div>
