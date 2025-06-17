@@ -3,46 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
 import { formatDate } from '../utils/helpers';
 import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
-import { 
-  FileText, 
-  Plus, 
-  Trash2, 
-  Search, 
-  Filter, 
-  Copy, 
-  Mail, 
-  MessageCircle,
-  Eye,
-  Edit,
-  Calendar,
-  Tag,
-  X,
-  TrendingUp,
-  DollarSign,
-  Clock,
-  Users,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-  Zap,
-  ChevronDown,
-  Download,
-  Layers,
-  Box,
-  Hexagon,
-  Triangle,
-  Square,
-  Circle,
-  Diamond,
-  Star,
-  Sparkles,
-  Gem,
-  Prism,
-  Crystallize
-} from 'lucide-react';
+import { FileText, Plus, Trash2, Search, Filter, Copy, Mail, MessageCircle, Eye, Edit, Calendar, Tag, X, TrendingUp, DollarSign, Clock, Users, BarChart3, ArrowUpRight, ArrowDownRight, CheckCircle, AlertCircle, XCircle, Zap, ChevronDown, Download, Layers, Box, Hexagon, Triangle, Square, Circle, Diamond, Star, Sparkles, Gem, Printer as Prism, Italic as Crystallize } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
