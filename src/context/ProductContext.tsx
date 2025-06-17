@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, ProductFilters } from '../types';
 import { useAuth } from './AuthContext';
-import { supabase } from '../lib/supabase';
+import { supabase, testConnection } from '../lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ProductContextType {
@@ -10,6 +10,7 @@ interface ProductContextType {
   filters: ProductFilters;
   loading: boolean;
   error: string | null;
+  connectionStatus: 'checking' | 'connected' | 'error';
   setFilters: (filters: ProductFilters) => void;
   createProduct: (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) => Promise<{ data?: Product; error?: string }>;
   updateProduct: (id: string, updates: Partial<Product>) => Promise<{ data?: Product; error?: string }>;
@@ -17,6 +18,7 @@ interface ProductContextType {
   refreshProducts: () => Promise<void>;
   getProductsByCategory: (category: string) => Product[];
   searchProducts: (query: string) => Product[];
+  retryConnection: () => Promise<void>;
 }
 
 const DEFAULT_FILTERS: ProductFilters = {
@@ -35,6 +37,21 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [filters, setFilters] = useState<ProductFilters>(DEFAULT_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+
+  // Test Supabase connection
+  const checkConnection = async () => {
+    setConnectionStatus('checking');
+    const result = await testConnection();
+    if (result.success) {
+      setConnectionStatus('connected');
+      setError(null);
+    } else {
+      setConnectionStatus('error');
+      setError(result.error || 'Failed to connect to Supabase');
+    }
+    return result.success;
+  };
 
   // Load products from Supabase
   const loadProducts = async () => {
@@ -46,6 +63,14 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     try {
       setLoading(true);
+      
+      // Check connection first
+      const isConnected = await checkConnection();
+      if (!isConnected) {
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -53,7 +78,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         .order('created_at', { ascending: false });
 
       if (error) {
-        setError(error.message);
+        setError(`Database error: ${error.message}`);
+        setConnectionStatus('error');
         return;
       }
 
@@ -77,9 +103,21 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       setProducts(transformedProducts);
       setError(null);
-    } catch (err) {
-      setError('Failed to load products');
+      setConnectionStatus('connected');
+    } catch (err: any) {
+      const errorMessage = err.message || 'Failed to load products';
+      setError(errorMessage);
+      setConnectionStatus('error');
       console.error('Error loading products:', err);
+      
+      // Provide helpful error messages
+      if (errorMessage.includes('Failed to fetch')) {
+        setError('Unable to connect to Supabase. Please check your internet connection and Supabase configuration.');
+      } else if (errorMessage.includes('Invalid API key')) {
+        setError('Invalid Supabase API key. Please check your .env file.');
+      } else if (errorMessage.includes('Project not found')) {
+        setError('Supabase project not found. Please check your project URL in .env file.');
+      }
     } finally {
       setLoading(false);
     }
@@ -113,8 +151,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       await loadProducts();
       return { data: data as Product };
-    } catch (err) {
-      return { error: 'Failed to create product' };
+    } catch (err: any) {
+      return { error: err.message || 'Failed to create product' };
     }
   };
 
@@ -147,8 +185,8 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       await loadProducts();
       return { data: data as Product };
-    } catch (err) {
-      return { error: 'Failed to update product' };
+    } catch (err: any) {
+      return { error: err.message || 'Failed to update product' };
     }
   };
 
@@ -166,8 +204,16 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       await loadProducts();
       return {};
-    } catch (err) {
-      return { error: 'Failed to delete product' };
+    } catch (err: any) {
+      return { error: err.message || 'Failed to delete product' };
+    }
+  };
+
+  // Retry connection
+  const retryConnection = async () => {
+    await checkConnection();
+    if (connectionStatus === 'connected') {
+      await loadProducts();
     }
   };
 
@@ -238,6 +284,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     filters,
     loading,
     error,
+    connectionStatus,
     setFilters,
     createProduct,
     updateProduct,
@@ -245,6 +292,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     refreshProducts: loadProducts,
     getProductsByCategory,
     searchProducts,
+    retryConnection,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
