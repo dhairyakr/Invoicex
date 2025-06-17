@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag, X, Package, Search } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, Tag, X, Package, Search } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
 import PaymentQRGenerator from './PaymentQRGenerator';
 import ProductSelector from './Products/ProductSelector';
@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontType, Product } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
-import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
+import { sendEmailInvoice } from '../utils/communication';
 
 const fonts: FontType[] = [
   { id: 'inter', name: 'Inter' },
@@ -127,28 +127,11 @@ const InvoiceForm: React.FC = () => {
 
   const handleEmailSend = async () => {
     if (!currentInvoice) return;
-    if (!currentInvoice.client.email) {
-      alert('❌ No email address found for this client. Please add an email address first.');
-      return;
-    }
     try {
-      await sendEmailInvoice(currentInvoice, currentInvoice.client.email);
+      await sendEmailInvoice(currentInvoice);
     } catch (error) {
       console.error('Error sending email:', error);
       alert('❌ Error sending email. Please try again.');
-    }
-  };
-
-  const handleWhatsAppSend = async () => {
-    if (!currentInvoice) return;
-    const phone = prompt('📱 Enter WhatsApp number (with country code):\n\nExample: +1234567890');
-    if (phone) {
-      try {
-        await sendWhatsAppInvoice(currentInvoice, phone);
-      } catch (error) {
-        console.error('Error sending WhatsApp:', error);
-        alert('❌ Error sending WhatsApp message. Please try again.');
-      }
     }
   };
 
@@ -787,14 +770,6 @@ const InvoiceForm: React.FC = () => {
             >
               <Mail size={12} className="mr-1" />
               📧 Email + PDF
-            </button>
-            <button
-              type="button"
-              onClick={handleWhatsAppSend}
-              className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
-            >
-              <MessageCircle size={12} className="mr-1" />
-              📱 WhatsApp + PDF
             </button>
           </div>
         </div>

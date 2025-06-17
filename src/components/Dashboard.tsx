@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
 import { formatDate } from '../utils/helpers';
-import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
+import { sendEmailInvoice } from '../utils/communication';
 import { 
   FileText, 
   Plus, 
@@ -11,7 +11,6 @@ import {
   Filter, 
   Copy, 
   Mail, 
-  MessageCircle,
   Eye,
   Edit,
   Calendar,
@@ -135,18 +134,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleEmailSend = async (invoice: any) => {
-    if (!invoice.client.email) {
-      alert('❌ No email address found for this client. Please add an email address first.');
-      return;
-    }
-    await sendEmailInvoice(invoice, invoice.client.email);
-  };
-
-  const handleWhatsAppSend = async (invoice: any) => {
-    const phone = prompt('📱 Enter WhatsApp number (with country code):\n\nExample: +1234567890');
-    if (phone) {
-      await sendWhatsAppInvoice(invoice, phone);
-    }
+    await sendEmailInvoice(invoice);
   };
 
   const toggleStatusDropdown = (invoiceId: string) => {
@@ -581,13 +569,6 @@ const Dashboard: React.FC = () => {
                               title="📧 Send Email with PDF"
                             >
                               <Mail size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleWhatsAppSend(invoice)}
-                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-lg transition-all duration-200"
-                              title="📱 Send WhatsApp with PDF"
-                            >
-                              <MessageCircle size={16} />
                             </button>
                             <button
                               onClick={() => deleteInvoice(invoice.id)}
