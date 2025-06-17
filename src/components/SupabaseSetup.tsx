@@ -48,11 +48,16 @@ CREATE TABLE IF NOT EXISTS public.products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
-  description TEXT,
-  price DECIMAL NOT NULL DEFAULT 0,
-  unit TEXT DEFAULT 'item',
-  category TEXT,
+  description TEXT DEFAULT '',
+  price NUMERIC DEFAULT 0,
+  currency TEXT DEFAULT 'USD',
+  category TEXT NOT NULL,
   sku TEXT,
+  stock INTEGER,
+  unit TEXT DEFAULT 'piece',
+  taxable BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -78,7 +83,7 @@ CREATE TABLE IF NOT EXISTS public.invoices (
   font TEXT DEFAULT 'inter',
   show_footer BOOLEAN DEFAULT true,
   discount_type TEXT DEFAULT 'percentage',
-  discount_value DECIMAL DEFAULT 0,
+  discount_value NUMERIC DEFAULT 0,
   currency TEXT DEFAULT 'USD',
   status TEXT DEFAULT 'draft',
   tags TEXT[] DEFAULT '{}',
@@ -95,7 +100,7 @@ CREATE TABLE IF NOT EXISTS public.invoice_items (
   invoice_id UUID REFERENCES public.invoices(id) ON DELETE CASCADE NOT NULL,
   description TEXT NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 1,
-  rate DECIMAL NOT NULL DEFAULT 0,
+  rate NUMERIC NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -104,7 +109,7 @@ CREATE TABLE IF NOT EXISTS public.tax_rates (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   invoice_id UUID REFERENCES public.invoices(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
-  rate DECIMAL NOT NULL DEFAULT 0,
+  rate NUMERIC NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
