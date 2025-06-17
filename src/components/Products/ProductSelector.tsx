@@ -87,14 +87,14 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="relative w-full max-w-7xl max-h-[95vh] overflow-hidden">
+      <div className="relative w-full max-w-7xl h-[90vh] overflow-hidden">
         {/* Outer Glow Effect */}
         <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-25 animate-pulse"></div>
         
         {/* Main Container */}
-        <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden">
+        <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden h-full flex flex-col">
           {/* Premium Header */}
-          <div className="relative bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 p-8">
+          <div className="relative bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 p-8 flex-shrink-0">
             {/* Header Background Pattern */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.05%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
             
@@ -161,6 +161,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                         ? 'bg-white/20 text-white shadow-lg' 
                         : 'text-white/60 hover:text-white hover:bg-white/10'
                     }`}
+                    title="Grid View"
                   >
                     <Grid size={20} />
                   </button>
@@ -171,6 +172,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                         ? 'bg-white/20 text-white shadow-lg' 
                         : 'text-white/60 hover:text-white hover:bg-white/10'
                     }`}
+                    title="List View"
                   >
                     <List size={20} />
                   </button>
@@ -197,9 +199,9 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
             </div>
           </div>
 
-          {/* Content Area */}
-          <div className="flex h-[600px]">
-            {/* Product List */}
+          {/* Content Area - Fixed Height with Flex */}
+          <div className="flex flex-1 min-h-0">
+            {/* Product List - Scrollable */}
             <div className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-gray-50 to-blue-50">
               {filteredProducts.length === 0 ? (
                 <div className="text-center py-16">
@@ -303,7 +305,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                   })}
                 </div>
               ) : (
-                /* List View */
+                /* List View - Fixed */
                 <div className="space-y-3">
                   {filteredProducts.map((product) => {
                     const stockStatus = getStockStatus(product.stock);
@@ -317,15 +319,18 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                             : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-md'
                         }`}
                       >
-                        <div className="flex-1 grid grid-cols-5 gap-4 items-center">
-                          <div>
+                        <div className="flex-1 grid grid-cols-6 gap-4 items-center">
+                          <div className="col-span-2">
                             <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                               {product.name}
                             </h3>
                             <p className="text-sm text-gray-500">{product.category}</p>
+                            {product.sku && (
+                              <p className="text-xs text-gray-400 font-mono">SKU: {product.sku}</p>
+                            )}
                           </div>
                           
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-gray-600 line-clamp-2">
                             {product.description || 'No description'}
                           </div>
                           
@@ -337,8 +342,9 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                           </div>
                           
                           <div className="text-center">
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${stockStatus.bg} ${stockStatus.color}`}>
-                              {stockStatus.icon} {product.stock !== undefined ? product.stock : 'N/A'}
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${stockStatus.bg} ${stockStatus.color} flex items-center justify-center`}>
+                              <span className="mr-1">{stockStatus.icon}</span>
+                              {product.stock !== undefined ? product.stock : 'N/A'}
                             </span>
                           </div>
                           
@@ -357,10 +363,10 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
               )}
             </div>
 
-            {/* Product Details & Quantity Selector */}
+            {/* Product Details & Quantity Selector - Fixed Width, Scrollable */}
             {selectedProduct && (
-              <div className="w-96 border-l border-gray-200 bg-gradient-to-br from-white to-blue-50">
-                <div className="p-6 h-full flex flex-col">
+              <div className="w-96 border-l border-gray-200 bg-gradient-to-br from-white to-blue-50 flex flex-col">
+                <div className="p-6 flex-1 overflow-y-auto">
                   {/* Header */}
                   <div className="mb-6">
                     <div className="flex items-center mb-4">
@@ -372,7 +378,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                   </div>
                   
                   {/* Product Info */}
-                  <div className="space-y-6 flex-1">
+                  <div className="space-y-6">
                     <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
                       <h4 className="font-bold text-gray-900 text-lg mb-2">{selectedProduct.name}</h4>
                       <p className="text-gray-600 mb-4 leading-relaxed">{selectedProduct.description}</p>
@@ -456,22 +462,22 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
                       </div>
                     )}
                   </div>
+                </div>
 
-                  {/* Add to Invoice Button */}
-                  <div className="mt-6">
-                    <button
-                      onClick={handleAddToInvoice}
-                      className="w-full relative group overflow-hidden"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl"></div>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="relative px-6 py-4 flex items-center justify-center text-white font-bold text-lg">
-                        <ShoppingCart className="mr-3 w-6 h-6" />
-                        Add to Invoice
-                        <Sparkles className="ml-3 w-6 h-6" />
-                      </div>
-                    </button>
-                  </div>
+                {/* Add to Invoice Button - Fixed at Bottom */}
+                <div className="p-6 border-t border-gray-200 bg-white/80 backdrop-blur-sm">
+                  <button
+                    onClick={handleAddToInvoice}
+                    className="w-full relative group overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative px-6 py-4 flex items-center justify-center text-white font-bold text-lg">
+                      <ShoppingCart className="mr-3 w-6 h-6" />
+                      Add to Invoice
+                      <Sparkles className="ml-3 w-6 h-6" />
+                    </div>
+                  </button>
                 </div>
               </div>
             )}
