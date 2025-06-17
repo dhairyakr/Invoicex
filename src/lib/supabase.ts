@@ -32,6 +32,26 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   }
 })
 
+// Clear invalid session data
+export const clearInvalidSession = async () => {
+  try {
+    // Clear local storage items related to Supabase auth
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('sb-') || key.includes('supabase')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Sign out to clear any remaining session state
+    await supabase.auth.signOut();
+    
+    console.log('✅ Cleared invalid session data');
+  } catch (error) {
+    console.warn('⚠️ Error clearing session data:', error);
+  }
+}
+
 // Test connection function
 export const testConnection = async () => {
   try {
