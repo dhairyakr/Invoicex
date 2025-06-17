@@ -18,11 +18,14 @@ import {
   Star,
   AlertCircle,
   CheckCircle,
-  X
+  X,
+  Zap,
+  Table
 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
 import { Product } from '../../types';
 import ProductForm from './ProductForm';
+import QuickAddTable from './QuickAddTable';
 
 const ProductManager: React.FC = () => {
   const {
@@ -37,7 +40,7 @@ const ProductManager: React.FC = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'quick'>('quick');
   const [showFilters, setShowFilters] = useState(false);
 
   // Get unique categories and tags
@@ -103,7 +106,7 @@ const ProductManager: React.FC = () => {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
               <div>
                 <h1 className="text-4xl font-bold mb-2">Product Database</h1>
-                <p className="text-blue-100 text-lg">Manage your products and services</p>
+                <p className="text-blue-100 text-lg">Manage your products and services efficiently</p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -337,10 +340,20 @@ const ProductManager: React.FC = () => {
           
           <div className="flex items-center space-x-2">
             <button
+              onClick={() => setViewMode('quick')}
+              className={`p-2 rounded-lg transition-colors ${
+                viewMode === 'quick' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title="Quick Add Table"
+            >
+              <Table size={20} />
+            </button>
+            <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${
                 viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
+              title="Grid View"
             >
               <Grid size={20} />
             </button>
@@ -349,6 +362,7 @@ const ProductManager: React.FC = () => {
               className={`p-2 rounded-lg transition-colors ${
                 viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
+              title="List View"
             >
               <List size={20} />
             </button>
@@ -365,8 +379,59 @@ const ProductManager: React.FC = () => {
           </div>
         )}
 
-        {/* Products Grid/List */}
-        {filteredProducts.length === 0 ? (
+        {/* Content based on view mode */}
+        {viewMode === 'quick' ? (
+          <div className="space-y-8">
+            {/* Quick Add Table */}
+            <QuickAddTable />
+            
+            {/* Existing Products Summary */}
+            {products.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Existing Products</h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center"
+                    >
+                      <Grid size={16} className="mr-2" />
+                      View All
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {products.slice(0, 6).map((product) => (
+                    <div key={product.id} className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-medium text-gray-900 text-sm">{product.name}</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {product.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{product.category}</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {getCurrencySymbol(product.currency)}{product.price.toFixed(2)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {products.length > 6 && (
+                  <div className="text-center mt-4">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+                    >
+                      View all {products.length} products →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="bg-white rounded-2xl p-16 text-center shadow-lg border border-gray-100">
             <div className="max-w-md mx-auto">
               <div className="bg-gradient-to-br from-blue-100 to-purple-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -384,13 +449,22 @@ const ProductManager: React.FC = () => {
                   : 'Create your first product to start building your database'
                 }
               </p>
-              <button
-                onClick={() => setShowForm(true)}
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:scale-105 transform shadow-lg"
-              >
-                <Plus size={20} className="mr-3" /> 
-                Add Your First Product
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setViewMode('quick')}
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:scale-105 transform shadow-lg"
+                >
+                  <Zap size={20} className="mr-2" /> 
+                  Quick Add Products
+                </button>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="inline-flex items-center px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-xl font-semibold transition-all duration-200 hover:bg-blue-50 hover:scale-105 transform"
+                >
+                  <Plus size={20} className="mr-2" /> 
+                  Detailed Form
+                </button>
+              </div>
             </div>
           </div>
         ) : viewMode === 'grid' ? (
