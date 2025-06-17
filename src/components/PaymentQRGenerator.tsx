@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { QrCode, CreditCard, Smartphone, DollarSign } from 'lucide-react';
+import { QrCode, CreditCard, Smartphone, DollarSign, Globe } from 'lucide-react';
 import { generateMultiProviderQR } from '../utils/qrCode';
 
 interface PaymentQRGeneratorProps {
@@ -17,11 +17,11 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
   reference,
   onQRGenerated,
 }) => {
-  const [selectedProvider, setSelectedProvider] = useState<'googlepay' | 'upi' | 'paypal' | 'stripe'>('upi');
+  const [selectedProvider, setSelectedProvider] = useState<'googlepay' | 'upi' | 'paypal' | 'stripe' | 'generic'>('upi');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [upiId, setUpiId] = useState('dhairya.dhanbad@oksbi'); // Pre-filled with your UPI ID
   const [merchantConfig, setMerchantConfig] = useState({
     merchantId: '',
+    upiId: 'dhairya.dhanbad@oksbi', // Pre-filled with your UPI ID
     paypalMerchantId: '',
     stripePaymentLinkId: '',
   });
@@ -31,7 +31,9 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
       id: 'upi' as const,
       name: 'UPI Direct',
       icon: <CreditCard className="w-5 h-5" />,
-      description: 'Direct UPI payments (India only)',
+      description: 'Direct UPI payments (India only) - Pre-configured',
+      configField: 'upiId',
+      placeholder: 'UPI ID (pre-filled with yours)',
       supported: ['INR'],
       recommended: true,
     },
@@ -40,6 +42,8 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
       name: 'Google Pay',
       icon: <Smartphone className="w-5 h-5" />,
       description: 'UPI & Card payments via Google Pay',
+      configField: 'merchantId',
+      placeholder: 'Enter Merchant ID (optional)',
       supported: ['INR', 'USD', 'EUR', 'GBP'],
     },
     {
@@ -47,6 +51,8 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
       name: 'PayPal',
       icon: <DollarSign className="w-5 h-5" />,
       description: 'PayPal.me payment links',
+      configField: 'paypalMerchantId',
+      placeholder: 'Enter PayPal username',
       supported: ['USD', 'EUR', 'GBP', 'CAD', 'AUD'],
     },
     {
@@ -54,7 +60,18 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
       name: 'Stripe',
       icon: <CreditCard className="w-5 h-5" />,
       description: 'Stripe payment links',
+      configField: 'stripePaymentLinkId',
+      placeholder: 'Enter Stripe Payment Link ID',
       supported: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'INR'],
+    },
+    {
+      id: 'generic' as const,
+      name: 'Generic',
+      icon: <Globe className="w-5 h-5" />,
+      description: 'Basic payment information QR',
+      configField: '',
+      placeholder: '',
+      supported: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'INR', 'JPY'],
     },
   ];
 
@@ -67,16 +84,6 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
       return;
     }
 
-    // Always ask for UPI ID confirmation
-    if (selectedProvider === 'upi' || selectedProvider === 'googlepay') {
-      const confirmedUpiId = prompt(`Please confirm or enter your UPI ID:`, upiId);
-      if (!confirmedUpiId) {
-        alert('UPI ID is required to generate QR code');
-        return;
-      }
-      setUpiId(confirmedUpiId);
-    }
-
     setIsGenerating(true);
     try {
       const qrCode = await generateMultiProviderQR(selectedProvider, {
@@ -85,7 +92,7 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
         recipient,
         reference,
         merchantId: merchantConfig.merchantId || undefined,
-        upiId: upiId,
+        upiId: merchantConfig.upiId || 'dhairya.dhanbad@oksbi', // Always use your UPI ID as fallback
         paypalMerchantId: merchantConfig.paypalMerchantId || undefined,
         stripePaymentLinkId: merchantConfig.stripePaymentLinkId || undefined,
       });
@@ -154,78 +161,63 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
         </div>
       </div>
 
-      {/* UPI ID Configuration */}
-      {(selectedProvider === 'upi' || selectedProvider === 'googlepay') && (
+      {selectedProviderInfo?.configField && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            UPI ID
+            Configuration
           </label>
           <input
             type="text"
-            value={upiId}
-            onChange={(e) => setUpiId(e.target.value)}
+            value={merchantConfig[selectedProviderInfo.configField as keyof typeof merchantConfig]}
+            onChange={(e) => updateMerchantConfig(selectedProviderInfo.configField, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your UPI ID"
+            placeholder={selectedProviderInfo.placeholder}
           />
           
-          <div className="mt-2 p-3 bg-green-50 rounded-md border border-green-200">
-            <h4 className="font-medium text-green-900 mb-2">✅ UPI Payment Setup</h4>
-            <ul className="text-sm text-green-800 space-y-1">
-              <li>• Your UPI ID: <strong>{upiId}</strong></li>
-              <li>• Works with all UPI apps (PhonePe, Paytm, Google Pay, etc.)</li>
-              <li>• Instant bank-to-bank transfers</li>
-              <li>• Only works for INR currency</li>
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* Other Provider Configurations */}
-      {selectedProvider === 'paypal' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            PayPal Username
-          </label>
-          <input
-            type="text"
-            value={merchantConfig.paypalMerchantId}
-            onChange={(e) => updateMerchantConfig('paypalMerchantId', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your PayPal.me username"
-          />
+          {selectedProvider === 'upi' && (
+            <div className="mt-2 p-3 bg-green-50 rounded-md border border-green-200">
+              <h4 className="font-medium text-green-900 mb-2">✅ UPI Ready to Use!</h4>
+              <ul className="text-sm text-green-800 space-y-1">
+                <li>• Your UPI ID: <strong>dhairya.dhanbad@oksbi</strong></li>
+                <li>• Works with all UPI apps (PhonePe, Paytm, Google Pay, etc.)</li>
+                <li>• Instant bank-to-bank transfers</li>
+                <li>• Only works for INR currency</li>
+              </ul>
+            </div>
+          )}
           
-          <div className="mt-2 p-3 bg-purple-50 rounded-md">
-            <h4 className="font-medium text-purple-900 mb-2">PayPal Setup:</h4>
-            <ul className="text-sm text-purple-800 space-y-1">
-              <li>• Use your PayPal.me username</li>
-              <li>• Enable PayPal.me in your PayPal account</li>
-              <li>• Works internationally</li>
-            </ul>
-          </div>
-        </div>
-      )}
-      
-      {selectedProvider === 'stripe' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Stripe Payment Link ID
-          </label>
-          <input
-            type="text"
-            value={merchantConfig.stripePaymentLinkId}
-            onChange={(e) => updateMerchantConfig('stripePaymentLinkId', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Stripe Payment Link ID"
-          />
+          {selectedProvider === 'googlepay' && (
+            <div className="mt-2 p-3 bg-blue-50 rounded-md">
+              <h4 className="font-medium text-blue-900 mb-2">Google Pay Setup:</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Uses your UPI ID: <strong>dhairya.dhanbad@oksbi</strong></li>
+                <li>• Merchant ID is optional for basic UPI payments</li>
+                <li>• For advanced features, get Merchant ID from Google Pay Business Console</li>
+              </ul>
+            </div>
+          )}
           
-          <div className="mt-2 p-3 bg-indigo-50 rounded-md">
-            <h4 className="font-medium text-indigo-900 mb-2">Stripe Setup:</h4>
-            <ul className="text-sm text-indigo-800 space-y-1">
-              <li>• Create a Payment Link in Stripe Dashboard</li>
-              <li>• Copy the Payment Link ID from the URL</li>
-              <li>• Supports cards and local payment methods</li>
-            </ul>
-          </div>
+          {selectedProvider === 'paypal' && (
+            <div className="mt-2 p-3 bg-purple-50 rounded-md">
+              <h4 className="font-medium text-purple-900 mb-2">PayPal Setup:</h4>
+              <ul className="text-sm text-purple-800 space-y-1">
+                <li>• Use your PayPal.me username</li>
+                <li>• Enable PayPal.me in your PayPal account</li>
+                <li>• Works internationally</li>
+              </ul>
+            </div>
+          )}
+          
+          {selectedProvider === 'stripe' && (
+            <div className="mt-2 p-3 bg-indigo-50 rounded-md">
+              <h4 className="font-medium text-indigo-900 mb-2">Stripe Setup:</h4>
+              <ul className="text-sm text-indigo-800 space-y-1">
+                <li>• Create a Payment Link in Stripe Dashboard</li>
+                <li>• Copy the Payment Link ID from the URL</li>
+                <li>• Supports cards and local payment methods</li>
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
@@ -244,10 +236,10 @@ const PaymentQRGenerator: React.FC<PaymentQRGeneratorProps> = ({
             <span className="text-gray-600">Recipient:</span>
             <span className="ml-2 font-medium">{recipient}</span>
           </div>
-          {(selectedProvider === 'upi' || selectedProvider === 'googlepay') && (
+          {selectedProvider === 'upi' && (
             <div className="col-span-2">
               <span className="text-gray-600">UPI ID:</span>
-              <span className="ml-2 font-medium text-green-600">{upiId}</span>
+              <span className="ml-2 font-medium text-green-600">dhairya.dhanbad@oksbi</span>
             </div>
           )}
         </div>

@@ -42,7 +42,6 @@ const DEFAULT_INVOICE: Omit<Invoice, 'id' | 'createdAt' | 'updatedAt'> = {
   client: {
     name: '',
     email: '',
-    phone: '', // Added phone field
     address: '',
   },
   items: [
@@ -92,10 +91,6 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         // Migrate old invoices to new format
         const migratedInvoices = parsed.map((invoice: any) => ({
           ...invoice,
-          client: {
-            ...invoice.client,
-            phone: invoice.client.phone || '', // Add phone field if missing
-          },
           discountType: invoice.discountType || 'percentage',
           discountValue: invoice.discountValue || 0,
           taxRates: invoice.taxRates || [],
