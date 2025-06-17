@@ -1,107 +1,184 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './components/Header';
-import Dashboard from './components/Dashboard';
-import TemplateSelector from './components/TemplateSelector';
-import InvoiceForm from './components/InvoiceForm';
-import ProductManager from './components/Products/ProductManager';
-import SupabaseSetup from './components/SupabaseSetup';
-import AuthPage from './components/Auth/AuthPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { InvoiceProvider } from './context/InvoiceContext';
 import { ProductProvider } from './context/ProductContext';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import AuthPage from './components/Auth/AuthPage';
+import Dashboard from './components/Dashboard';
+import InvoiceForm from './components/InvoiceForm';
+import InvoicePreview from './components/InvoicePreview';
+import TemplateSelector from './components/TemplateSelector';
+import ProductManager from './components/Products/ProductManager';
+import ConnectionStatus from './components/ConnectionStatus';
+import SupabaseSetup from './components/SupabaseSetup';
+import { testConnection } from './lib/supabase';
+import './index.css';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
-
+  
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/30 border-t-blue-500 mx-auto mb-4"></div>
-            <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-4 border-blue-500/20 mx-auto"></div>
-          </div>
-          <p className="text-white text-lg font-medium">Loading your workspace...</p>
-          <p className="text-gray-400 text-sm mt-2">Preparing something beautiful</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Loading...</p>
         </div>
       </div>
     );
   }
-
+  
   if (!user) {
-    return <AuthPage />;
+    return <Navigate to="/auth" replace />;
   }
-
+  
   return <>{children}</>;
 };
 
 // Main App Content
 const AppContent: React.FC = () => {
-  const { user } = useAuth();
-  
-  // Check if Supabase is configured
-  const isSupabaseConfigured = !!(
-    import.meta.env.VITE_SUPABASE_URL && 
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-  );
+  const { user, loading } = useAuth();
+  const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [connectionError, setConnectionError] = useState<string>('');
 
-  if (!isSupabaseConfigured) {
-    return <SupabaseSetup />;
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const result = await testConnection();
+        if (result.success) {
+          setConnectionStatus('connected');
+        } else {
+          setConnectionStatus('error');
+          setConnectionError(result.error || 'Unknown connection error');
+        }
+      } catch (err) {
+        setConnectionStatus('error');
+        setConnectionError('Failed to connect to database');
+      }
+    };
+
+    checkConnection();
+  }, []);
+
+  // Show connection status while checking
+  if (connectionStatus === 'checking') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Connecting to database...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show setup page if connection failed
+  if (connectionStatus === 'error') {
+    return <SupabaseSetup error={connectionError} />;
+  }
+
+  // Show auth loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <InvoiceProvider>
       <ProductProvider>
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-          <Header />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/setup" element={<SupabaseSetup />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/" element={
+        <div className="min-h-screen bg-gray-50">
+          <ConnectionStatus />
+          <Routes>
+            {/* Public Routes */}
+            <Route 
+              path="/auth" 
+              element={user ? <Navigate to="/dashboard" replace /> : <AuthPage />} 
+            />
+            
+            {/* Protected Routes */}
+            <Route 
+              path="/dashboard" 
+              element={
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
-              } />
-              <Route path="/templates" element={
+              } 
+            />
+            <Route 
+              path="/create" 
+              element={
+                <ProtectedRoute>
+                  <InvoiceForm />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/edit/:id" 
+              element={
+                <ProtectedRoute>
+                  <InvoiceForm />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/preview/:id" 
+              element={
+                <ProtectedRoute>
+                  <InvoicePreview />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/templates" 
+              element={
                 <ProtectedRoute>
                   <TemplateSelector />
                 </ProtectedRoute>
-              } />
-              <Route path="/products" element={
+              } 
+            />
+            <Route 
+              path="/products" 
+              element={
                 <ProtectedRoute>
                   <ProductManager />
                 </ProtectedRoute>
-              } />
-              <Route path="/create" element={
-                <ProtectedRoute>
-                  <InvoiceForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/edit/:id" element={
-                <ProtectedRoute>
-                  <InvoiceForm />
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
+              } 
+            />
+            
+            {/* Default redirect */}
+            <Route 
+              path="/" 
+              element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} 
+            />
+            
+            {/* Catch all route */}
+            <Route 
+              path="*" 
+              element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} 
+            />
+          </Routes>
         </div>
       </ProductProvider>
     </InvoiceProvider>
   );
 };
 
-function App() {
+// Root App Component
+const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <AppContent />
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -71,12 +71,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Enhanced signIn with better error handling
+  const handleSignIn = async (email: string, password: string) => {
+    try {
+      const result = await signIn(email, password);
+      
+      // Provide more specific error messages
+      if (result.error) {
+        let errorMessage = result.error.message;
+        
+        if (result.error.message === 'Invalid login credentials') {
+          errorMessage = 'The email or password you entered is incorrect. Please check your credentials and try again.';
+        } else if (result.error.message.includes('Email not confirmed')) {
+          errorMessage = 'Please check your email and click the confirmation link before signing in.';
+        } else if (result.error.message.includes('Too many requests')) {
+          errorMessage = 'Too many sign-in attempts. Please wait a few minutes before trying again.';
+        }
+        
+        return { data: result.data, error: { ...result.error, message: errorMessage } };
+      }
+      
+      return result;
+    } catch (err) {
+      console.error('Sign in error:', err);
+      return { 
+        data: null, 
+        error: { message: 'An unexpected error occurred during sign in. Please try again.' } 
+      };
+    }
+  };
+
+  // Enhanced signUp with better error handling
+  const handleSignUp = async (email: string, password: string) => {
+    try {
+      const result = await signUp(email, password);
+      
+      // Provide more specific error messages
+      if (result.error) {
+        let errorMessage = result.error.message;
+        
+        if (result.error.message.includes('User already registered')) {
+          errorMessage = 'An account with this email already exists. Please sign in instead.';
+        } else if (result.error.message.includes('Password should be at least')) {
+          errorMessage = 'Password must be at least 6 characters long.';
+        } else if (result.error.message.includes('Unable to validate email address')) {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (result.error.message.includes('Signups not allowed')) {
+          errorMessage = 'New account registration is currently disabled. Please contact support.';
+        }
+        
+        return { data: result.data, error: { ...result.error, message: errorMessage } };
+      }
+      
+      return result;
+    } catch (err) {
+      console.error('Sign up error:', err);
+      return { 
+        data: null, 
+        error: { message: 'An unexpected error occurred during account creation. Please try again.' } 
+      };
+    }
+  };
+
   const value = {
     user,
     session,
     loading,
-    signIn,
-    signUp,
+    signIn: handleSignIn,
+    signUp: handleSignUp,
     signOut,
   };
 

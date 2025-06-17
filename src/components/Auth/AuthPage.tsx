@@ -22,7 +22,8 @@ import {
   Crown,
   Gem,
   Coffee,
-  Palette
+  Palette,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -38,6 +39,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -76,6 +78,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccess('');
+
+    // Basic validation
+    if (!email.trim()) {
+      setError('Please enter your email address');
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Please enter your password');
+      setLoading(false);
+      return;
+    }
 
     if (!isLogin && password !== confirmPassword) {
       setError('Passwords do not match');
@@ -83,18 +99,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
       return;
     }
 
+    if (!isLogin && password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error } = isLogin 
-        ? await signIn(email, password)
-        : await signUp(email, password);
+        ? await signIn(email.trim(), password)
+        : await signUp(email.trim(), password);
 
       if (error) {
         setError(error.message);
       } else {
+        if (!isLogin) {
+          setSuccess('Account created successfully! Please check your email for verification instructions.');
+        }
         onSuccess?.();
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('Authentication error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -103,6 +129,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const handleModeSwitch = () => {
     setIsTransitioning(true);
     setError('');
+    setSuccess('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
@@ -270,7 +297,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 {/* Error Message */}
                 {error && (
                   <div className="mb-8 p-4 bg-red-500/20 border border-red-500/30 rounded-2xl backdrop-blur-sm animate-shake">
-                    <p className="text-red-200 text-sm text-center font-medium">{error}</p>
+                    <div className="flex items-center">
+                      <AlertCircle className="w-5 h-5 text-red-300 mr-3 flex-shrink-0" />
+                      <p className="text-red-200 text-sm font-medium">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Success Message */}
+                {success && (
+                  <div className="mb-8 p-4 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl backdrop-blur-sm">
+                    <div className="flex items-center">
+                      <CheckCircle className="w-5 h-5 text-emerald-300 mr-3 flex-shrink-0" />
+                      <p className="text-emerald-200 text-sm font-medium">{success}</p>
+                    </div>
                   </div>
                 )}
 
@@ -290,6 +330,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         className="w-full pl-14 pr-5 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 text-lg"
                         placeholder="Enter your email"
                         required
+                        disabled={loading}
                       />
                     </div>
                   </div>
@@ -309,11 +350,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         placeholder="Enter your password"
                         required
                         minLength={6}
+                        disabled={loading}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
+                        disabled={loading}
                       >
                         {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
                       </button>
@@ -338,6 +381,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                           placeholder="Confirm your password"
                           required={!isLogin}
                           minLength={6}
+                          disabled={loading}
                         />
                       </div>
                     </div>
@@ -347,7 +391,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative w-full group overflow-hidden mt-8"
+                    className="relative w-full group overflow-hidden mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className={`absolute inset-0 rounded-2xl transition-all duration-500 ${
                       isLogin 
@@ -380,6 +424,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       type="button"
                       onClick={handleModeSwitch}
                       className="text-gray-300 hover:text-white transition-colors font-medium group text-lg"
+                      disabled={loading}
                     >
                       {isLogin 
                         ? "Don't have an account? " 
