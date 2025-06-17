@@ -64,7 +64,15 @@ export const signIn = async (email: string, password: string) => {
 }
 
 export const signOut = async () => {
-  return await supabase.auth.signOut()
+  const { error } = await supabase.auth.signOut()
+  
+  // Handle the case where the session is already invalidated
+  if (error && error.message?.includes('session_not_found')) {
+    console.warn('Session already invalidated on server side - user is effectively logged out')
+    return { error: null } // Return success since user is already logged out
+  }
+  
+  return { error }
 }
 
 export const getCurrentUser = async () => {
