@@ -55,16 +55,36 @@ export const clearInvalidSession = async () => {
 // Test connection function
 export const testConnection = async () => {
   try {
+    // First check if we can reach Supabase at all
     const { data, error } = await supabase.from('users').select('count').limit(1)
+    
     if (error) {
       console.error('Supabase connection test failed:', error.message)
-      return { success: false, error: error.message }
+      
+      // Provide more specific error messages
+      if (error.message.includes('Failed to fetch')) {
+        return { success: false, error: 'Unable to reach Supabase. Please check your internet connection and Supabase URL.' }
+      } else if (error.message.includes('Invalid API key')) {
+        return { success: false, error: 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY in .env file.' }
+      } else if (error.message.includes('Project not found')) {
+        return { success: false, error: 'Supabase project not found. Please check your VITE_SUPABASE_URL in .env file.' }
+      } else if (error.message.includes('relation "users" does not exist')) {
+        return { success: false, error: 'Database tables not found. Please run the SQL schema in your Supabase dashboard.' }
+      } else {
+        return { success: false, error: `Database error: ${error.message}` }
+      }
     }
+    
     console.log('✅ Supabase connection successful')
     return { success: true }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Supabase connection test failed:', err)
-    return { success: false, error: 'Network error or invalid credentials' }
+    
+    if (err.message?.includes('fetch')) {
+      return { success: false, error: 'Network error: Unable to connect to Supabase. Please check your internet connection.' }
+    }
+    
+    return { success: false, error: err.message || 'Unknown connection error' }
   }
 }
 

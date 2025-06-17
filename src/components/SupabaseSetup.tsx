@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { Database, Settings, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Database, Settings, CheckCircle, AlertCircle, ExternalLink, RefreshCw, Copy, Eye, EyeOff } from 'lucide-react';
 
-const SupabaseSetup: React.FC = () => {
+interface SupabaseSetupProps {
+  error?: string;
+}
+
+const SupabaseSetup: React.FC<SupabaseSetupProps> = ({ error }) => {
   const [step, setStep] = useState(1);
   const [supabaseUrl, setSupabaseUrl] = useState('');
   const [supabaseKey, setSupabaseKey] = useState('');
+  const [showKey, setShowKey] = useState(false);
+  const [copied, setCopied] = useState<'url' | 'key' | 'env' | null>(null);
 
   const steps = [
     {
@@ -26,12 +32,30 @@ const SupabaseSetup: React.FC = () => {
       link: null
     },
     {
-      title: 'Run Database Migration',
-      description: 'Create the required tables in your database',
-      action: 'Run Migration',
+      title: 'Restart Development Server',
+      description: 'Restart your server to apply the changes',
+      action: 'Restart',
       link: null
     }
   ];
+
+  const handleCopy = async (text: string, type: 'url' | 'key' | 'env') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(type);
+      setTimeout(() => setCopied(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const envFileContent = `# Supabase Configuration
+VITE_SUPABASE_URL=${supabaseUrl || 'your_supabase_project_url'}
+VITE_SUPABASE_ANON_KEY=${supabaseKey || 'your_supabase_anon_key'}
+
+# Example:
+# VITE_SUPABASE_URL=https://your-project-id.supabase.co
+# VITE_SUPABASE_ANON_KEY=your-anon-key-here`;
 
   const sqlSchema = `-- Create users table (extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS public.users (
@@ -209,18 +233,43 @@ CREATE TRIGGER on_auth_user_created
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl mb-6">
-            <Database className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl mb-6 shadow-2xl">
+            <Database className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Supabase Database Setup
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Supabase Setup Required
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Connect your Invoice Beautifier to Supabase for cloud storage, real-time sync, and user authentication.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Your Invoice Beautifier needs to connect to Supabase for cloud storage, real-time sync, and user authentication.
           </p>
+          
+          {/* Error Display */}
+          {error && (
+            <div className="mt-8 max-w-2xl mx-auto">
+              <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded-lg">
+                <div className="flex items-start">
+                  <AlertCircle className="w-6 h-6 text-red-400 mr-3 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Connection Error</h3>
+                    <p className="text-red-700 mb-4">{error}</p>
+                    <div className="bg-red-100 rounded-lg p-4">
+                      <h4 className="font-semibold text-red-800 mb-2">Common Solutions:</h4>
+                      <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+                        <li>Check if your .env file exists in the project root</li>
+                        <li>Verify your Supabase URL starts with https://</li>
+                        <li>Ensure your API key is the anon/public key, not the service role key</li>
+                        <li>Confirm your Supabase project is active and not paused</li>
+                        <li>Restart your development server after making changes</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Steps */}
@@ -230,28 +279,28 @@ CREATE TRIGGER on_auth_user_created
               key={index}
               className={`relative p-6 rounded-2xl border-2 transition-all duration-300 ${
                 step > index + 1
-                  ? 'bg-green-50 border-green-200'
+                  ? 'bg-green-50 border-green-200 shadow-lg'
                   : step === index + 1
-                  ? 'bg-blue-50 border-blue-200 ring-4 ring-blue-100'
-                  : 'bg-white border-gray-200'
+                  ? 'bg-blue-50 border-blue-200 ring-4 ring-blue-100 shadow-xl'
+                  : 'bg-white border-gray-200 hover:shadow-lg'
               }`}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                   step > index + 1
                     ? 'bg-green-500 text-white'
                     : step === index + 1
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-600'
                 }`}>
-                  {step > index + 1 ? <CheckCircle size={16} /> : index + 1}
+                  {step > index + 1 ? <CheckCircle size={20} /> : index + 1}
                 </div>
                 {step > index + 1 && (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <CheckCircle className="w-6 h-6 text-green-500" />
                 )}
               </div>
               
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-900 mb-2 text-lg">
                 {stepItem.title}
               </h3>
               <p className="text-sm text-gray-600 mb-4">
@@ -263,10 +312,10 @@ CREATE TRIGGER on_auth_user_created
                   href={stepItem.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium bg-blue-100 hover:bg-blue-200 px-3 py-2 rounded-lg transition-colors"
                 >
                   {stepItem.action}
-                  <ExternalLink size={14} className="ml-1" />
+                  <ExternalLink size={14} className="ml-2" />
                 </a>
               )}
             </div>
@@ -274,53 +323,114 @@ CREATE TRIGGER on_auth_user_created
         </div>
 
         {/* Configuration Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Settings className="w-6 h-6 mr-3" />
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-100">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+            <Settings className="w-8 h-8 mr-4 text-blue-600" />
             Environment Configuration
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Supabase Project URL
               </label>
-              <input
-                type="url"
-                value={supabaseUrl}
-                onChange={(e) => setSupabaseUrl(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://your-project-id.supabase.co"
-              />
+              <div className="relative">
+                <input
+                  type="url"
+                  value={supabaseUrl}
+                  onChange={(e) => setSupabaseUrl(e.target.value)}
+                  className="w-full px-4 py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-lg"
+                  placeholder="https://your-project-id.supabase.co"
+                />
+                {supabaseUrl && (
+                  <button
+                    onClick={() => handleCopy(supabaseUrl, 'url')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Copy URL"
+                  >
+                    {copied === 'url' ? <CheckCircle size={20} className="text-green-500" /> : <Copy size={20} />}
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Find this in your Supabase Dashboard → Settings → API → Project URL
+              </p>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Supabase Anon Key
               </label>
-              <input
-                type="password"
-                value={supabaseKey}
-                onChange={(e) => setSupabaseKey(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your anon key here"
-              />
+              <div className="relative">
+                <input
+                  type={showKey ? 'text' : 'password'}
+                  value={supabaseKey}
+                  onChange={(e) => setSupabaseKey(e.target.value)}
+                  className="w-full px-4 py-4 pr-20 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-lg"
+                  placeholder="Your anon key here"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+                  <button
+                    onClick={() => setShowKey(!showKey)}
+                    className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title={showKey ? "Hide key" : "Show key"}
+                  >
+                    {showKey ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                  {supabaseKey && (
+                    <button
+                      onClick={() => handleCopy(supabaseKey, 'key')}
+                      className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Copy key"
+                    >
+                      {copied === 'key' ? <CheckCircle size={20} className="text-green-500" /> : <Copy size={20} />}
+                    </button>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Find this in your Supabase Dashboard → Settings → API → Project API keys → anon public
+              </p>
             </div>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-6 rounded-lg mb-8">
             <div className="flex items-start">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
-              <div>
-                <h4 className="font-medium text-yellow-800 mb-1">
-                  Create .env file
+              <AlertCircle className="w-6 h-6 text-yellow-600 mr-4 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <h4 className="font-semibold text-yellow-800 mb-3 text-lg">
+                  Create .env file in your project root
                 </h4>
-                <p className="text-sm text-yellow-700 mb-3">
-                  Create a <code>.env</code> file in your project root with these variables:
+                <p className="text-yellow-700 mb-4">
+                  Create a file named <code className="bg-yellow-200 px-2 py-1 rounded font-mono text-sm">.env</code> in your project root directory and add these variables:
                 </p>
-                <div className="bg-yellow-100 rounded p-3 font-mono text-sm">
-                  <div>VITE_SUPABASE_URL={supabaseUrl || 'your_supabase_project_url'}</div>
-                  <div>VITE_SUPABASE_ANON_KEY={supabaseKey || 'your_supabase_anon_key'}</div>
+                <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm relative">
+                  <pre className="text-green-400 whitespace-pre-wrap overflow-x-auto">
+                    {envFileContent}
+                  </pre>
+                  <button
+                    onClick={() => handleCopy(envFileContent, 'env')}
+                    className="absolute top-3 right-3 p-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors"
+                    title="Copy .env content"
+                  >
+                    {copied === 'env' ? <CheckCircle size={16} className="text-green-400" /> : <Copy size={16} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Restart Instructions */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+            <div className="flex items-center">
+              <RefreshCw className="w-6 h-6 text-blue-600 mr-4" />
+              <div>
+                <h4 className="font-semibold text-blue-800 mb-2">Important: Restart Required</h4>
+                <p className="text-blue-700 mb-3">
+                  After creating/updating your .env file, you must restart your development server:
+                </p>
+                <div className="bg-gray-900 rounded-lg p-3 font-mono text-green-400 text-sm">
+                  npm run dev
                 </div>
               </div>
             </div>
@@ -328,18 +438,25 @@ CREATE TRIGGER on_auth_user_created
         </div>
 
         {/* SQL Schema */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Database Schema
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Database Schema Setup
           </h2>
-          <p className="text-gray-600 mb-4">
-            Copy and paste this SQL into your Supabase SQL Editor to create the required tables:
+          <p className="text-gray-600 mb-6 text-lg">
+            After connecting to Supabase, copy and paste this SQL into your Supabase SQL Editor to create the required tables:
           </p>
           
-          <div className="bg-gray-900 rounded-lg p-6 overflow-x-auto">
+          <div className="bg-gray-900 rounded-lg p-6 overflow-x-auto relative">
             <pre className="text-green-400 text-sm font-mono whitespace-pre-wrap">
               {sqlSchema}
             </pre>
+            <button
+              onClick={() => handleCopy(sqlSchema, 'env')}
+              className="absolute top-4 right-4 p-3 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors"
+              title="Copy SQL"
+            >
+              {copied === 'env' ? <CheckCircle size={20} className="text-green-400" /> : <Copy size={20} />}
+            </button>
           </div>
           
           <div className="mt-6 flex items-center justify-between">
@@ -347,26 +464,29 @@ CREATE TRIGGER on_auth_user_created
               <AlertCircle size={16} className="mr-2" />
               Run this SQL in your Supabase dashboard under SQL Editor
             </div>
-            <button
-              onClick={() => navigator.clipboard.writeText(sqlSchema)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            <a
+              href="https://supabase.com/dashboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
             >
-              Copy SQL
-            </button>
+              Open Supabase Dashboard
+              <ExternalLink size={16} className="ml-2" />
+            </a>
           </div>
         </div>
 
         {/* Next Steps */}
         <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8">
-            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Ready to Go!
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 border border-green-200">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-6" />
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Almost Ready!
             </h3>
-            <p className="text-gray-600 mb-6">
-              Once you've completed the setup, restart your development server to connect to Supabase.
+            <p className="text-gray-600 mb-8 text-lg max-w-2xl mx-auto">
+              Once you've completed the setup and restarted your development server, your Invoice Beautifier will be connected to Supabase and ready to use.
             </p>
-            <div className="bg-gray-900 rounded-lg p-4 font-mono text-green-400 text-sm">
+            <div className="bg-gray-900 rounded-lg p-4 font-mono text-green-400 text-lg max-w-md mx-auto">
               npm run dev
             </div>
           </div>
