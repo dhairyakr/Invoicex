@@ -141,14 +141,15 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     setFieldCompletions({});
     setEasterEggTrigger('modeSwitch');
     
-    // Ultra-smooth transition sequence
+    // Restored better transition sequence with multiple phases
     setTimeout(() => {
       setIsLogin(!isLogin);
-      setTimeout(() => {
-        setIsTransitioning(false);
-        setEasterEggTrigger(null);
-      }, 800);
-    }, 400);
+    }, 600);
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setEasterEggTrigger(null);
+    }, 1200);
   };
 
   const handleFieldFocus = (field: string) => {
@@ -333,9 +334,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               </div>
             </div>
             
+            {/* Restored Better Transition with Multiple Phases */}
             <div className={`transition-all duration-1200 ease-out transform ${
               isTransitioning 
-                ? 'translate-x-20 opacity-0 scale-95 rotate-1' 
+                ? 'translate-x-32 opacity-0 scale-90 rotate-3' 
                 : 'translate-x-0 opacity-100 scale-100 rotate-0'
             }`}>
               <h2 className={`text-8xl font-bold leading-tight mb-12 ${getReadableTextClass('primary')}`}>
@@ -373,8 +375,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
           {/* Enhanced Features Grid with Ultra-Smooth Staggered Animations */}
           <div className={`grid grid-cols-2 gap-10 transition-all duration-1200 ease-out transform ${
             isTransitioning 
-              ? 'translate-y-20 opacity-0 scale-90' 
-              : 'translate-y-0 opacity-100 scale-100'
+              ? 'translate-y-32 opacity-0 scale-85 rotate-1' 
+              : 'translate-y-0 opacity-100 scale-100 rotate-0'
           }`}>
             {features.map((feature, index) => (
               <div 
@@ -462,11 +464,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 </svg>
               </div>
               
-              {/* Main Form with Ultra-Smooth Transition Effects */}
+              {/* Main Form with Restored Better Transition Effects */}
               <div className={`relative bg-white/12 backdrop-blur-2xl rounded-3xl p-14 border border-white/25 shadow-2xl transition-all duration-1200 ease-out transform ${
                 isTransitioning 
-                  ? 'scale-95 opacity-70 rotate-0.5 translate-y-6' 
-                  : 'scale-100 opacity-100 rotate-0 translate-y-0'
+                  ? 'scale-90 opacity-60 rotate-2 translate-y-12 translate-x-8' 
+                  : 'scale-100 opacity-100 rotate-0 translate-y-0 translate-x-0'
               }`}>
                 {/* Enhanced Animated Header */}
                 <div className="text-center mb-14">
@@ -474,8 +476,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                     isLogin 
                       ? 'bg-gradient-to-r from-cyan-500 to-blue-500 rotate-0' 
                       : 'bg-gradient-to-r from-emerald-500 to-teal-500 rotate-180'
-                  } ${isTransitioning ? 'scale-80 rotate-360' : 'scale-100'}`}>
-                    <div className={`transition-all duration-800 ease-out ${isTransitioning ? 'scale-0 rotate-180' : 'scale-100 rotate-0'}`}>
+                  } ${isTransitioning ? 'scale-75 rotate-540' : 'scale-100'}`}>
+                    <div className={`transition-all duration-1000 ease-out ${isTransitioning ? 'scale-0 rotate-360' : 'scale-100 rotate-0'}`}>
                       {isLogin ? (
                         <User className="w-14 h-14 text-white animate-bounce-ultra-subtle" />
                       ) : (
@@ -483,13 +485,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       )}
                     </div>
                   </div>
-                  <h3 className={`text-6xl font-bold mb-6 transition-all duration-800 ease-out ${getReadableTextClass('primary')} ${
-                    isTransitioning ? 'opacity-0 transform translate-y-6' : 'opacity-100 transform translate-y-0'
+                  <h3 className={`text-6xl font-bold mb-6 transition-all duration-1000 ease-out ${getReadableTextClass('primary')} ${
+                    isTransitioning ? 'opacity-0 transform translate-y-12 scale-90' : 'opacity-100 transform translate-y-0 scale-100'
                   }`}>
                     {isLogin ? 'Welcome Back' : 'Join Us Today'}
                   </h3>
-                  <p className={`text-2xl transition-all duration-800 ease-out ${getReadableTextClass('secondary')} ${
-                    isTransitioning ? 'opacity-0 transform translate-y-6' : 'opacity-100 transform translate-y-0'
+                  <p className={`text-2xl transition-all duration-1000 ease-out ${getReadableTextClass('secondary')} ${
+                    isTransitioning ? 'opacity-0 transform translate-y-12 scale-90' : 'opacity-100 transform translate-y-0 scale-100'
                   }`} style={{ transitionDelay: '0.1s' }}>
                     {isLogin 
                       ? 'Sign in to access your professional dashboard' 
@@ -543,8 +545,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         onChange={(e) => setEmail(e.target.value)}
                         onFocus={() => handleFieldFocus('email')}
                         onBlur={handleFieldBlur}
-                        className={`w-full pl-18 pr-8 py-6 bg-white/12 border border-white/25 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-cyan-500/50 focus:border-cyan-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
-                          focusedField === 'email' ? 'transform scale-105 shadow-2xl' : 'transform scale-100'
+                        className={`w-full pl-18 pr-8 py-6 bg-white/12 border border-white/25 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/50 focus:border-cyan-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
+                          focusedField === 'email' ? 'transform scale-105 shadow-2xl bg-white/20' : 'transform scale-100'
                         } ${fieldCompletions.email ? 'border-emerald-400/50' : ''}`}
                         placeholder="Enter your email address"
                         required
@@ -593,8 +595,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         onChange={(e) => setPassword(e.target.value)}
                         onFocus={() => handleFieldFocus('password')}
                         onBlur={handleFieldBlur}
-                        className={`w-full pl-18 pr-18 py-6 bg-white/12 border border-white/25 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
-                          focusedField === 'password' ? 'transform scale-105 shadow-2xl' : 'transform scale-100'
+                        className={`w-full pl-18 pr-18 py-6 bg-white/12 border border-white/25 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
+                          focusedField === 'password' ? 'transform scale-105 shadow-2xl bg-white/20' : 'transform scale-100'
                         } ${fieldCompletions.password ? 'border-emerald-400/50' : ''}`}
                         placeholder="Enter your password"
                         required
@@ -604,7 +606,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-all duration-500 hover:scale-125"
+                        className="absolute right-7 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-all duration-500 hover:scale-125"
                       >
                         {showPassword ? <EyeOff size={26} /> : <Eye size={26} />}
                       </button>
@@ -661,8 +663,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           onFocus={() => handleFieldFocus('confirmPassword')}
                           onBlur={handleFieldBlur}
-                          className={`w-full pl-18 pr-8 py-6 bg-white/12 border border-white/25 rounded-2xl text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 focus:border-emerald-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
-                            focusedField === 'confirmPassword' ? 'transform scale-105 shadow-2xl' : 'transform scale-100'
+                          className={`w-full pl-18 pr-8 py-6 bg-white/12 border border-white/25 rounded-2xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 focus:border-emerald-400 backdrop-blur-sm transition-all duration-700 ease-out text-xl font-medium ${
+                            focusedField === 'confirmPassword' ? 'transform scale-105 shadow-2xl bg-white/20' : 'transform scale-100'
                           } ${fieldCompletions.confirmPassword && password === confirmPassword ? 'border-emerald-400/50' : ''}`}
                           placeholder="Confirm your password"
                           required={!isLogin}
@@ -748,7 +750,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 {/* Enhanced Success Indicators for Sign Up */}
                 {!isLogin && (
                   <div className={`mt-12 space-y-6 transition-all duration-1200 ease-out ${
-                    isTransitioning ? 'opacity-0 transform translate-y-10 scale-95' : 'opacity-100 transform translate-y-0 scale-100'
+                    isTransitioning ? 'opacity-0 transform translate-y-16 scale-90 rotate-1' : 'opacity-100 transform translate-y-0 scale-100 rotate-0'
                   }`}>
                     {[
                       { icon: <Shield className="w-7 h-7" />, text: "Military-grade encryption & security", delay: "0s" },
@@ -985,12 +987,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
           transform: rotate(360deg);
         }
         
+        .rotate-540 {
+          transform: rotate(540deg);
+        }
+        
         .scale-130 {
           transform: scale(1.3);
         }
         
-        .scale-80 {
-          transform: scale(0.8);
+        .scale-75 {
+          transform: scale(0.75);
         }
         
         .pl-18 {
