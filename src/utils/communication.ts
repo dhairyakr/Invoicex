@@ -38,22 +38,49 @@ This invoice was generated using Invoice Beautifier`;
     // Create mailto link with customer email pre-filled
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    // Open email client directly
-    window.open(mailtoLink);
-    
-    // Show success message
-    alert(`✅ EMAIL CLIENT OPENED!
+    // Try to open email client
+    try {
+      const link = document.createElement('a');
+      link.href = mailtoLink;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success message
+      setTimeout(() => {
+        alert(`✅ EMAIL CLIENT OPENED!
 
-Your email client has opened with:
+Your email client should have opened with:
 - To: ${recipientEmail}
 - Subject: ${subject}
 - Pre-filled message content
 
+If your email client didn't open:
+1. Copy this email: ${recipientEmail}
+2. Copy the subject: Invoice ${invoice.number} from ${invoice.company.name}
+3. Use the pre-written message content
+
 Simply attach the invoice PDF and send!`);
+      }, 500);
+    } catch (error) {
+      // Fallback: show email details for manual copying
+      alert(`📧 EMAIL DETAILS
+
+Please manually create an email with these details:
+
+To: ${recipientEmail}
+Subject: ${subject}
+
+Message:
+${body}
+
+Copy these details to your email client and attach the invoice PDF.`);
+    }
     
   } catch (error) {
-    console.error('Error opening email:', error);
-    alert('❌ Error opening email client. Please try again.');
+    console.error('Error preparing email:', error);
+    alert('❌ Error preparing email details. Please try again.');
   }
 };
 
@@ -70,6 +97,9 @@ export const sendMessageInvoice = async (invoice: any) => {
     const afterDiscount = subtotal - discountAmount;
     const taxAmount = (invoice.taxRates || []).reduce((sum: number, tax: any) => sum + (afterDiscount * tax.rate) / 100, 0);
     const total = afterDiscount + taxAmount;
+
+    // Get client phone number
+    const clientPhone = invoice.client.phone || 'No phone number provided';
 
     const message = `Hi ${invoice.client.name}! 👋
 
@@ -90,19 +120,27 @@ Generated with Invoice Beautifier ✨`;
       await navigator.clipboard.writeText(message);
       alert(`✅ MESSAGE COPIED TO CLIPBOARD!
 
-The invoice message has been copied to your clipboard. You can now:
+The invoice message has been copied to your clipboard.
 
+Client Details:
+- Name: ${invoice.client.name}
+- Phone: ${clientPhone}
+- Email: ${invoice.client.email}
+
+You can now:
 1. Open your preferred messaging app (SMS, WhatsApp, Telegram, etc.)
-2. Paste the message (Ctrl+V or Cmd+V)
-3. Send to: ${invoice.client.name}
+2. Send to: ${clientPhone}
+3. Paste the message (Ctrl+V or Cmd+V)
 
 Message includes all invoice details and is ready to send!`);
     } catch (clipboardError) {
       // Fallback: show message in a modal for manual copying
       const userConfirmed = confirm(`📱 INVOICE MESSAGE READY
 
-Here's your message for ${invoice.client.name}:
+Client: ${invoice.client.name}
+Phone: ${clientPhone}
 
+Message:
 ${message}
 
 Click OK to continue, then copy this message to your preferred messaging app.`);

@@ -16,6 +16,7 @@ export interface Company {
 export interface Client {
   name: string;
   email: string;
+  phone: string; // Added phone number
   address: string;
 }
 
