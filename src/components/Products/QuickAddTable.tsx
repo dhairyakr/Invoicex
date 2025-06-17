@@ -396,7 +396,7 @@ const QuickAddTable: React.FC = () => {
         <div className="flex items-center justify-center space-x-6 text-xs">
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-100 rounded-full mr-2"></div>
-            <span className="text-gray-600">In Stock (>5)</span>
+            <span className="text-gray-600">{'In Stock (>5)'}</span>
           </div>
           <div className="flex items-center">
             <div className="w-3 h-3 bg-yellow-100 rounded-full mr-2"></div>
