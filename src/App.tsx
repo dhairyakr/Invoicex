@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { InvoiceProvider } from './context/InvoiceContext';
 import { ProductProvider } from './context/ProductContext';
+import Header from './components/Header';
 import AuthPage from './components/Auth/AuthPage';
 import Dashboard from './components/Dashboard';
 import InvoiceForm from './components/InvoiceForm';
@@ -94,15 +95,32 @@ const AppContent: React.FC = () => {
     <InvoiceProvider>
       <ProductProvider>
         <div className="min-h-screen bg-gray-50">
-          <ConnectionStatus />
+          {/* Show header only when user is authenticated */}
+          {user && <Header />}
+          
+          {/* Show connection status */}
+          <ConnectionStatus 
+            status={connectionStatus} 
+            error={connectionError}
+            onRetry={() => window.location.reload()}
+          />
+          
           <Routes>
             {/* Public Routes */}
             <Route 
               path="/auth" 
-              element={user ? <Navigate to="/dashboard" replace /> : <AuthPage />} 
+              element={user ? <Navigate to="/" replace /> : <AuthPage />} 
             />
             
             {/* Protected Routes */}
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="/dashboard" 
               element={
@@ -152,16 +170,10 @@ const AppContent: React.FC = () => {
               } 
             />
             
-            {/* Default redirect */}
-            <Route 
-              path="/" 
-              element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} 
-            />
-            
             {/* Catch all route */}
             <Route 
               path="*" 
-              element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} 
+              element={<Navigate to={user ? "/" : "/auth"} replace />} 
             />
           </Routes>
         </div>
