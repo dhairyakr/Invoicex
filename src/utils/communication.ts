@@ -62,7 +62,7 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
     const clientEmail = recipientEmail || invoice.client?.email || '';
     
     // Create email service selection modal
-    const serviceSelection = await new Promise<{url: string, supportsTo: boolean}>((resolve) => {
+    const serviceSelection = await new Promise<{url: string, supportsTo: boolean, serviceName: string}>((resolve) => {
       // Create modal overlay
       const overlay = document.createElement('div');
       overlay.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4';
@@ -78,7 +78,7 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-2">Choose Email Service</h3>
           <p class="text-gray-600">Select your preferred email service to send the invoice</p>
-          ${clientEmail ? `<p class="text-sm text-blue-600 mt-2">📧 To: ${clientEmail}</p>` : ''}
+          ${clientEmail ? `<p class="text-sm text-blue-600 mt-2 font-medium">📧 To: ${clientEmail}</p>` : `<p class="text-sm text-orange-600 mt-2">⚠️ No client email found - you'll need to add it manually</p>`}
         </div>
         
         <div class="space-y-3 mb-6">
@@ -94,8 +94,10 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
                 <div class="font-semibold text-gray-900 group-hover:text-blue-600">${service.name}</div>
                 <div class="text-sm text-gray-500">
                   ${service.supportsTo && clientEmail 
-                    ? `Will auto-fill recipient: ${clientEmail}` 
-                    : 'Open ' + service.name + ' to compose email'
+                    ? `✅ Will auto-fill recipient: ${clientEmail}` 
+                    : clientEmail && !service.supportsTo
+                    ? `📝 Manual entry required: ${clientEmail}`
+                    : '📝 Manual recipient entry required'
                   }
                 </div>
               </div>
@@ -142,14 +144,14 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
           modal.classList.add('scale-95', 'opacity-0');
           setTimeout(() => {
             document.body.removeChild(overlay);
-            resolve({ url: serviceUrl, supportsTo });
+            resolve({ url: serviceUrl, supportsTo, serviceName });
           }, 200);
         } else if (cancelBtn) {
           // Animate out
           modal.classList.add('scale-95', 'opacity-0');
           setTimeout(() => {
             document.body.removeChild(overlay);
-            resolve({ url: '', supportsTo: false });
+            resolve({ url: '', supportsTo: false, serviceName: '' });
           }, 200);
         }
       });
@@ -160,26 +162,40 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
       return;
     }
     
-    // Open the selected email service
+    // Open the selected email service with proper client email handling
     let finalUrl = serviceSelection.url;
     
     if (serviceSelection.url.startsWith('mailto:')) {
       // For mailto links, add the recipient if available
       if (clientEmail) {
-        finalUrl = `mailto:${clientEmail}`;
+        finalUrl = `mailto:${encodeURIComponent(clientEmail)}`;
+      } else {
+        finalUrl = 'mailto:';
       }
       window.open(finalUrl);
-    } else if (serviceSelection.url.includes('mail.google.com') && clientEmail) {
+    } else if (serviceSelection.url.includes('mail.google.com')) {
       // For Gmail, add recipient to compose URL
-      finalUrl = `https://mail.google.com/mail/u/0/#inbox?compose=new&to=${encodeURIComponent(clientEmail)}`;
+      if (clientEmail) {
+        finalUrl = `https://mail.google.com/mail/u/0/#inbox?compose=new&to=${encodeURIComponent(clientEmail)}`;
+      } else {
+        finalUrl = 'https://mail.google.com/mail/u/0/#inbox?compose=new';
+      }
       window.open(finalUrl, '_blank');
-    } else if (serviceSelection.url.includes('outlook.live.com') && clientEmail) {
+    } else if (serviceSelection.url.includes('outlook.live.com')) {
       // For Outlook, add recipient to compose URL
-      finalUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(clientEmail)}`;
+      if (clientEmail) {
+        finalUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(clientEmail)}`;
+      } else {
+        finalUrl = 'https://outlook.live.com/mail/0/deeplink/compose';
+      }
       window.open(finalUrl, '_blank');
-    } else if (serviceSelection.url.includes('mail.yahoo.com') && clientEmail) {
+    } else if (serviceSelection.url.includes('mail.yahoo.com')) {
       // For Yahoo Mail, add recipient to compose URL
-      finalUrl = `https://mail.yahoo.com/d/compose?to=${encodeURIComponent(clientEmail)}`;
+      if (clientEmail) {
+        finalUrl = `https://mail.yahoo.com/d/compose?to=${encodeURIComponent(clientEmail)}`;
+      } else {
+        finalUrl = 'https://mail.yahoo.com/d/compose';
+      }
       window.open(finalUrl, '_blank');
     } else {
       // For other web-based email services (like iCloud), open in new tab
@@ -193,6 +209,8 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
       
       const successContent = document.createElement('div');
       successContent.className = 'bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 transform transition-all duration-300 scale-95 opacity-0';
+      
+      const wasEmailPreFilled = clientEmail && serviceSelection.supportsTo;
       
       successContent.innerHTML = `
         <div class="text-center">
@@ -216,9 +234,9 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span class="font-medium">Email Service Opened</span>
+                <span class="font-medium">${serviceSelection.serviceName} Opened</span>
               </div>
-              ${clientEmail && serviceSelection.supportsTo ? `
+              ${wasEmailPreFilled ? `
                 <div class="flex items-center text-green-800">
                   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -232,18 +250,18 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
           <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <h4 class="font-semibold text-blue-900 mb-3">Next Steps:</h4>
             <ol class="text-left text-blue-800 space-y-2 text-sm">
-              ${!clientEmail || !serviceSelection.supportsTo ? `
+              ${!wasEmailPreFilled ? `
                 <li class="flex items-start">
                   <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</span>
                   <span>Add the client's email address: <strong>${clientEmail || 'client@example.com'}</strong></span>
                 </li>
               ` : ''}
               <li class="flex items-start">
-                <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">${!clientEmail || !serviceSelection.supportsTo ? '2' : '1'}</span>
+                <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">${!wasEmailPreFilled ? '2' : '1'}</span>
                 <span>Attach the downloaded PDF file (${fileName})</span>
               </li>
               <li class="flex items-start">
-                <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">${!clientEmail || !serviceSelection.supportsTo ? '3' : '2'}</span>
+                <span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">${!wasEmailPreFilled ? '3' : '2'}</span>
                 <span>Write your message and send the email</span>
               </li>
             </ol>
