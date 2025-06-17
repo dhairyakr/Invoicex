@@ -14,6 +14,10 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail: string) => 
     const taxAmount = (invoice.taxRates || []).reduce((sum: number, tax: any) => sum + (afterDiscount * tax.rate) / 100, 0);
     const total = afterDiscount + taxAmount;
 
+    // Generate and download PDF first
+    const fileName = `invoice-${invoice.number}.pdf`;
+    await exportToPDF('invoice-preview', fileName);
+    
     const subject = `Invoice ${invoice.number} from ${invoice.company.name}`;
     const body = `Dear ${invoice.client.name},
 
@@ -35,29 +39,44 @@ ${invoice.company.phone}
 ---
 This invoice was generated using Invoice Beautifier`;
 
-    // Create mailto link with customer email pre-filled
+    // Create mailto link
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
-    // Open email client directly
-    window.open(mailtoLink);
-    
-    // Show success message
-    alert(`✅ EMAIL CLIENT OPENED!
+    // Show instructions first
+    const userConfirmed = confirm(`📧 EMAIL PROCESS:
 
-Your email client has opened with:
-- To: ${recipientEmail}
-- Subject: ${subject}
-- Pre-filled message content
+1. PDF invoice will be downloaded automatically
+2. Your email client will open with pre-filled content
+3. Manually attach the downloaded PDF file to the email
+4. Send the email
 
-Simply attach the invoice PDF and send!`);
+Click OK to proceed, or Cancel to abort.`);
+
+    if (userConfirmed) {
+      // Open email client
+      window.open(mailtoLink);
+      
+      // Show follow-up instructions
+      setTimeout(() => {
+        alert(`✅ EMAIL OPENED!
+
+Next steps:
+1. Check your Downloads folder for: ${fileName}
+2. In your email client, click "Attach" or 📎
+3. Select the downloaded PDF file
+4. Send the email
+
+The PDF has been downloaded to your Downloads folder.`);
+      }, 1000);
+    }
     
   } catch (error) {
-    console.error('Error opening email:', error);
-    alert('❌ Error opening email client. Please try again.');
+    console.error('Error sending email:', error);
+    alert('❌ Error generating PDF. Please try again.');
   }
 };
 
-export const sendMessageInvoice = async (invoice: any) => {
+export const sendWhatsAppInvoice = async (invoice: any, phoneNumber: string) => {
   try {
     // Calculate total for display
     const subtotal = invoice.items.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0);
@@ -71,6 +90,10 @@ export const sendMessageInvoice = async (invoice: any) => {
     const taxAmount = (invoice.taxRates || []).reduce((sum: number, tax: any) => sum + (afterDiscount * tax.rate) / 100, 0);
     const total = afterDiscount + taxAmount;
 
+    // Generate and download PDF first
+    const fileName = `invoice-${invoice.number}.pdf`;
+    await exportToPDF('invoice-preview', fileName);
+
     const message = `Hi ${invoice.client.name}! 👋
 
 Your invoice is ready:
@@ -79,50 +102,48 @@ Your invoice is ready:
 💰 Amount: ${invoice.currency} ${total.toFixed(2)}
 📅 Due Date: ${invoice.dueDate}
 
+I'll send the PDF invoice in the next message.
+
 From: ${invoice.company.name}
 📧 ${invoice.company.email}
 📞 ${invoice.company.phone}
 
 Generated with Invoice Beautifier ✨`;
 
-    // Copy message to clipboard
-    try {
-      await navigator.clipboard.writeText(message);
-      alert(`✅ MESSAGE COPIED TO CLIPBOARD!
+    const whatsappLink = `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+    
+    // Show instructions first
+    const userConfirmed = confirm(`📱 WHATSAPP PROCESS:
 
-The invoice message has been copied to your clipboard. You can now:
+1. PDF invoice will be downloaded automatically
+2. WhatsApp will open with pre-filled message
+3. Send the text message first
+4. Then attach and send the PDF file
 
-1. Open your preferred messaging app (SMS, WhatsApp, Telegram, etc.)
-2. Paste the message (Ctrl+V or Cmd+V)
-3. Send to: ${invoice.client.name}
+Click OK to proceed, or Cancel to abort.`);
 
-Message includes all invoice details and is ready to send!`);
-    } catch (clipboardError) {
-      // Fallback: show message in a modal for manual copying
-      const userConfirmed = confirm(`📱 INVOICE MESSAGE READY
-
-Here's your message for ${invoice.client.name}:
-
-${message}
-
-Click OK to continue, then copy this message to your preferred messaging app.`);
+    if (userConfirmed) {
+      // Open WhatsApp
+      window.open(whatsappLink, '_blank');
       
-      if (userConfirmed) {
-        // Create a temporary textarea to select text for copying
-        const textarea = document.createElement('textarea');
-        textarea.value = message;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        
-        alert('✅ Message prepared! You can now paste it in your messaging app.');
-      }
+      // Show follow-up instructions
+      setTimeout(() => {
+        alert(`✅ WHATSAPP OPENED!
+
+Next steps:
+1. Send the pre-filled text message first
+2. Check Downloads folder for: ${fileName}
+3. Click 📎 (attachment) in WhatsApp
+4. Select "Document" and choose the PDF
+5. Send the PDF file
+
+The PDF has been downloaded to your Downloads folder.`);
+      }, 1000);
     }
     
   } catch (error) {
-    console.error('Error preparing message:', error);
-    alert('❌ Error preparing message. Please try again.');
+    console.error('Error sending WhatsApp:', error);
+    alert('❌ Error generating PDF. Please try again.');
   }
 };
 
