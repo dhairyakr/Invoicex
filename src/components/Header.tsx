@@ -1,9 +1,19 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FileText, Sparkles, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FileText, Sparkles, Zap, LogOut, User, Settings } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+    setShowUserMenu(false);
+  };
   
   return (
     <header className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white shadow-2xl relative overflow-hidden">
@@ -66,6 +76,47 @@ const Header: React.FC = () => {
               </Link>
             </div>
 
+            {/* User Menu */}
+            {user && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center space-x-3 bg-white bg-opacity-10 hover:bg-opacity-20 px-4 py-2 rounded-xl transition-all duration-300 backdrop-blur-sm border border-white border-opacity-20"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <User size={16} className="text-white" />
+                  </div>
+                  <span className="text-sm font-medium hidden sm:block">
+                    {user.email?.split('@')[0]}
+                  </span>
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                      <p className="text-xs text-gray-500">Signed in</p>
+                    </div>
+                    <button
+                      onClick={() => setShowUserMenu(false)}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                    >
+                      <Settings size={16} className="mr-3" />
+                      Settings
+                    </button>
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                    >
+                      <LogOut size={16} className="mr-3" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Mobile Navigation Indicator */}
             <div className="md:hidden flex items-center space-x-2 mr-4">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
@@ -121,6 +172,14 @@ const Header: React.FC = () => {
 
       {/* Animated Border */}
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 opacity-60"></div>
+
+      {/* Click outside to close user menu */}
+      {showUserMenu && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowUserMenu(false)}
+        />
+      )}
     </header>
   );
 };

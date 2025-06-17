@@ -5,51 +5,31 @@ import Dashboard from './components/Dashboard';
 import TemplateSelector from './components/TemplateSelector';
 import InvoiceForm from './components/InvoiceForm';
 import SupabaseSetup from './components/SupabaseSetup';
-import AuthModal from './components/Auth/AuthModal';
+import AuthPage from './components/Auth/AuthPage';
 import { InvoiceProvider } from './context/InvoiceContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500/30 border-t-blue-500 mx-auto mb-4"></div>
+            <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-4 border-blue-500/20 mx-auto"></div>
+          </div>
+          <p className="text-white text-lg font-medium">Loading your workspace...</p>
+          <p className="text-gray-400 text-sm mt-2">Preparing something beautiful</p>
         </div>
       </div>
     );
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Welcome to Invoice Beautifier
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Sign in to access your invoices and create beautiful, professional invoices.
-            </p>
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 hover:from-blue-700 hover:to-purple-700"
-            >
-              Sign In / Sign Up
-            </button>
-          </div>
-        </div>
-        <AuthModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-        />
-      </div>
-    );
+    return <AuthPage />;
   }
 
   return <>{children}</>;
@@ -76,6 +56,7 @@ const AppContent: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/setup" element={<SupabaseSetup />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <Dashboard />
