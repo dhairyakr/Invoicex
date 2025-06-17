@@ -1,35 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  ArrowRight, 
-  Sparkles, 
-  Star, 
-  Zap,
-  Shield,
-  CheckCircle,
-  User,
-  Globe,
-  Layers,
-  Cpu,
-  Heart,
-  Briefcase,
-  TrendingUp,
-  Award,
-  Rocket,
-  Crown,
-  Gem,
-  Coffee,
-  Palette,
-  Wand2,
-  Flame,
-  Lightning,
-  Orbit,
-  Atom,
-  Hexagon
-} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, Star, Zap, Shield, CheckCircle, User, Globe, Layers, Cpu, Heart, Briefcase, TrendingUp, Award, Rocket, Crown, Gem, Coffee, Palette, Wand2, Flame, CloudLightning as Lightning, Orbit, Atom, Hexagon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface AuthPageProps {
