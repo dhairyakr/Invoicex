@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
 import { formatDate } from '../utils/helpers';
-import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
+import { sendEmailInvoice, sendMessageInvoice } from '../utils/communication';
 import { 
   FileText, 
   Plus, 
@@ -142,11 +142,8 @@ const Dashboard: React.FC = () => {
     await sendEmailInvoice(invoice, invoice.client.email);
   };
 
-  const handleWhatsAppSend = async (invoice: any) => {
-    const phone = prompt('📱 Enter WhatsApp number (with country code):\n\nExample: +1234567890');
-    if (phone) {
-      await sendWhatsAppInvoice(invoice, phone);
-    }
+  const handleMessageSend = async (invoice: any) => {
+    await sendMessageInvoice(invoice);
   };
 
   const toggleStatusDropdown = (invoiceId: string) => {
@@ -578,14 +575,14 @@ const Dashboard: React.FC = () => {
                             <button
                               onClick={() => handleEmailSend(invoice)}
                               className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-100 rounded-lg transition-all duration-200"
-                              title="📧 Send Email with PDF"
+                              title="📧 Send Email"
                             >
                               <Mail size={16} />
                             </button>
                             <button
-                              onClick={() => handleWhatsAppSend(invoice)}
-                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-lg transition-all duration-200"
-                              title="📱 Send WhatsApp with PDF"
+                              onClick={() => handleMessageSend(invoice)}
+                              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-lg transition-all duration-200"
+                              title="💬 Send Message"
                             >
                               <MessageCircle size={16} />
                             </button>

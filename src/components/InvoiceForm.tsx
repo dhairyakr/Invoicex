@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontType, Product } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
-import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
+import { sendEmailInvoice, sendMessageInvoice } from '../utils/communication';
 
 const fonts: FontType[] = [
   { id: 'inter', name: 'Inter' },
@@ -139,16 +139,13 @@ const InvoiceForm: React.FC = () => {
     }
   };
 
-  const handleWhatsAppSend = async () => {
+  const handleMessageSend = async () => {
     if (!currentInvoice) return;
-    const phone = prompt('📱 Enter WhatsApp number (with country code):\n\nExample: +1234567890');
-    if (phone) {
-      try {
-        await sendWhatsAppInvoice(currentInvoice, phone);
-      } catch (error) {
-        console.error('Error sending WhatsApp:', error);
-        alert('❌ Error sending WhatsApp message. Please try again.');
-      }
+    try {
+      await sendMessageInvoice(currentInvoice);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('❌ Error preparing message. Please try again.');
     }
   };
 
@@ -786,15 +783,15 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs flex items-center justify-center"
             >
               <Mail size={12} className="mr-1" />
-              📧 Email + PDF
+              📧 Email
             </button>
             <button
               type="button"
-              onClick={handleWhatsAppSend}
-              className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
+              onClick={handleMessageSend}
+              className="w-full px-2 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs flex items-center justify-center"
             >
               <MessageCircle size={12} className="mr-1" />
-              📱 WhatsApp + PDF
+              💬 Message
             </button>
           </div>
         </div>
