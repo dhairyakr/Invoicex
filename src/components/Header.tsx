@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, Zap, LogOut, User, Settings } from 'lucide-react';
+import { FileText, Sparkles, Zap, LogOut, User, Settings, Package } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
@@ -72,6 +72,23 @@ const Header: React.FC = () => {
                 </span>
                 {location.pathname === '/templates' && (
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl opacity-20"></div>
+                )}
+              </Link>
+
+              <Link 
+                to="/products" 
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 group ${
+                  location.pathname === '/products' 
+                    ? 'bg-white bg-opacity-20 text-white shadow-lg backdrop-blur-sm' 
+                    : 'text-blue-100 hover:text-white hover:bg-white hover:bg-opacity-10'
+                }`}
+              >
+                <span className="relative z-10 flex items-center">
+                  <Package size={16} className="mr-2" />
+                  Products
+                </span>
+                {location.pathname === '/products' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl opacity-20"></div>
                 )}
               </Link>
             </div>
@@ -165,6 +182,17 @@ const Header: React.FC = () => {
             >
               <Sparkles size={14} className="mr-1" />
               Templates
+            </Link>
+            <Link 
+              to="/products" 
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
+                location.pathname === '/products' 
+                  ? 'bg-white bg-opacity-20 text-white' 
+                  : 'text-blue-200 hover:text-white hover:bg-white hover:bg-opacity-10'
+              }`}
+            >
+              <Package size={14} className="mr-1" />
+              Products
             </Link>
           </div>
         </div>

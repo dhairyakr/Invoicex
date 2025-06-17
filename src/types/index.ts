@@ -57,6 +57,36 @@ export interface Invoice {
   updatedAt: string;
 }
 
+// New Product interface
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  category: string;
+  sku?: string;
+  stock?: number;
+  unit: string; // e.g., 'piece', 'hour', 'kg', 'meter'
+  taxable: boolean;
+  isActive: boolean;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+}
+
+export interface ProductFilters {
+  search: string;
+  category: string;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+  tags: string[];
+  isActive: boolean;
+}
+
 export type TemplateType = {
   id: string;
   name: string;

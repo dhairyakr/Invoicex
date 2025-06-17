@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag, X } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, MessageCircle, Tag, X, Package, Search } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
 import PaymentQRGenerator from './PaymentQRGenerator';
+import ProductSelector from './Products/ProductSelector';
 import { v4 as uuidv4 } from 'uuid';
-import { FontType } from '../types';
+import { FontType, Product } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
 import { sendEmailInvoice, sendWhatsAppInvoice } from '../utils/communication';
@@ -56,6 +57,7 @@ const InvoiceForm: React.FC = () => {
 
   const [newTag, setNewTag] = useState('');
   const [showQRGenerator, setShowQRGenerator] = useState(false);
+  const [showProductSelector, setShowProductSelector] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -89,6 +91,21 @@ const InvoiceForm: React.FC = () => {
       qrCode: qrCode
     });
     setShowQRGenerator(false);
+  };
+
+  const handleProductSelect = (product: Product, quantity: number) => {
+    const newItem = {
+      id: uuidv4(),
+      description: product.name,
+      quantity: quantity,
+      rate: product.price,
+    };
+    
+    // Add the item to the invoice
+    if (currentInvoice) {
+      const updatedItems = [...currentInvoice.items, newItem];
+      updateInvoiceField('items', updatedItems);
+    }
   };
 
   const handleExportPDF = async () => {
@@ -424,13 +441,22 @@ const InvoiceForm: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Items
                 </label>
-                <button
-                  type="button"
-                  onClick={addInvoiceItem}
-                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none"
-                >
-                  <Plus size={16} className="mr-1" /> Add Item
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowProductSelector(true)}
+                    className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200 focus:outline-none"
+                  >
+                    <Package size={16} className="mr-1" /> Select Product
+                  </button>
+                  <button
+                    type="button"
+                    onClick={addInvoiceItem}
+                    className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none"
+                  >
+                    <Plus size={16} className="mr-1" /> Add Item
+                  </button>
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -798,6 +824,14 @@ const InvoiceForm: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Product Selector Modal */}
+      <ProductSelector
+        isOpen={showProductSelector}
+        onClose={() => setShowProductSelector(false)}
+        onSelectProduct={handleProductSelect}
+        currency={currentInvoice.currency}
+      />
     </div>
   );
 };

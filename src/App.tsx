@@ -4,9 +4,11 @@ import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import TemplateSelector from './components/TemplateSelector';
 import InvoiceForm from './components/InvoiceForm';
+import ProductManager from './components/Products/ProductManager';
 import SupabaseSetup from './components/SupabaseSetup';
 import AuthPage from './components/Auth/AuthPage';
 import { InvoiceProvider } from './context/InvoiceContext';
+import { ProductProvider } from './context/ProductContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Protected Route Component
@@ -51,36 +53,43 @@ const AppContent: React.FC = () => {
 
   return (
     <InvoiceProvider>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/setup" element={<SupabaseSetup />} />
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/templates" element={
-              <ProtectedRoute>
-                <TemplateSelector />
-              </ProtectedRoute>
-            } />
-            <Route path="/create" element={
-              <ProtectedRoute>
-                <InvoiceForm />
-              </ProtectedRoute>
-            } />
-            <Route path="/edit/:id" element={
-              <ProtectedRoute>
-                <InvoiceForm />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-      </div>
+      <ProductProvider>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+          <Header />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/setup" element={<SupabaseSetup />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/templates" element={
+                <ProtectedRoute>
+                  <TemplateSelector />
+                </ProtectedRoute>
+              } />
+              <Route path="/products" element={
+                <ProtectedRoute>
+                  <ProductManager />
+                </ProtectedRoute>
+              } />
+              <Route path="/create" element={
+                <ProtectedRoute>
+                  <InvoiceForm />
+                </ProtectedRoute>
+              } />
+              <Route path="/edit/:id" element={
+                <ProtectedRoute>
+                  <InvoiceForm />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </div>
+      </ProductProvider>
     </InvoiceProvider>
   );
 };
