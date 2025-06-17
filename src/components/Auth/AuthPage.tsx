@@ -14,7 +14,15 @@ import {
   Globe,
   Layers,
   Cpu,
-  Heart
+  Heart,
+  Briefcase,
+  TrendingUp,
+  Award,
+  Rocket,
+  Crown,
+  Gem,
+  Coffee,
+  Palette
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -31,8 +39,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const { signIn, signUp } = useAuth();
 
@@ -47,19 +54,22 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   }, []);
 
   // Animated background particles
-  const particles = Array.from({ length: 50 }, (_, i) => ({
+  const particles = Array.from({ length: 60 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 4 + 1,
-    speed: Math.random() * 2 + 0.5,
+    size: Math.random() * 3 + 1,
+    speed: Math.random() * 3 + 1,
+    opacity: Math.random() * 0.5 + 0.2,
   }));
 
   const features = [
-    { icon: <Sparkles className="w-6 h-6" />, text: "Beautiful Invoice Templates" },
-    { icon: <Shield className="w-6 h-6" />, text: "Secure Cloud Storage" },
-    { icon: <Zap className="w-6 h-6" />, text: "Real-time Collaboration" },
-    { icon: <Globe className="w-6 h-6" />, text: "Multi-currency Support" },
+    { icon: <Sparkles className="w-5 h-5" />, text: "Beautiful Invoice Templates", color: "from-blue-400 to-cyan-400" },
+    { icon: <Shield className="w-5 h-5" />, text: "Bank-Grade Security", color: "from-emerald-400 to-teal-400" },
+    { icon: <Zap className="w-5 h-5" />, text: "Lightning Fast Performance", color: "from-yellow-400 to-orange-400" },
+    { icon: <Globe className="w-5 h-5" />, text: "Global Multi-Currency", color: "from-purple-400 to-pink-400" },
+    { icon: <TrendingUp className="w-5 h-5" />, text: "Advanced Analytics", color: "from-indigo-400 to-blue-400" },
+    { icon: <Award className="w-5 h-5" />, text: "Professional Quality", color: "from-rose-400 to-pink-400" },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,40 +100,62 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     }
   };
 
+  const handleModeSwitch = () => {
+    setIsTransitioning(true);
+    setError('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    
+    setTimeout(() => {
+      setIsLogin(!isLogin);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 200);
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Animated Background */}
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900">
+      {/* Dynamic Animated Background */}
       <div className="absolute inset-0">
-        {/* Gradient Orbs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-r from-pink-500/30 to-red-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        {/* Primary Gradient Orbs */}
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/20 via-cyan-500/20 to-teal-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-rose-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-0 left-1/3 w-[400px] h-[400px] bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Secondary Accent Orbs */}
+        <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-gradient-to-r from-yellow-400/15 to-orange-400/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute bottom-1/4 left-1/4 w-[350px] h-[350px] bg-gradient-to-r from-indigo-400/15 to-purple-400/15 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1.5s' }}></div>
         
         {/* Floating Particles */}
         {particles.map((particle) => (
           <div
             key={particle.id}
-            className="absolute w-1 h-1 bg-white/20 rounded-full animate-float"
+            className="absolute rounded-full bg-white animate-float"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              opacity: particle.opacity,
               animationDelay: `${particle.id * 0.1}s`,
-              animationDuration: `${particle.speed + 2}s`,
+              animationDuration: `${particle.speed + 3}s`,
             }}
           />
         ))}
 
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.03%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        {/* Mesh Gradient Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.02%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
       </div>
 
       {/* Mouse Follower */}
       <div 
-        className="fixed w-6 h-6 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full pointer-events-none z-50 mix-blend-difference transition-transform duration-100 ease-out"
+        className="fixed w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full pointer-events-none z-50 mix-blend-screen transition-transform duration-150 ease-out"
         style={{
-          left: mousePosition.x - 12,
-          top: mousePosition.y - 12,
-          transform: isHovered ? 'scale(2)' : 'scale(1)',
+          left: mousePosition.x - 16,
+          top: mousePosition.y - 16,
+          transform: `scale(${isTransitioning ? 1.5 : 1})`,
         }}
       />
 
@@ -131,61 +163,81 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         {/* Left Side - Branding & Features */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12 relative">
           {/* Logo Section */}
-          <div className="mb-12">
-            <div className="flex items-center mb-6">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
-                <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-2xl">
-                  <Layers className="w-8 h-8 text-white" />
+          <div className="mb-16">
+            <div className="flex items-center mb-8">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                <div className="relative bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 p-5 rounded-3xl shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                  <Layers className="w-10 h-10 text-white" />
                 </div>
               </div>
-              <div className="ml-4">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              <div className="ml-6">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-cyan-100 to-blue-100 bg-clip-text text-transparent">
                   Invoice Beautifier
                 </h1>
-                <p className="text-blue-200 text-sm">Professional Invoice Solutions</p>
+                <p className="text-cyan-200 text-lg font-medium">Professional Invoice Solutions</p>
               </div>
             </div>
             
-            <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
-              Create
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"> Beautiful </span>
-              Invoices
-            </h2>
-            <p className="text-xl text-gray-300 leading-relaxed">
-              Transform your billing process with stunning, professional invoices that make lasting impressions.
-            </p>
+            <div className={`transition-all duration-700 ${isTransitioning ? 'transform translate-x-8 opacity-50' : ''}`}>
+              <h2 className="text-6xl font-bold text-white mb-8 leading-tight">
+                {isLogin ? (
+                  <>
+                    Welcome
+                    <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent"> Back </span>
+                    Professional
+                  </>
+                ) : (
+                  <>
+                    Start Your
+                    <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent"> Journey </span>
+                    Today
+                  </>
+                )}
+              </h2>
+              <p className="text-2xl text-gray-300 leading-relaxed max-w-lg">
+                {isLogin 
+                  ? "Sign in to access your beautiful invoices and continue creating professional billing experiences."
+                  : "Join thousands of professionals who trust us with their invoicing needs. Create stunning invoices in minutes."
+                }
+              </p>
+            </div>
           </div>
 
-          {/* Features */}
-          <div className="space-y-6">
+          {/* Features Grid */}
+          <div className={`grid grid-cols-2 gap-6 transition-all duration-700 ${isTransitioning ? 'transform translate-y-8 opacity-50' : ''}`}>
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="flex items-center group cursor-pointer"
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="group cursor-pointer"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-3 rounded-xl group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300 backdrop-blur-sm border border-white/10">
-                  <div className="text-blue-400 group-hover:text-blue-300 transition-colors">
-                    {feature.icon}
+                <div className="flex items-center p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
+                  <div className={`bg-gradient-to-r ${feature.color} p-3 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <div className="text-white">
+                      {feature.icon}
+                    </div>
                   </div>
+                  <span className="ml-4 text-gray-300 group-hover:text-white transition-colors text-lg font-medium">
+                    {feature.text}
+                  </span>
                 </div>
-                <span className="ml-4 text-gray-300 group-hover:text-white transition-colors text-lg">
-                  {feature.text}
-                </span>
               </div>
             ))}
           </div>
 
-          {/* Floating Elements */}
-          <div className="absolute top-20 right-20 animate-float">
-            <Star className="w-6 h-6 text-yellow-400 opacity-60" />
+          {/* Floating Decorative Elements */}
+          <div className="absolute top-32 right-20 animate-float">
+            <Star className="w-8 h-8 text-yellow-400 opacity-60" />
           </div>
           <div className="absolute bottom-40 right-32 animate-float" style={{ animationDelay: '1s' }}>
-            <Heart className="w-4 h-4 text-pink-400 opacity-60" />
+            <Heart className="w-6 h-6 text-pink-400 opacity-60" />
           </div>
           <div className="absolute top-1/2 right-10 animate-float" style={{ animationDelay: '2s' }}>
-            <Cpu className="w-5 h-5 text-cyan-400 opacity-60" />
+            <Gem className="w-7 h-7 text-purple-400 opacity-60" />
+          </div>
+          <div className="absolute bottom-20 left-20 animate-float" style={{ animationDelay: '0.5s' }}>
+            <Crown className="w-6 h-6 text-amber-400 opacity-60" />
           </div>
         </div>
 
@@ -193,27 +245,33 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             {/* Form Container */}
-            <div 
-              className="relative group"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              {/* Glow Effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-lg opacity-25 group-hover:opacity-40 transition-opacity duration-500"></div>
+            <div className="relative group">
+              {/* Enhanced Glow Effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 animate-pulse"></div>
               
               {/* Main Form */}
-              <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
+              <div className={`relative bg-white/10 backdrop-blur-2xl rounded-3xl p-10 border border-white/20 shadow-2xl transition-all duration-700 ${
+                isTransitioning ? 'transform scale-95 opacity-80' : 'transform scale-100 opacity-100'
+              }`}>
                 {/* Header */}
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl mb-4 shadow-lg">
-                    <User className="w-8 h-8 text-white" />
+                <div className="text-center mb-10">
+                  <div className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-2xl transition-all duration-700 ${
+                    isLogin 
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-500' 
+                      : 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                  }`}>
+                    {isLogin ? (
+                      <User className="w-10 h-10 text-white" />
+                    ) : (
+                      <Rocket className="w-10 h-10 text-white" />
+                    )}
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-2">
+                  <h3 className="text-4xl font-bold text-white mb-3">
                     {isLogin ? 'Welcome Back' : 'Join Us Today'}
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-300 text-lg">
                     {isLogin 
-                      ? 'Sign in to access your beautiful invoices' 
+                      ? 'Sign in to access your professional dashboard' 
                       : 'Create an account to start building amazing invoices'
                     }
                   </p>
@@ -221,8 +279,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
                 {/* Error Message */}
                 {error && (
-                  <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl backdrop-blur-sm">
-                    <p className="text-red-200 text-sm text-center">{error}</p>
+                  <div className="mb-8 p-4 bg-red-500/20 border border-red-500/30 rounded-2xl backdrop-blur-sm animate-shake">
+                    <p className="text-red-200 text-sm text-center font-medium">{error}</p>
                   </div>
                 )}
 
@@ -230,16 +288,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Email Field */}
                   <div className="relative group">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-3">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" size={20} />
+                      <Mail className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-cyan-400 transition-colors duration-300" size={22} />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                        className="w-full pl-14 pr-5 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 text-lg"
                         placeholder="Enter your email"
                         required
                       />
@@ -248,16 +306,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
                   {/* Password Field */}
                   <div className="relative group">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-300 mb-3">
                       Password
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" size={20} />
+                      <Lock className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-cyan-400 transition-colors duration-300" size={22} />
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-12 pr-12 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                        className="w-full pl-14 pr-14 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 text-lg"
                         placeholder="Enter your password"
                         required
                         minLength={6}
@@ -265,95 +323,105 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-300"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
                       </button>
                     </div>
                   </div>
 
                   {/* Confirm Password (Sign Up only) */}
-                  {!isLogin && (
+                  <div className={`transition-all duration-500 overflow-hidden ${
+                    !isLogin ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
+                  }`}>
                     <div className="relative group">
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                      <label className="block text-sm font-semibold text-gray-300 mb-3">
                         Confirm Password
                       </label>
                       <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" size={20} />
+                        <Lock className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-400 transition-colors duration-300" size={22} />
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                          className="w-full pl-14 pr-5 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 text-lg"
                           placeholder="Confirm your password"
-                          required
+                          required={!isLogin}
                           minLength={6}
                         />
                       </div>
                     </div>
-                  )}
+                  </div>
 
                   {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative w-full group overflow-hidden"
+                    className="relative w-full group overflow-hidden mt-8"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative px-6 py-4 flex items-center justify-center text-white font-semibold">
+                    <div className={`absolute inset-0 rounded-2xl transition-all duration-500 ${
+                      isLogin 
+                        ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600' 
+                        : 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600'
+                    }`}></div>
+                    <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                      isLogin 
+                        ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500' 
+                        : 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500'
+                    }`}></div>
+                    <div className="relative px-8 py-4 flex items-center justify-center text-white font-bold text-lg">
                       {loading ? (
                         <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
                           {isLogin ? 'Signing In...' : 'Creating Account...'}
                         </div>
                       ) : (
                         <div className="flex items-center">
                           {isLogin ? 'Sign In' : 'Create Account'}
-                          <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                          <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform duration-300" size={22} />
                         </div>
                       )}
                     </div>
                   </button>
 
                   {/* Toggle Mode */}
-                  <div className="text-center pt-4">
+                  <div className="text-center pt-6">
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsLogin(!isLogin);
-                        setError('');
-                        setEmail('');
-                        setPassword('');
-                        setConfirmPassword('');
-                      }}
-                      className="text-gray-300 hover:text-white transition-colors font-medium group"
+                      onClick={handleModeSwitch}
+                      className="text-gray-300 hover:text-white transition-colors font-medium group text-lg"
                     >
                       {isLogin 
                         ? "Don't have an account? " 
                         : "Already have an account? "
                       }
-                      <span className="text-blue-400 group-hover:text-blue-300">
+                      <span className={`transition-colors duration-300 ${
+                        isLogin 
+                          ? 'text-emerald-400 group-hover:text-emerald-300' 
+                          : 'text-cyan-400 group-hover:text-cyan-300'
+                      }`}>
                         {isLogin ? 'Sign up' : 'Sign in'}
                       </span>
                     </button>
                   </div>
                 </form>
 
-                {/* Success Indicators */}
+                {/* Success Indicators for Sign Up */}
                 {!isLogin && (
-                  <div className="mt-6 space-y-2">
+                  <div className={`mt-8 space-y-3 transition-all duration-700 ${
+                    isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
+                  }`}>
                     <div className="flex items-center text-sm text-gray-400">
-                      <CheckCircle className="w-4 h-4 mr-2 text-green-400" />
-                      Secure cloud storage
+                      <CheckCircle className="w-5 h-5 mr-3 text-emerald-400" />
+                      Secure cloud storage with bank-grade encryption
                     </div>
                     <div className="flex items-center text-sm text-gray-400">
-                      <CheckCircle className="w-4 h-4 mr-2 text-green-400" />
-                      Real-time synchronization
+                      <CheckCircle className="w-5 h-5 mr-3 text-emerald-400" />
+                      Real-time synchronization across all devices
                     </div>
                     <div className="flex items-center text-sm text-gray-400">
-                      <CheckCircle className="w-4 h-4 mr-2 text-green-400" />
-                      Professional templates
+                      <CheckCircle className="w-5 h-5 mr-3 text-emerald-400" />
+                      Professional templates and customization
                     </div>
                   </div>
                 )}
@@ -364,11 +432,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
             <div className="text-center mt-8">
               <p className="text-gray-400 text-sm">
                 By continuing, you agree to our{' '}
-                <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
+                <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium">
                   Terms of Service
                 </a>{' '}
                 and{' '}
-                <a href="#" className="text-blue-400 hover:text-blue-300 transition-colors">
+                <a href="#" className="text-cyan-400 hover:text-cyan-300 transition-colors font-medium">
                   Privacy Policy
                 </a>
               </p>
@@ -381,11 +449,21 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
       <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
+          50% { transform: translateY(-25px) rotate(180deg); }
         }
         
         .animate-float {
-          animation: float 6s ease-in-out infinite;
+          animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-8px); }
+          75% { transform: translateX(8px); }
+        }
+        
+        .animate-shake {
+          animation: shake 0.6s ease-in-out;
         }
         
         @keyframes shimmer {
@@ -394,7 +472,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         }
         
         .animate-shimmer {
-          animation: shimmer 2s infinite;
+          animation: shimmer 3s infinite;
         }
       `}</style>
     </div>
