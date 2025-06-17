@@ -149,16 +149,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.02%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
       </div>
 
-      {/* Mouse Follower */}
-      <div 
-        className="fixed w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full pointer-events-none z-50 mix-blend-screen transition-transform duration-150 ease-out"
-        style={{
-          left: mousePosition.x - 16,
-          top: mousePosition.y - 16,
-          transform: `scale(${isTransitioning ? 1.5 : 1})`,
-        }}
-      />
-
       <div className="relative z-10 min-h-screen flex">
         {/* Left Side - Branding & Features */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-12 relative">
