@@ -17,20 +17,48 @@ if (!supabaseAnonKey || supabaseAnonKey === 'your_supabase_anon_key' || supabase
   console.log('🔗 Get it from: https://supabase.com/dashboard → Your Project → Settings → API')
 }
 
-if (!supabaseUrl || !supabaseAnonKey || 
-    supabaseUrl === 'your_supabase_project_url' || 
-    supabaseAnonKey === 'your_supabase_anon_key' ||
-    supabaseAnonKey === 'your_supabase_anon_key_here') {
-  throw new Error('Missing or invalid Supabase environment variables. Please check your .env file and restart the dev server.')
+// Check if environment variables are properly configured
+const hasValidConfig = supabaseUrl && 
+                      supabaseAnonKey && 
+                      supabaseUrl !== 'your_supabase_project_url' && 
+                      supabaseAnonKey !== 'your_supabase_anon_key' &&
+                      supabaseAnonKey !== 'your_supabase_anon_key_here' &&
+                      supabaseUrl.startsWith('https://')
+
+if (!hasValidConfig) {
+  console.warn('⚠️ Supabase configuration incomplete - using placeholder client')
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+// Create a placeholder client if configuration is invalid
+const createPlaceholderClient = () => ({
+  from: () => ({
+    select: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    insert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    update: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    delete: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+  }),
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
+    signUp: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    signInWithPassword: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
+    signOut: () => Promise.resolve({ error: null }),
+    getUser: () => Promise.resolve({ data: { user: null } }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+  },
+  channel: () => ({
+    on: () => ({ subscribe: () => {} }),
+  }),
+  rpc: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
 })
+
+export const supabase = hasValidConfig 
+  ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      }
+    })
+  : createPlaceholderClient() as any
 
 // Clear invalid session data
 export const clearInvalidSession = async () => {
@@ -44,7 +72,9 @@ export const clearInvalidSession = async () => {
     });
     
     // Sign out to clear any remaining session state
-    await supabase.auth.signOut();
+    if (hasValidConfig) {
+      await supabase.auth.signOut();
+    }
     
     console.log('✅ Cleared invalid session data');
   } catch (error) {
@@ -55,33 +85,72 @@ export const clearInvalidSession = async () => {
 // Test connection function
 export const testConnection = async () => {
   try {
-    // First check if we can reach Supabase at all
-    const { data, error } = await supabase.from('users').select('count').limit(1)
-    
-    if (error) {
-      console.error('Supabase connection test failed:', error.message)
-      
-      // Provide more specific error messages
-      if (error.message.includes('Failed to fetch')) {
-        return { success: false, error: 'Unable to reach Supabase. Please check your internet connection and Supabase URL.' }
-      } else if (error.message.includes('Invalid API key')) {
-        return { success: false, error: 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY in .env file.' }
-      } else if (error.message.includes('Project not found')) {
-        return { success: false, error: 'Supabase project not found. Please check your VITE_SUPABASE_URL in .env file.' }
-      } else if (error.message.includes('relation "users" does not exist')) {
-        return { success: false, error: 'Database tables not found. Please run the SQL schema in your Supabase dashboard.' }
-      } else {
-        return { success: false, error: `Database error: ${error.message}` }
+    // Check if configuration is valid first
+    if (!hasValidConfig) {
+      return { 
+        success: false, 
+        error: 'Supabase configuration is incomplete. Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are properly set.' 
       }
     }
-    
-    console.log('✅ Supabase connection successful')
-    return { success: true }
+
+    // Validate URL format
+    try {
+      new URL(supabaseUrl)
+    } catch {
+      return { 
+        success: false, 
+        error: 'Invalid Supabase URL format. Please ensure your VITE_SUPABASE_URL starts with https:// and is a valid URL.' 
+      }
+    }
+
+    // Test connection with timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('count')
+        .limit(1)
+        .abortSignal(controller.signal)
+      
+      clearTimeout(timeoutId)
+      
+      if (error) {
+        console.error('Supabase connection test failed:', error.message)
+        
+        // Provide more specific error messages
+        if (error.message.includes('Failed to fetch')) {
+          return { success: false, error: 'Unable to reach Supabase. Please check your internet connection and Supabase URL.' }
+        } else if (error.message.includes('Invalid API key')) {
+          return { success: false, error: 'Invalid Supabase API key. Please check your VITE_SUPABASE_ANON_KEY in .env file.' }
+        } else if (error.message.includes('Project not found')) {
+          return { success: false, error: 'Supabase project not found. Please check your VITE_SUPABASE_URL in .env file.' }
+        } else if (error.message.includes('relation "users" does not exist')) {
+          return { success: false, error: 'Database tables not found. Please run the SQL schema in your Supabase dashboard.' }
+        } else if (error.message.includes('Supabase not configured')) {
+          return { success: false, error: 'Supabase configuration is incomplete. Please check your .env file.' }
+        } else {
+          return { success: false, error: `Database error: ${error.message}` }
+        }
+      }
+      
+      console.log('✅ Supabase connection successful')
+      return { success: true }
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId)
+      
+      if (fetchError.name === 'AbortError') {
+        return { success: false, error: 'Connection timeout. Please check your internet connection and Supabase URL.' }
+      }
+      
+      throw fetchError
+    }
   } catch (err: any) {
     console.error('Supabase connection test failed:', err)
     
-    if (err.message?.includes('fetch')) {
-      return { success: false, error: 'Network error: Unable to connect to Supabase. Please check your internet connection.' }
+    if (err.message?.includes('fetch') || err.name === 'TypeError') {
+      return { success: false, error: 'Network error: Unable to connect to Supabase. Please check your internet connection and verify your Supabase URL is correct.' }
     }
     
     return { success: false, error: err.message || 'Unknown connection error' }
@@ -90,6 +159,9 @@ export const testConnection = async () => {
 
 // Auth functions
 export const signUp = async (email: string, password: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.auth.signUp({
     email,
     password,
@@ -97,6 +169,9 @@ export const signUp = async (email: string, password: string) => {
 }
 
 export const signIn = async (email: string, password: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.auth.signInWithPassword({
     email,
     password,
@@ -104,6 +179,10 @@ export const signIn = async (email: string, password: string) => {
 }
 
 export const signOut = async () => {
+  if (!hasValidConfig) {
+    return { error: null }
+  }
+  
   const { error } = await supabase.auth.signOut()
   
   // Handle the case where the session is already invalidated
@@ -116,6 +195,9 @@ export const signOut = async () => {
 }
 
 export const getCurrentUser = async () => {
+  if (!hasValidConfig) {
+    return null
+  }
   const { data: { user } } = await supabase.auth.getUser()
   return user
 }
@@ -129,6 +211,9 @@ export const getCurrentUser = async () => {
 // ==========================================
 
 export const createAccount = async (accountData: Database['public']['Tables']['accounts']['Insert']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('accounts')
     .insert(accountData)
@@ -137,6 +222,9 @@ export const createAccount = async (accountData: Database['public']['Tables']['a
 }
 
 export const getAccounts = async (userId: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('accounts')
     .select('*')
@@ -145,6 +233,9 @@ export const getAccounts = async (userId: string) => {
 }
 
 export const getAccountsByGroup = async (userId: string, groupType: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('accounts')
     .select('*')
@@ -155,6 +246,9 @@ export const getAccountsByGroup = async (userId: string, groupType: string) => {
 }
 
 export const updateAccount = async (id: string, updates: Database['public']['Tables']['accounts']['Update']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('accounts')
     .update(updates)
@@ -164,6 +258,9 @@ export const updateAccount = async (id: string, updates: Database['public']['Tab
 }
 
 export const deleteAccount = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('accounts')
     .delete()
@@ -171,6 +268,9 @@ export const deleteAccount = async (id: string) => {
 }
 
 export const getAccountBalance = async (accountId: string, asOfDate?: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_account_balance', {
     p_account_id: accountId,
     p_as_of_date: asOfDate || new Date().toISOString().split('T')[0]
@@ -186,6 +286,10 @@ export const createVoucher = async (voucherData: {
   entries: Database['public']['Tables']['voucher_entries']['Insert'][],
   gstDetails?: Database['public']['Tables']['gst_details']['Insert'][]
 }) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
   const { voucher, entries, gstDetails } = voucherData
 
   // Start a transaction
@@ -253,6 +357,10 @@ export const getVouchers = async (userId: string, filters?: {
   dateTo?: string,
   status?: string
 }) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
   let query = supabase
     .from('vouchers')
     .select(`
@@ -283,6 +391,9 @@ export const getVouchers = async (userId: string, filters?: {
 }
 
 export const getVoucherById = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('vouchers')
     .select(`
@@ -299,6 +410,10 @@ export const updateVoucher = async (id: string, voucherData: {
   entries?: Database['public']['Tables']['voucher_entries']['Insert'][],
   gstDetails?: Database['public']['Tables']['gst_details']['Insert'][]
 }) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
   const { voucher, entries, gstDetails } = voucherData
 
   // Update voucher
@@ -353,6 +468,9 @@ export const updateVoucher = async (id: string, voucherData: {
 }
 
 export const deleteVoucher = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   // Delete related records first (cascade should handle this, but being explicit)
   await supabase.from('gst_details').delete().eq('voucher_id', id)
   await supabase.from('voucher_entries').delete().eq('voucher_id', id)
@@ -368,6 +486,9 @@ export const deleteVoucher = async (id: string) => {
 // ==========================================
 
 export const createCostCenter = async (costCenterData: Database['public']['Tables']['cost_centers']['Insert']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('cost_centers')
     .insert(costCenterData)
@@ -376,6 +497,9 @@ export const createCostCenter = async (costCenterData: Database['public']['Table
 }
 
 export const getCostCenters = async (userId: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('cost_centers')
     .select('*')
@@ -385,6 +509,9 @@ export const getCostCenters = async (userId: string) => {
 }
 
 export const updateCostCenter = async (id: string, updates: Database['public']['Tables']['cost_centers']['Update']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('cost_centers')
     .update(updates)
@@ -394,6 +521,9 @@ export const updateCostCenter = async (id: string, updates: Database['public']['
 }
 
 export const deleteCostCenter = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('cost_centers')
     .delete()
@@ -405,6 +535,9 @@ export const deleteCostCenter = async (id: string) => {
 // ==========================================
 
 export const createExchangeRate = async (rateData: Database['public']['Tables']['exchange_rates']['Insert']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('exchange_rates')
     .insert(rateData)
@@ -413,6 +546,9 @@ export const createExchangeRate = async (rateData: Database['public']['Tables'][
 }
 
 export const getExchangeRates = async (currencyCode?: string, date?: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   let query = supabase
     .from('exchange_rates')
     .select('*')
@@ -430,6 +566,9 @@ export const getExchangeRates = async (currencyCode?: string, date?: string) => 
 }
 
 export const updateExchangeRate = async (id: string, updates: Database['public']['Tables']['exchange_rates']['Update']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('exchange_rates')
     .update(updates)
@@ -439,6 +578,9 @@ export const updateExchangeRate = async (id: string, updates: Database['public']
 }
 
 export const deleteExchangeRate = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('exchange_rates')
     .delete()
@@ -450,6 +592,9 @@ export const deleteExchangeRate = async (id: string) => {
 // ==========================================
 
 export const createBankReconciliation = async (reconciliationData: Database['public']['Tables']['bank_reconciliation']['Insert']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('bank_reconciliation')
     .insert(reconciliationData)
@@ -458,6 +603,9 @@ export const createBankReconciliation = async (reconciliationData: Database['pub
 }
 
 export const getBankReconciliations = async (userId: string, accountId?: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   let query = supabase
     .from('bank_reconciliation')
     .select('*')
@@ -472,6 +620,9 @@ export const getBankReconciliations = async (userId: string, accountId?: string)
 }
 
 export const updateBankReconciliation = async (id: string, updates: Database['public']['Tables']['bank_reconciliation']['Update']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('bank_reconciliation')
     .update(updates)
@@ -485,6 +636,9 @@ export const updateBankReconciliation = async (id: string, updates: Database['pu
 // ==========================================
 
 export const createBudget = async (budgetData: Database['public']['Tables']['budgets']['Insert']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('budgets')
     .insert(budgetData)
@@ -493,6 +647,9 @@ export const createBudget = async (budgetData: Database['public']['Tables']['bud
 }
 
 export const getBudgets = async (userId: string, fiscalYear?: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   let query = supabase
     .from('budgets')
     .select('*')
@@ -507,6 +664,9 @@ export const getBudgets = async (userId: string, fiscalYear?: string) => {
 }
 
 export const updateBudget = async (id: string, updates: Database['public']['Tables']['budgets']['Update']) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('budgets')
     .update(updates)
@@ -516,6 +676,9 @@ export const updateBudget = async (id: string, updates: Database['public']['Tabl
 }
 
 export const deleteBudget = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('budgets')
     .delete()
@@ -527,6 +690,9 @@ export const deleteBudget = async (id: string) => {
 // ==========================================
 
 export const generateVoucherNumber = async (voucherType: string, voucherDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_generate_voucher_number', {
     p_voucher_type: voucherType,
     p_voucher_date: voucherDate
@@ -534,6 +700,9 @@ export const generateVoucherNumber = async (voucherType: string, voucherDate: st
 }
 
 export const calculateGst = async (taxableValue: number, taxRate: number, stateCode?: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_calculate_gst', {
     p_taxable_value: taxableValue,
     p_tax_rate: taxRate,
@@ -542,6 +711,9 @@ export const calculateGst = async (taxableValue: number, taxRate: number, stateC
 }
 
 export const getExchangeRate = async (fromCurrency: string, toCurrency: string, date: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_exchange_rate', {
     p_from_currency: fromCurrency,
     p_to_currency: toCurrency,
@@ -550,6 +722,9 @@ export const getExchangeRate = async (fromCurrency: string, toCurrency: string, 
 }
 
 export const getTrialBalance = async (userId: string, asOfDate: string, includeZeroBalances: boolean = false) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_trial_balance', {
     p_user_id: userId,
     p_as_of_date: asOfDate,
@@ -558,6 +733,9 @@ export const getTrialBalance = async (userId: string, asOfDate: string, includeZ
 }
 
 export const getProfitLoss = async (userId: string, fromDate: string, toDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_profit_loss', {
     p_user_id: userId,
     p_from_date: fromDate,
@@ -566,6 +744,9 @@ export const getProfitLoss = async (userId: string, fromDate: string, toDate: st
 }
 
 export const getBalanceSheet = async (userId: string, asOfDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_balance_sheet', {
     p_user_id: userId,
     p_as_of_date: asOfDate
@@ -573,6 +754,9 @@ export const getBalanceSheet = async (userId: string, asOfDate: string) => {
 }
 
 export const getCashBook = async (userId: string, accountId: string, fromDate: string, toDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_cash_book', {
     p_user_id: userId,
     p_account_id: accountId,
@@ -582,6 +766,9 @@ export const getCashBook = async (userId: string, accountId: string, fromDate: s
 }
 
 export const getLedgerReport = async (userId: string, accountId: string, fromDate: string, toDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_ledger_report', {
     p_user_id: userId,
     p_account_id: accountId,
@@ -591,6 +778,9 @@ export const getLedgerReport = async (userId: string, accountId: string, fromDat
 }
 
 export const getDayBook = async (userId: string, fromDate: string, toDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_day_book', {
     p_user_id: userId,
     p_from_date: fromDate,
@@ -599,6 +789,9 @@ export const getDayBook = async (userId: string, fromDate: string, toDate: strin
 }
 
 export const getGstrReport = async (userId: string, reportType: string, month: number, year: number) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_gstr_report', {
     p_user_id: userId,
     p_report_type: reportType,
@@ -608,6 +801,9 @@ export const getGstrReport = async (userId: string, reportType: string, month: n
 }
 
 export const getCostCenterReport = async (userId: string, costCenterId: string, fromDate: string, toDate: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase.rpc('fn_get_cost_center_report', {
     p_user_id: userId,
     p_cost_center_id: costCenterId,
@@ -621,6 +817,9 @@ export const getCostCenterReport = async (userId: string, costCenterId: string, 
 // ==========================================
 
 export const getInvoices = async (userId: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('invoices')
     .select(`
@@ -633,6 +832,9 @@ export const getInvoices = async (userId: string) => {
 }
 
 export const createInvoice = async (invoice: any) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('invoices')
     .insert(invoice)
@@ -641,6 +843,9 @@ export const createInvoice = async (invoice: any) => {
 }
 
 export const updateInvoice = async (id: string, updates: any) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('invoices')
     .update(updates)
@@ -650,6 +855,9 @@ export const updateInvoice = async (id: string, updates: any) => {
 }
 
 export const deleteInvoice = async (id: string) => {
+  if (!hasValidConfig) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   return await supabase
     .from('invoices')
     .delete()
@@ -658,6 +866,9 @@ export const deleteInvoice = async (id: string) => {
 
 // Real-time subscription
 export const subscribeToInvoices = (userId: string, callback: (payload: any) => void) => {
+  if (!hasValidConfig) {
+    return { unsubscribe: () => {} }
+  }
   return supabase
     .channel('invoices')
     .on(
@@ -675,6 +886,9 @@ export const subscribeToInvoices = (userId: string, callback: (payload: any) => 
 
 // Real-time subscriptions for accounting tables
 export const subscribeToVouchers = (userId: string, callback: (payload: any) => void) => {
+  if (!hasValidConfig) {
+    return { unsubscribe: () => {} }
+  }
   return supabase
     .channel('vouchers')
     .on(
@@ -691,6 +905,9 @@ export const subscribeToVouchers = (userId: string, callback: (payload: any) => 
 }
 
 export const subscribeToAccounts = (userId: string, callback: (payload: any) => void) => {
+  if (!hasValidConfig) {
+    return { unsubscribe: () => {} }
+  }
   return supabase
     .channel('accounts')
     .on(
