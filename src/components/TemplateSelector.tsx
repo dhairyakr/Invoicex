@@ -149,9 +149,6 @@ const TemplateSelector: React.FC = () => {
 
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
-  const newTemplates = templates.filter(t => t.new);
-  const exceptionalTemplates = templates.filter(t => t.exceptional);
-  const allTemplates = templates.filter(t => !t.popular && !t.premium && !t.new && !t.exceptional);
 
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
     <div 
@@ -160,14 +157,11 @@ const TemplateSelector: React.FC = () => {
         template.exceptional ? 'ring-4 ring-purple-200 ring-opacity-50 hover:ring-purple-300 hover:ring-opacity-70' : ''
       }`}
     >
-      {/* Regular Template Effects */}
-      <>
-        {/* Background Gradient */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
-        
-        {/* Shimmer Effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-      </>
+      {/* Background Gradient */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
+      
+      {/* Shimmer Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
       
       {/* Premium/Popular/New Badge */}
       {(template.premium || template.popular || template.new) && (
@@ -284,65 +278,23 @@ const TemplateSelector: React.FC = () => {
           </div>
         </div>
 
-        {/* Popular Templates */}
-        {popularTemplates.length > 0 && (
-          <div className="mb-20">
-            <div className="flex items-center mb-12">
-              <div className="flex items-center">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center mr-6 shadow-lg">
-                  <Star className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-4xl font-bold text-gray-900">Popular Templates</h2>
-                  <p className="text-lg text-gray-600">Most loved by our users</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {popularTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Premium Templates */}
-        {premiumTemplates.length > 0 && (
-          <div className="mb-20">
-            <div className="flex items-center mb-12">
-              <div className="flex items-center">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 flex items-center justify-center mr-6 shadow-lg">
-                  <Crown className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-4xl font-bold text-gray-900">Premium Collection</h2>
-                  <p className="text-lg text-gray-600">Exclusive designs for professional businesses</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {premiumTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* All Templates */}
+        {/* All Templates Section */}
         <div className="mb-20">
-          <div className="flex items-center mb-12">
+          <div className="flex items-center justify-center mb-12">
             <div className="flex items-center">
               <div className="w-16 h-16 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-6 shadow-lg">
                 <Palette className="w-8 h-8 text-white" />
               </div>
-              <div>
-                <h2 className="text-4xl font-bold text-gray-900">All Templates</h2>
-                <p className="text-lg text-gray-600">Complete collection of invoice designs</p>
+              <div className="text-center">
+                <h2 className="text-4xl font-bold text-gray-900">Professional Invoice Templates</h2>
+                <p className="text-lg text-gray-600">Complete collection of stunning designs for every business</p>
               </div>
             </div>
           </div>
+          
+          {/* Template Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {allTemplates.map((template) => (
+            {templates.map((template) => (
               <TemplateCard key={template.id} template={template} />
             ))}
           </div>
