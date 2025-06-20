@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { useProducts } from '../context/ProductContext';
-import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/helpers';
 import { sendEmailInvoice } from '../utils/communication';
 import { 
@@ -33,13 +31,11 @@ import {
   Download,
   Sparkles,
   Star,
-  Activity,
-  Database
+  Activity
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { 
     filteredInvoices, 
     deleteInvoice, 
@@ -50,11 +46,8 @@ const Dashboard: React.FC = () => {
     invoices
   } = useInvoice();
   
-  const { seedSampleData } = useProducts();
-  
   const [showFilters, setShowFilters] = useState(false);
   const [statusDropdowns, setStatusDropdowns] = useState<{[key: string]: boolean}>({});
-  const [seedingData, setSeedingData] = useState(false);
 
   const getCurrencySymbol = (currency: string) => {
     const currencies = {
@@ -162,27 +155,6 @@ const Dashboard: React.FC = () => {
     }));
   };
 
-  const handleSeedSampleData = async () => {
-    if (!user) {
-      alert('Please sign in to generate sample data');
-      return;
-    }
-
-    setSeedingData(true);
-    try {
-      const result = await seedSampleData(20);
-      if (result.success) {
-        alert(`✅ Successfully generated ${result.count} sample products! Check the Products page to see them.`);
-      } else {
-        alert(`❌ Error generating sample data: ${result.error}`);
-      }
-    } catch (error) {
-      alert('❌ Error generating sample data. Please try again.');
-    } finally {
-      setSeedingData(false);
-    }
-  };
-
   // Get all unique tags from invoices
   const allTags = Array.from(new Set(filteredInvoices.flatMap(inv => inv.tags)));
 
@@ -247,30 +219,6 @@ const Dashboard: React.FC = () => {
                   <Filter size={18} className="mr-3 relative z-10" />
                   <span className="relative z-10">Filters</span>
                 </button>
-
-                {/* Sample Data Button - Only show if user is logged in */}
-                {user && (
-                  <button
-                    onClick={handleSeedSampleData}
-                    disabled={seedingData}
-                    className="relative group overflow-hidden bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-md text-white px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/90 to-emerald-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                    {seedingData ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3 relative z-10"></div>
-                        <span className="relative z-10">Generating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Database size={18} className="mr-3 relative z-10" />
-                        <span className="relative z-10">Sample Data</span>
-                        <Sparkles size={16} className="ml-2 relative z-10 opacity-75" />
-                      </>
-                    )}
-                  </button>
-                )}
                 
                 {/* Enhanced New Invoice Button - Aero Glass */}
                 <Link

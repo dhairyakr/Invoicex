@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, ProductFilters } from '../types';
 import { useAuth } from './AuthContext';
 import { supabase, testConnection } from '../lib/supabase';
-import { generateFakeProducts } from '../utils/sampleDataGenerator';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ProductContextType {
@@ -20,7 +19,6 @@ interface ProductContextType {
   getProductsByCategory: (category: string) => Product[];
   searchProducts: (query: string) => Product[];
   retryConnection: () => Promise<void>;
-  seedSampleData: (count?: number) => Promise<{ success: boolean; error?: string; count?: number }>;
 }
 
 const DEFAULT_FILTERS: ProductFilters = {
@@ -120,59 +118,6 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       } else if (errorMessage.includes('Project not found')) {
         setError('Supabase project not found. Please check your project URL in .env file.');
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Seed sample data function
-  const seedSampleData = async (count: number = 20): Promise<{ success: boolean; error?: string; count?: number }> => {
-    if (!user) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    try {
-      setLoading(true);
-      
-      // Check connection first
-      const isConnected = await checkConnection();
-      if (!isConnected) {
-        return { success: false, error: 'Unable to connect to Supabase' };
-      }
-
-      // Generate sample products
-      const sampleProducts = generateFakeProducts(count, user.id);
-      
-      // Insert products into Supabase
-      const productsToInsert = sampleProducts.map(product => ({
-        user_id: user.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        currency: product.currency,
-        category: product.category,
-        sku: product.sku,
-        stock: product.stock,
-        unit: product.unit,
-        taxable: product.taxable,
-        is_active: product.isActive,
-        tags: product.tags,
-      }));
-
-      const { error } = await supabase
-        .from('products')
-        .insert(productsToInsert);
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      // Reload products to show the new data
-      await loadProducts();
-      
-      return { success: true, count };
-    } catch (err: any) {
-      return { success: false, error: err.message || 'Failed to seed sample data' };
     } finally {
       setLoading(false);
     }
@@ -348,7 +293,6 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     getProductsByCategory,
     searchProducts,
     retryConnection,
-    seedSampleData,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
@@ -357,7 +301,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
 export const useProducts = () => {
   const context = useContext(ProductContext);
   if (context === undefined) {
-    throw new error('useProducts must be used within a ProductProvider');
+    throw new Error('useProducts must be used within a ProductProvider');
   }
   return context;
 };

@@ -23,17 +23,14 @@ import {
   Table,
   Sparkles,
   Activity,
-  Archive,
-  Database
+  Archive
 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
-import { useAuth } from '../../context/AuthContext';
 import { Product } from '../../types';
 import ProductForm from './ProductForm';
 import QuickAddTable from './QuickAddTable';
 
 const ProductManager: React.FC = () => {
-  const { user } = useAuth();
   const {
     filteredProducts,
     filters,
@@ -41,15 +38,13 @@ const ProductManager: React.FC = () => {
     loading,
     error,
     deleteProduct,
-    products,
-    seedSampleData
+    products
   } = useProducts();
 
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'quick'>('quick');
   const [showFilters, setShowFilters] = useState(false);
-  const [seedingData, setSeedingData] = useState(false);
 
   // Get unique categories and tags
   const categories = Array.from(new Set(products.map(p => p.category)));
@@ -81,27 +76,6 @@ const ProductManager: React.FC = () => {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingProduct(null);
-  };
-
-  const handleSeedSampleData = async () => {
-    if (!user) {
-      alert('Please sign in to generate sample data');
-      return;
-    }
-
-    setSeedingData(true);
-    try {
-      const result = await seedSampleData(20);
-      if (result.success) {
-        alert(`✅ Successfully generated ${result.count} sample products!`);
-      } else {
-        alert(`❌ Error generating sample data: ${result.error}`);
-      }
-    } catch (error) {
-      alert('❌ Error generating sample data. Please try again.');
-    } finally {
-      setSeedingData(false);
-    }
   };
 
   const getCurrencySymbol = (currency: string) => {
@@ -187,30 +161,6 @@ const ProductManager: React.FC = () => {
                   <Filter size={18} className="mr-3 relative z-10" />
                   <span className="relative z-10">Filters</span>
                 </button>
-
-                {/* Sample Data Button - Only show if user is logged in */}
-                {user && (
-                  <button
-                    onClick={handleSeedSampleData}
-                    disabled={seedingData}
-                    className="relative group overflow-hidden bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-md text-white px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/90 to-emerald-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
-                    {seedingData ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3 relative z-10"></div>
-                        <span className="relative z-10">Generating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Database size={18} className="mr-3 relative z-10" />
-                        <span className="relative z-10">Sample Data</span>
-                        <Sparkles size={16} className="ml-2 relative z-10 opacity-75" />
-                      </>
-                    )}
-                  </button>
-                )}
                 
                 {/* Enhanced Add Product Button - Aero Glass */}
                 <button
@@ -586,26 +536,6 @@ const ProductManager: React.FC = () => {
                 }
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {user && (
-                  <button
-                    onClick={handleSeedSampleData}
-                    disabled={seedingData}
-                    className="relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-sm text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:from-green-700/90 hover:to-emerald-700/90 hover:scale-105 transform shadow-xl hover:shadow-2xl border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                    {seedingData ? (
-                      <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3 relative z-10"></div>
-                        <span className="relative z-10">Generating...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Database size={20} className="mr-3 relative z-10" />
-                        <span className="relative z-10">Generate Sample Data</span>
-                      </>
-                    )}
-                  </button>
-                )}
                 <button
                   onClick={() => setViewMode('quick')}
                   className="relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600/80 to-blue-600/80 backdrop-blur-sm text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:from-purple-700/90 hover:to-blue-700/90 hover:scale-105 transform shadow-xl hover:shadow-2xl border border-white/30"
