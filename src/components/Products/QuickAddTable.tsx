@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Save, X, Check, Edit3, Package, Zap, ArrowRight, Archive } from 'lucide-react';
+import { Plus, Save, X, Check, Edit3, Package, Zap, ArrowRight, Archive, Sparkles } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
 
 interface QuickProduct {
@@ -122,95 +122,108 @@ const QuickAddTable: React.FC = () => {
 
   // Get stock status color
   const getStockStatus = (stock?: number) => {
-    if (stock === undefined) return { color: 'text-gray-400', bg: 'bg-gray-100', text: 'N/A' };
-    if (stock === 0) return { color: 'text-red-600', bg: 'bg-red-100', text: 'Out of Stock' };
-    if (stock <= 5) return { color: 'text-yellow-600', bg: 'bg-yellow-100', text: 'Low Stock' };
-    return { color: 'text-green-600', bg: 'bg-green-100', text: 'In Stock' };
+    if (stock === undefined) return { color: 'text-gray-500', bg: 'bg-gray-100/60', text: 'N/A' };
+    if (stock === 0) return { color: 'text-red-600', bg: 'bg-red-100/60', text: 'Out of Stock' };
+    if (stock <= 5) return { color: 'text-yellow-600', bg: 'bg-yellow-100/60', text: 'Low Stock' };
+    return { color: 'text-green-600', bg: 'bg-green-100/60', text: 'In Stock' };
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-xl mr-4">
-              <Zap className="w-6 h-6 text-white" />
+    <div className="relative bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl shadow-gray-500/20 border border-white/50 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
+      
+      {/* Enhanced Header - Aero Glass */}
+      <div className="relative bg-gradient-to-r from-purple-50/60 to-blue-50/60 backdrop-blur-sm p-8 border-b border-white/30">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500/80 to-blue-500/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 mr-6 border border-white/30">
+                <Zap className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-2">Quick Add Products</h3>
+                <p className="text-gray-700 text-lg">Add multiple products quickly with inventory tracking</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">Quick Add Products</h3>
-              <p className="text-gray-600 text-sm">Add multiple products quickly with inventory tracking</p>
-            </div>
+            <button
+              onClick={addNewRow}
+              className="relative group overflow-hidden bg-gradient-to-r from-purple-600/80 to-blue-600/80 backdrop-blur-md text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:shadow-purple-500/40 transform hover:-translate-y-1 hover:scale-105 border border-white/30"
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/90 to-blue-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+              <Plus size={20} className="mr-3 relative z-10" />
+              <span className="relative z-10">Add Row</span>
+              <Sparkles size={16} className="ml-2 relative z-10 opacity-75" />
+            </button>
           </div>
-          <button
-            onClick={addNewRow}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold transition-all duration-200 hover:from-blue-700 hover:to-purple-700 hover:scale-105 transform shadow-lg"
-          >
-            <Plus size={18} className="mr-2" />
-            Add Row
-          </button>
         </div>
       </div>
 
-      {/* Quick Tips */}
-      <div className="bg-blue-50 border-b border-blue-100 p-4">
-        <div className="flex items-center text-sm text-blue-800">
-          <Package className="w-4 h-4 mr-2" />
-          <span className="font-medium">Quick Tips:</span>
+      {/* Enhanced Quick Tips - Aero Glass */}
+      <div className="relative bg-blue-50/40 backdrop-blur-sm border-b border-white/30 p-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
+        <div className="relative z-10 flex items-center text-sm text-blue-800">
+          <Package className="w-5 h-5 mr-3 flex-shrink-0" />
+          <span className="font-semibold">Quick Tips:</span>
           <span className="ml-2">Fill in Name & Category (required) • Add Stock quantity to track inventory • Use Ctrl+Enter to save • Click ✓ to save individual rows</span>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Enhanced Table */}
+      <div className="relative z-10 overflow-x-auto">
         <table className="min-w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-gradient-to-r from-gray-50/60 to-purple-50/60 backdrop-blur-sm">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/5">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-1/5">
                 Product Name *
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-1/5">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-1/5">
                 Description
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-20">
                 Price
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-16">
                 Currency
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
                 Category *
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-16">
                 Unit
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-20">
                 <div className="flex items-center">
-                  <Archive size={14} className="mr-1" />
+                  <Archive size={14} className="mr-2" />
                   Stock
                 </div>
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-24">
+              <th className="px-6 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider w-24">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-white/30">
             {quickProducts.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center">
+                <td colSpan={8} className="px-6 py-16 text-center">
                   <div className="flex flex-col items-center">
-                    <div className="bg-gradient-to-br from-blue-100 to-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                      <Package size={32} className="text-blue-600" />
+                    <div className="relative mb-6">
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-blue-500/30 w-20 h-20 rounded-full blur-2xl mx-auto"></div>
+                      <div className="relative bg-gradient-to-br from-purple-100/60 to-blue-100/60 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-xl border border-white/50">
+                        <Package size={40} className="text-purple-600" />
+                      </div>
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-2">Ready to add products?</h4>
-                    <p className="text-gray-600 mb-4">Click "Add Row" to start adding products with inventory tracking</p>
+                    <h4 className="text-2xl font-bold text-gray-900 mb-3">Ready to add products?</h4>
+                    <p className="text-gray-700 mb-6 text-lg">Click "Add Row" to start adding products with inventory tracking</p>
                     <button
                       onClick={addNewRow}
-                      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      className="relative inline-flex items-center px-6 py-3 bg-purple-600/80 backdrop-blur-sm text-white rounded-2xl hover:bg-purple-700/90 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
                     >
-                      <Plus size={16} className="mr-2" />
-                      Add First Product
+                      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
+                      <Plus size={18} className="mr-2 relative z-10" />
+                      <span className="relative z-10">Add First Product</span>
                     </button>
                   </div>
                 </td>
@@ -219,106 +232,127 @@ const QuickAddTable: React.FC = () => {
               quickProducts.map((product, index) => {
                 const stockStatus = getStockStatus(product.stock);
                 return (
-                  <tr key={product.id} className="hover:bg-blue-50 transition-colors">
+                  <tr key={product.id} className="hover:bg-blue-50/30 transition-colors group">
                     {/* Product Name */}
-                    <td className="px-4 py-3">
-                      <input
-                        ref={index === quickProducts.length - 1 ? nameInputRef : undefined}
-                        type="text"
-                        value={product.name}
-                        onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                        onKeyPress={(e) => handleKeyPress(e, product)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        placeholder="Enter product name"
-                      />
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <input
+                          ref={index === quickProducts.length - 1 ? nameInputRef : undefined}
+                          type="text"
+                          value={product.name}
+                          onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                          onKeyPress={(e) => handleKeyPress(e, product)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          placeholder="Enter product name"
+                        />
+                      </div>
                     </td>
 
                     {/* Description */}
-                    <td className="px-4 py-3">
-                      <input
-                        type="text"
-                        value={product.description}
-                        onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
-                        onKeyPress={(e) => handleKeyPress(e, product)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        placeholder="Brief description"
-                      />
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <input
+                          type="text"
+                          value={product.description}
+                          onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
+                          onKeyPress={(e) => handleKeyPress(e, product)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          placeholder="Brief description"
+                        />
+                      </div>
                     </td>
 
                     {/* Price */}
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        value={product.price}
-                        onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value))}
-                        onKeyPress={(e) => handleKeyPress(e, product)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                        placeholder="0.00"
-                        min="0"
-                        step="0.01"
-                      />
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <input
+                          type="number"
+                          value={product.price}
+                          onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value))}
+                          onKeyPress={(e) => handleKeyPress(e, product)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          placeholder="0.00"
+                          min="0"
+                          step="0.01"
+                        />
+                      </div>
                     </td>
 
                     {/* Currency */}
-                    <td className="px-4 py-3">
-                      <select
-                        value={product.currency}
-                        onChange={(e) => updateProduct(product.id, 'currency', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      >
-                        {currencies.map(currency => (
-                          <option key={currency.code} value={currency.code}>
-                            {currency.symbol} {currency.code}
-                          </option>
-                        ))}
-                      </select>
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <select
+                          value={product.currency}
+                          onChange={(e) => updateProduct(product.id, 'currency', e.target.value)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                        >
+                          {currencies.map(currency => (
+                            <option key={currency.code} value={currency.code}>
+                              {currency.symbol} {currency.code}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
 
                     {/* Category */}
-                    <td className="px-4 py-3">
-                      <select
-                        value={product.category}
-                        onChange={(e) => updateProduct(product.id, 'category', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      >
-                        <option value="">Select category</option>
-                        {categories.map(category => (
-                          <option key={category} value={category}>
-                            {category}
-                          </option>
-                        ))}
-                      </select>
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <select
+                          value={product.category}
+                          onChange={(e) => updateProduct(product.id, 'category', e.target.value)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                        >
+                          <option value="">Select category</option>
+                          {categories.map(category => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
 
                     {/* Unit */}
-                    <td className="px-4 py-3">
-                      <select
-                        value={product.unit}
-                        onChange={(e) => updateProduct(product.id, 'unit', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      >
-                        {units.map(unit => (
-                          <option key={unit} value={unit}>
-                            {unit}
-                          </option>
-                        ))}
-                      </select>
+                    <td className="px-6 py-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <select
+                          value={product.unit}
+                          onChange={(e) => updateProduct(product.id, 'unit', e.target.value)}
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                        >
+                          {units.map(unit => (
+                            <option key={unit} value={unit}>
+                              {unit}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
 
                     {/* Stock */}
-                    <td className="px-4 py-3">
-                      <div className="space-y-1">
-                        <input
-                          type="number"
-                          value={product.stock || ''}
-                          onChange={(e) => updateProduct(product.id, 'stock', e.target.value ? Number(e.target.value) : undefined)}
-                          onKeyPress={(e) => handleKeyPress(e, product)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                          placeholder="0"
-                          min="0"
-                        />
+                    <td className="px-6 py-4">
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                          <input
+                            type="number"
+                            value={product.stock || ''}
+                            onChange={(e) => updateProduct(product.id, 'stock', e.target.value ? Number(e.target.value) : undefined)}
+                            onKeyPress={(e) => handleKeyPress(e, product)}
+                            className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                            placeholder="0"
+                            min="0"
+                          />
+                        </div>
                         {product.stock !== undefined && (
-                          <div className={`text-xs px-2 py-1 rounded-full text-center ${stockStatus.bg} ${stockStatus.color}`}>
+                          <div className={`text-xs px-3 py-1 rounded-full text-center backdrop-blur-sm border border-white/50 ${stockStatus.bg} ${stockStatus.color}`}>
                             {product.stock === 0 ? 'Out' : product.stock <= 5 ? 'Low' : 'OK'}
                           </div>
                         )}
@@ -326,27 +360,29 @@ const QuickAddTable: React.FC = () => {
                     </td>
 
                     {/* Actions */}
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <div className="flex items-center justify-center space-x-2">
                         <button
                           onClick={() => saveProduct(product)}
                           disabled={saving.includes(product.id)}
-                          className="p-2 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-lg transition-colors disabled:opacity-50"
+                          className="relative p-3 text-green-600 hover:text-green-800 hover:bg-green-100/60 backdrop-blur-sm rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/50"
                           title="Save product (Ctrl+Enter)"
                         >
+                          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
                           {saving.includes(product.id) ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600 relative z-10"></div>
                           ) : (
-                            <Check size={16} />
+                            <Check size={18} className="relative z-10" />
                           )}
                         </button>
                         <button
                           onClick={() => cancelEdit(product.id)}
                           disabled={saving.includes(product.id)}
-                          className="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50"
+                          className="relative p-3 text-red-600 hover:text-red-800 hover:bg-red-100/60 backdrop-blur-sm rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/50"
                           title="Cancel"
                         >
-                          <X size={16} />
+                          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                          <X size={18} className="relative z-10" />
                         </button>
                       </div>
                     </td>
@@ -358,19 +394,21 @@ const QuickAddTable: React.FC = () => {
         </table>
       </div>
 
-      {/* Footer with bulk actions */}
+      {/* Enhanced Footer with bulk actions - Aero Glass */}
       {quickProducts.length > 0 && (
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+        <div className="relative bg-gray-50/40 backdrop-blur-sm px-8 py-6 border-t border-white/30">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="text-sm text-gray-700 font-semibold">
               {quickProducts.length} product{quickProducts.length !== 1 ? 's' : ''} ready to save
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => setQuickProducts([])}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-colors text-sm"
+                className="relative px-6 py-3 text-gray-600 hover:text-gray-800 hover:bg-gray-200/60 backdrop-blur-sm rounded-2xl transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/50"
               >
-                Clear All
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
+                <span className="relative z-10">Clear All</span>
               </button>
               <button
                 onClick={async () => {
@@ -381,34 +419,36 @@ const QuickAddTable: React.FC = () => {
                   }
                 }}
                 disabled={saving.length > 0}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm disabled:opacity-50 flex items-center"
+                className="relative px-6 py-3 bg-green-600/80 backdrop-blur-sm text-white rounded-2xl hover:bg-green-700/90 transition-all duration-300 text-sm font-semibold disabled:opacity-50 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
               >
-                <Save size={16} className="mr-2" />
-                Save All Valid
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
+                <Save size={16} className="mr-2 relative z-10" />
+                <span className="relative z-10">Save All Valid</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Stock Legend */}
-      <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-        <div className="flex items-center justify-center space-x-6 text-xs">
+      {/* Enhanced Stock Legend - Aero Glass */}
+      <div className="relative bg-gray-50/40 backdrop-blur-sm px-8 py-4 border-t border-white/30">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
+        <div className="relative z-10 flex items-center justify-center space-x-8 text-xs">
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-100 rounded-full mr-2"></div>
-            <span className="text-gray-600">{'In Stock (>5)'}</span>
+            <div className="w-4 h-4 bg-green-100/60 backdrop-blur-sm rounded-full mr-3 border border-white/50"></div>
+            <span className="text-gray-700 font-medium">{'In Stock (>5)'}</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-yellow-100 rounded-full mr-2"></div>
-            <span className="text-gray-600">Low Stock (1-5)</span>
+            <div className="w-4 h-4 bg-yellow-100/60 backdrop-blur-sm rounded-full mr-3 border border-white/50"></div>
+            <span className="text-gray-700 font-medium">Low Stock (1-5)</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-red-100 rounded-full mr-2"></div>
-            <span className="text-gray-600">Out of Stock (0)</span>
+            <div className="w-4 h-4 bg-red-100/60 backdrop-blur-sm rounded-full mr-3 border border-white/50"></div>
+            <span className="text-gray-700 font-medium">Out of Stock (0)</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 bg-gray-100 rounded-full mr-2"></div>
-            <span className="text-gray-600">No Tracking</span>
+            <div className="w-4 h-4 bg-gray-100/60 backdrop-blur-sm rounded-full mr-3 border border-white/50"></div>
+            <span className="text-gray-700 font-medium">No Tracking</span>
           </div>
         </div>
       </div>
