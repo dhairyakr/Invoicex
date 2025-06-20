@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Invoice, InvoiceItem, TaxRate, InvoiceFilters } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { generateFakeInvoices, generateFakeProducts } from '../utils/sampleDataGenerator';
 
 interface InvoiceContextType {
   invoices: Invoice[];
@@ -82,7 +83,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [filters, setFilters] = useState<InvoiceFilters>(DEFAULT_FILTERS);
 
-  // Load invoices from localStorage
+  // Load invoices from localStorage and seed if empty
   useEffect(() => {
     const savedInvoices = localStorage.getItem('invoices');
     if (savedInvoices) {
@@ -100,17 +101,44 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           createdAt: invoice.createdAt || new Date().toISOString(),
           updatedAt: invoice.updatedAt || new Date().toISOString(),
         }));
-        setInvoices(migratedInvoices);
+        
+        if (migratedInvoices.length === 0) {
+          // No invoices found, generate sample data
+          console.log('🎯 No invoices found, generating sample data...');
+          const sampleProducts = generateFakeProducts(20, 'sample-user');
+          const sampleInvoices = generateFakeInvoices(10, 'sample-user', sampleProducts);
+          setInvoices(sampleInvoices);
+          localStorage.setItem('invoices', JSON.stringify(sampleInvoices));
+          console.log('✅ Generated 10 sample invoices');
+        } else {
+          setInvoices(migratedInvoices);
+        }
       } catch (error) {
         console.error('Error loading invoices:', error);
-        setInvoices([]);
+        // If there's an error parsing, generate fresh sample data
+        console.log('🎯 Error parsing invoices, generating fresh sample data...');
+        const sampleProducts = generateFakeProducts(20, 'sample-user');
+        const sampleInvoices = generateFakeInvoices(10, 'sample-user', sampleProducts);
+        setInvoices(sampleInvoices);
+        localStorage.setItem('invoices', JSON.stringify(sampleInvoices));
+        console.log('✅ Generated 10 sample invoices');
       }
+    } else {
+      // No saved invoices, generate sample data
+      console.log('🎯 No saved invoices found, generating sample data...');
+      const sampleProducts = generateFakeProducts(20, 'sample-user');
+      const sampleInvoices = generateFakeInvoices(10, 'sample-user', sampleProducts);
+      setInvoices(sampleInvoices);
+      localStorage.setItem('invoices', JSON.stringify(sampleInvoices));
+      console.log('✅ Generated 10 sample invoices');
     }
   }, []);
 
   // Save invoices to localStorage when they change
   useEffect(() => {
-    localStorage.setItem('invoices', JSON.stringify(invoices));
+    if (invoices.length > 0) {
+      localStorage.setItem('invoices', JSON.stringify(invoices));
+    }
   }, [invoices]);
 
   // Filter invoices based on current filters
