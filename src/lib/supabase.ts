@@ -109,6 +109,8 @@ export const signOut = async () => {
   // Handle the case where the session is already invalidated
   if (error && error.message?.includes('session_not_found')) {
     console.warn('Session already invalidated on server side - user is effectively logged out')
+    // Clear local session data when server reports session doesn't exist
+    await clearInvalidSession()
     return { error: null } // Return success since user is already logged out
   }
   
