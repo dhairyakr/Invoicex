@@ -106,6 +106,31 @@ const Header: React.FC = () => {
             {/* Professional User Section */}
             {user && (
               <div className="flex items-center space-x-3">
+                {/* Liquid Glass Logout Button */}
+                <button
+                  onClick={handleSignOut}
+                  className="relative group overflow-hidden"
+                >
+                  {/* Multi-layer Glass Effect */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-red-400/40 to-purple-400/40 rounded-xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="relative bg-gradient-to-r from-red-500 to-purple-600 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg group-hover:shadow-xl transform group-hover:scale-105 border border-white/20">
+                    {/* Inner Glass Reflection */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                    
+                    {/* Hover Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                    
+                    {/* Liquid Shimmer */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700 rounded-xl"></div>
+                    
+                    <span className="relative z-10 text-white flex items-center">
+                      <LogOut size={16} className="mr-2" />
+                      Sign Out
+                    </span>
+                  </div>
+                </button>
+
                 {/* User Menu */}
                 <div className="relative">
                   <button
@@ -151,16 +176,6 @@ const Header: React.FC = () => {
                         >
                           <Settings size={16} className="mr-3 text-white/70" />
                           Account Settings
-                        </button>
-                        
-                        <div className="border-t border-white/20 my-1"></div>
-                        
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full text-left px-4 py-3 text-sm text-red-300 hover:text-red-200 hover:bg-red-500/20 flex items-center transition-colors duration-200"
-                        >
-                          <LogOut size={16} className="mr-3 text-red-400" />
-                          Sign Out
                         </button>
                       </div>
                     </div>
