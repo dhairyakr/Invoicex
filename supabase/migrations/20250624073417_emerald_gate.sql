@@ -1,21 +1,61 @@
 /*
-  # Invoice Beautifier Database Schema
+  # Fix Sign-up Schema and Policies
 
   1. New Tables
-    - `users` - User profiles extending Supabase auth
-    - `products` - Product catalog for invoice items
-    - `invoices` - Main invoice records
-    - `invoice_items` - Line items for each invoice
-    - `tax_rates` - Tax configurations per invoice
+    - `users` (extends Supabase auth.users)
+      - `id` (uuid, primary key, references auth.users)
+      - `email` (text, unique)
+      - `full_name` (text, nullable)
+      - `avatar_url` (text, nullable)
+      - `created_at` (timestamp)
+      - `updated_at` (timestamp)
+    - `products`
+      - `id` (uuid, primary key)
+      - `user_id` (uuid, foreign key to users)
+      - `name` (text)
+      - `description` (text)
+      - `price` (numeric)
+      - `currency` (text)
+      - `category` (text)
+      - `sku` (text, nullable)
+      - `stock` (integer, nullable)
+      - `unit` (text)
+      - `taxable` (boolean)
+      - `is_active` (boolean)
+      - `tags` (text array)
+      - `created_at` (timestamp)
+      - `updated_at` (timestamp)
+    - `invoices`
+      - Complete invoice structure with all fields
+    - `invoice_items`
+      - Invoice line items
+    - `tax_rates`
+      - Tax rate definitions
 
   2. Security
     - Enable RLS on all tables
-    - Add policies for authenticated users to manage their own data
-    - Create trigger for automatic user profile creation
+    - Add comprehensive policies for all operations
+    - Create user creation trigger
 
   3. Functions
-    - `handle_new_user()` - Automatically creates user profile on signup
+    - `handle_new_user()` function for automatic user profile creation
 */
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can view own products" ON public.products;
+DROP POLICY IF EXISTS "Users can create own products" ON public.products;
+DROP POLICY IF EXISTS "Users can update own products" ON public.products;
+DROP POLICY IF EXISTS "Users can delete own products" ON public.products;
+DROP POLICY IF EXISTS "Users can view own invoices" ON public.invoices;
+DROP POLICY IF EXISTS "Users can create own invoices" ON public.invoices;
+DROP POLICY IF EXISTS "Users can update own invoices" ON public.invoices;
+DROP POLICY IF EXISTS "Users can delete own invoices" ON public.invoices;
+DROP POLICY IF EXISTS "Users can view own invoice items" ON public.invoice_items;
+DROP POLICY IF EXISTS "Users can manage own invoice items" ON public.invoice_items;
+DROP POLICY IF EXISTS "Users can view own tax rates" ON public.tax_rates;
+DROP POLICY IF EXISTS "Users can manage own tax rates" ON public.tax_rates;
 
 -- Create users table (extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS public.users (
@@ -32,11 +72,16 @@ CREATE TABLE IF NOT EXISTS public.products (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
-  description TEXT,
-  price DECIMAL NOT NULL DEFAULT 0,
-  unit TEXT DEFAULT 'item',
-  category TEXT,
+  description TEXT DEFAULT '',
+  price NUMERIC DEFAULT 0,
+  currency TEXT DEFAULT 'USD',
+  category TEXT NOT NULL,
   sku TEXT,
+  stock INTEGER,
+  unit TEXT DEFAULT 'piece',
+  taxable BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -62,7 +107,7 @@ CREATE TABLE IF NOT EXISTS public.invoices (
   font TEXT DEFAULT 'inter',
   show_footer BOOLEAN DEFAULT true,
   discount_type TEXT DEFAULT 'percentage',
-  discount_value DECIMAL DEFAULT 0,
+  discount_value NUMERIC DEFAULT 0,
   currency TEXT DEFAULT 'USD',
   status TEXT DEFAULT 'draft',
   tags TEXT[] DEFAULT '{}',
@@ -79,7 +124,7 @@ CREATE TABLE IF NOT EXISTS public.invoice_items (
   invoice_id UUID REFERENCES public.invoices(id) ON DELETE CASCADE NOT NULL,
   description TEXT NOT NULL,
   quantity INTEGER NOT NULL DEFAULT 1,
-  rate DECIMAL NOT NULL DEFAULT 0,
+  rate NUMERIC NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -88,7 +133,7 @@ CREATE TABLE IF NOT EXISTS public.tax_rates (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   invoice_id UUID REFERENCES public.invoices(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
-  rate DECIMAL NOT NULL DEFAULT 0,
+  rate NUMERIC NOT NULL DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

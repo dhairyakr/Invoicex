@@ -88,19 +88,58 @@ export const testConnection = async () => {
   }
 }
 
-// Auth functions
+// Auth functions with enhanced error handling
 export const signUp = async (email: string, password: string) => {
-  return await supabase.auth.signUp({
-    email,
-    password,
-  })
+  try {
+    console.log('🔐 Supabase signUp called for:', email);
+    
+    const result = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth`
+      }
+    });
+    
+    console.log('📝 Supabase signUp result:', {
+      user: result.data.user ? 'User created' : 'No user',
+      session: result.data.session ? 'Session created' : 'No session',
+      error: result.error?.message || 'No error'
+    });
+    
+    return result;
+  } catch (err: any) {
+    console.error('❌ Supabase signUp error:', err);
+    return {
+      data: { user: null, session: null },
+      error: { message: err.message || 'Unknown sign up error' }
+    };
+  }
 }
 
 export const signIn = async (email: string, password: string) => {
-  return await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  try {
+    console.log('🔐 Supabase signIn called for:', email);
+    
+    const result = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    console.log('📝 Supabase signIn result:', {
+      user: result.data.user ? 'User found' : 'No user',
+      session: result.data.session ? 'Session created' : 'No session',
+      error: result.error?.message || 'No error'
+    });
+    
+    return result;
+  } catch (err: any) {
+    console.error('❌ Supabase signIn error:', err);
+    return {
+      data: { user: null, session: null },
+      error: { message: err.message || 'Unknown sign in error' }
+    };
+  }
 }
 
 export const signOut = async () => {
