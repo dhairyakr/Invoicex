@@ -106,17 +106,23 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     }
 
     try {
-      const { error } = isLogin 
+      const result = isLogin 
         ? await signIn(email.trim(), password)
         : await signUp(email.trim(), password);
 
-      if (error) {
-        setError(error.message);
+      if (result.error) {
+        setError(result.error.message);
       } else {
         if (!isLogin) {
-          setSuccess('Account created successfully! Please check your email for verification instructions.');
+          // Check if there's a specific message from the sign up process
+          if ((result as any).message) {
+            setSuccess((result as any).message);
+          } else {
+            setSuccess('Account created successfully! You can now sign in.');
+          }
+        } else {
+          onSuccess?.();
         }
-        onSuccess?.();
       }
     } catch (err) {
       console.error('Authentication error:', err);
@@ -497,8 +503,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               </div>
             </div>
 
-            {/* Bottom Text */}
+            {/* Bottom Text with Badge */}
             <div className="text-center mt-8">
+              {/* Bolt Badge */}
+              <div className="mb-6">
+                <img 
+                  src="/black_circle_360x360.png" 
+                  alt="Powered by Bolt" 
+                  className="w-16 h-16 mx-auto opacity-60 hover:opacity-80 transition-opacity duration-300"
+                />
+              </div>
+              
               <p className="text-gray-500">
                 By continuing, you agree to our{' '}
                 <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-medium">
