@@ -248,7 +248,7 @@ const TemplateSelector: React.FC = () => {
                 Choose Your Perfect Template
               </h1>
               <p className="text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
-                Select from our collection of professionally designed invoice templates with the elegant Aero Glass aesthetic.
+                Select from our collection of professionally designed invoice templates
               </p>
             </div>
           </div>
