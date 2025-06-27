@@ -28,11 +28,11 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 interface AuthPageProps {
-  isLogin: boolean;
   onSuccess?: () => void;
 }
 
-const AuthPage: React.FC<AuthPageProps> = ({ isLogin, onSuccess }) => {
+const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
+  const [isLogin, setIsLogin] = useState(false); // Default to sign-up
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -130,6 +130,22 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLogin, onSuccess }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleModeSwitch = () => {
+    setIsTransitioning(true);
+    setError('');
+    setSuccess('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    
+    setTimeout(() => {
+      setIsLogin(!isLogin);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 150);
   };
 
   return (
@@ -440,6 +456,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ isLogin, onSuccess }) => {
                         )}
                       </div>
                     </button>
+
+                    {/* Toggle Mode */}
+                    <div className="text-center pt-6">
+                      <button
+                        type="button"
+                        onClick={handleModeSwitch}
+                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg"
+                        disabled={loading}
+                      >
+                        {isLogin 
+                          ? "Don't have an account? " 
+                          : "Already have an account? "
+                        }
+                        <span className={`transition-colors duration-300 ${
+                          isLogin 
+                            ? 'text-emerald-500 group-hover:text-emerald-600' 
+                            : 'text-blue-500 group-hover:text-blue-600'
+                        }`}>
+                          {isLogin ? 'Sign up' : 'Sign in'}
+                        </span>
+                      </button>
+                    </div>
                   </form>
 
                   {/* Features for Sign Up */}
