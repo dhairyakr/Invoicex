@@ -44,6 +44,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
   const { signIn, signUp } = useAuth();
 
+  // Debug logging for loading state
+  console.log('AuthPage render - loading state:', loading, 'isLogin:', isLogin);
+
   // Mouse tracking for subtle interactive effects
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -79,28 +82,34 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     setError('');
     setSuccess('');
 
+    console.log('Form submission started - loading set to true');
+
     // Basic validation
     if (!email.trim()) {
       setError('Please enter your email address');
       setLoading(false);
+      console.log('Validation failed - loading set to false');
       return;
     }
 
     if (!password.trim()) {
       setError('Please enter your password');
       setLoading(false);
+      console.log('Validation failed - loading set to false');
       return;
     }
 
     if (!isLogin && password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
+      console.log('Validation failed - loading set to false');
       return;
     }
 
     if (!isLogin && password.length < 6) {
       setError('Password must be at least 6 characters long');
       setLoading(false);
+      console.log('Validation failed - loading set to false');
       return;
     }
 
@@ -111,6 +120,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
       if (result.error) {
         setError(result.error.message);
+        console.log('Auth error - loading will be set to false in finally block');
       } else {
         if (!isLogin) {
           // Check if there's a specific message from the sign up process
@@ -122,22 +132,27 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         } else {
           onSuccess?.();
         }
+        console.log('Auth success - loading will be set to false in finally block');
       }
     } catch (err) {
       console.error('Authentication error:', err);
       setError('An unexpected error occurred. Please try again.');
+      console.log('Auth exception - loading will be set to false in finally block');
     } finally {
       setLoading(false);
+      console.log('Form submission completed - loading set to false');
     }
   };
 
   const handleModeSwitch = () => {
+    console.log('Mode switch clicked - current loading state:', loading);
     setError('');
     setSuccess('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
     setIsLogin(!isLogin);
+    console.log('Mode switched to:', !isLogin ? 'login' : 'signup');
   };
 
   return (
@@ -447,25 +462,15 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       </div>
                     </button>
 
-                    {/* Toggle Mode */}
+                    {/* Mode Switch Button */}
                     <div className="text-center pt-6">
                       <button
                         type="button"
                         onClick={handleModeSwitch}
-                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg"
                         disabled={loading}
+                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {isLogin 
-                          ? "Don't have an account? " 
-                          : "Already have an account? "
-                        }
-                        <span className={`transition-colors duration-300 ${
-                          isLogin 
-                            ? 'text-emerald-500 group-hover:text-emerald-600' 
-                            : 'text-blue-500 group-hover:text-blue-600'
-                        }`}>
-                          {isLogin ? 'Sign up' : 'Sign in'}
-                        </span>
+                        {isLogin ? 'Create an account' : 'Sign in to your account'}
                       </button>
                     </div>
                   </form>
