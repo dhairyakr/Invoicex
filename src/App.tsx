@@ -4,7 +4,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { InvoiceProvider } from './context/InvoiceContext';
 import { ProductProvider } from './context/ProductContext';
 import Header from './components/Header';
-import AuthPage from './components/Auth/AuthPage';
+import SignUpPage from './components/Auth/SignUpPage';
+import LoginPage from './components/Auth/LoginPage';
 import Dashboard from './components/Dashboard';
 import InvoiceForm from './components/InvoiceForm';
 import InvoicePreview from './components/InvoicePreview';
@@ -109,7 +110,11 @@ const AppContent: React.FC = () => {
             {/* Public Routes */}
             <Route 
               path="/auth" 
-              element={user ? <Navigate to="/" replace /> : <AuthPage />} 
+              element={user ? <Navigate to="/" replace /> : <SignUpPage />} 
+            />
+            <Route 
+              path="/login" 
+              element={user ? <Navigate to="/" replace /> : <LoginPage />} 
             />
             
             {/* Protected Routes */}
