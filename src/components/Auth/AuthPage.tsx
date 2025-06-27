@@ -41,7 +41,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const { signIn, signUp } = useAuth();
 
@@ -55,16 +54,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Enhanced background particles with more dramatic movement
-  const particles = Array.from({ length: 60 }, (_, i) => ({
+  // Refined subtle background particles
+  const particles = Array.from({ length: 40 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    size: Math.random() * 4 + 1,
-    speed: Math.random() * 4 + 3,
-    opacity: Math.random() * 0.4 + 0.1,
-    delay: Math.random() * 10,
-    hue: Math.random() * 60 + 200, // Blue to purple range
+    size: Math.random() * 3 + 1,
+    speed: Math.random() * 3 + 2,
+    opacity: Math.random() * 0.3 + 0.1,
+    delay: Math.random() * 8,
+    hue: Math.random() * 30 + 200, // Subtle blue range
   }));
 
   const features = [
@@ -132,38 +131,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     }
   };
 
-  // Dramatic mode switch with quirky animations
   const handleModeSwitch = () => {
-    setIsTransitioning(true);
     setError('');
     setSuccess('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
-    
-    // First phase: dramatic exit animation (350ms)
-    setTimeout(() => {
-      setIsLogin(!isLogin);
-      // Second phase: dramatic enter animation (350ms)
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 350);
-    }, 350);
+    setIsLogin(!isLogin);
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Enhanced Dynamic Background */}
+      {/* Refined Subtle Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        {/* Primary Dynamic Orbs */}
-        <div className={`absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-r from-blue-200/30 via-cyan-200/20 to-teal-200/15 rounded-full blur-3xl opacity-70 transition-all duration-1000 ${isTransitioning ? 'scale-150 rotate-180' : 'scale-100 rotate-0'}`}></div>
-        <div className={`absolute bottom-0 right-0 w-[700px] h-[700px] bg-gradient-to-r from-purple-200/20 via-pink-200/15 to-rose-200/15 rounded-full blur-3xl opacity-60 transition-all duration-1000 ${isTransitioning ? 'scale-150 -rotate-180' : 'scale-100 rotate-0'}`}></div>
+        {/* Primary Subtle Orbs */}
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-r from-blue-200/20 via-cyan-200/15 to-teal-200/10 rounded-full blur-2xl opacity-60"></div>
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-r from-purple-200/15 via-pink-200/10 to-rose-200/10 rounded-full blur-2xl opacity-50"></div>
         
-        {/* Enhanced Floating Particles */}
+        {/* Subtle Floating Particles */}
         {particles.map((particle) => (
           <div
             key={particle.id}
-            className={`absolute rounded-full animate-float transition-all duration-700 ${isTransitioning ? 'animate-bounce scale-150' : ''}`}
+            className="absolute rounded-full animate-float"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
@@ -172,18 +161,18 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               opacity: particle.opacity,
               animationDelay: `${particle.delay}s`,
               animationDuration: `${particle.speed + 8}s`,
-              background: `hsla(${particle.hue}, 50%, 70%, 0.3)`,
-              boxShadow: `0 0 ${particle.size * 3}px hsla(${particle.hue}, 50%, 70%, 0.2)`,
+              background: `hsla(${particle.hue}, 40%, 70%, 0.2)`,
+              boxShadow: `0 0 ${particle.size * 2}px hsla(${particle.hue}, 40%, 70%, 0.1)`,
             }}
           />
         ))}
 
-        {/* Enhanced Mesh Overlay */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.03%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        {/* Subtle Mesh Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.02%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
         
-        {/* Enhanced Interactive Light */}
+        {/* Subtle Interactive Light */}
         <div 
-          className={`absolute w-[400px] h-[400px] bg-gradient-to-r from-white/12 via-cyan-100/8 to-transparent rounded-full blur-3xl transition-all duration-1000 ease-out pointer-events-none ${isTransitioning ? 'scale-200 opacity-50' : 'scale-100 opacity-100'}`}
+          className="absolute w-[300px] h-[300px] bg-gradient-to-r from-white/8 via-cyan-100/5 to-transparent rounded-full blur-2xl transition-all duration-1000 ease-out pointer-events-none"
           style={{
             left: `${mousePosition.x / window.innerWidth * 100}%`,
             top: `${mousePosition.y / window.innerHeight * 100}%`,
@@ -193,40 +182,32 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
       </div>
 
       <div className="relative z-10 min-h-screen flex">
-        {/* Left Side - Enhanced Branding with Dramatic Transitions */}
-        <div className={`hidden lg:flex lg:w-1/2 flex-col justify-center p-16 relative transition-all duration-700 ease-in-out ${
-          isTransitioning 
-            ? isLogin 
-              ? 'panel-exit-signup transform -translate-x-full skew-x-12 opacity-0' 
-              : 'panel-exit-login transform translate-x-full skew-x-12 opacity-0'
-            : isLogin
-              ? 'panel-enter-login transform translate-x-0 skew-x-0 opacity-100'
-              : 'panel-enter-signup transform translate-x-0 skew-x-0 opacity-100'
-        }`}>
+        {/* Left Side - Refined Branding */}
+        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center p-16 relative">
           {/* Logo Section */}
           <div className="mb-16 relative">
             <div className="flex items-center mb-8">
               <div className="relative group">
-                {/* Enhanced Glow */}
-                <div className={`absolute inset-0 bg-gradient-to-r from-blue-400/30 to-indigo-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 ${isTransitioning ? 'animate-pulse scale-150' : ''}`}></div>
+                {/* Subtle Glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-400/15 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                 
                 {/* Glass Container */}
-                <div className={`relative bg-white/30 backdrop-blur-lg border border-white/40 rounded-3xl p-6 shadow-2xl group-hover:scale-105 transition-all duration-500 ${isTransitioning ? 'animate-spin scale-125' : ''}`}>
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-white/10 rounded-3xl"></div>
+                <div className="relative bg-white/40 backdrop-blur-md border border-white/30 rounded-3xl p-6 shadow-lg group-hover:scale-105 transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/5 rounded-3xl"></div>
                   
                   <Layers className="w-10 h-10 text-blue-600 relative z-10" />
                 </div>
               </div>
               
               <div className="ml-6">
-                <h1 className={`text-4xl font-bold text-gray-900 mb-1 transition-all duration-500 ${isTransitioning ? 'blur-sm scale-110' : 'blur-0 scale-100'}`}>
+                <h1 className="text-4xl font-bold text-gray-900 mb-1">
                   Invoice Beautifier
                 </h1>
                 <p className="text-blue-600 text-lg font-medium">Professional Invoice Solutions</p>
               </div>
             </div>
             
-            <div className={`transition-all duration-700 ${isTransitioning ? 'transform translate-x-8 opacity-30 blur-sm' : 'transform translate-x-0 opacity-100 blur-0'}`}>
+            <div>
               <h2 className="text-6xl font-bold text-gray-900 mb-8 leading-tight">
                 {isLogin ? (
                   <>
@@ -249,20 +230,20 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
             </div>
           </div>
 
-          {/* Enhanced Features Grid */}
-          <div className={`grid grid-cols-2 gap-6 transition-all duration-700 ${isTransitioning ? 'transform translate-y-8 opacity-30 scale-95' : 'transform translate-y-0 opacity-100 scale-100'}`}>
+          {/* Refined Features Grid */}
+          <div className="grid grid-cols-2 gap-6">
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className={`group cursor-pointer relative transition-all duration-500 ${isTransitioning ? 'animate-pulse' : ''}`}
+                className="group cursor-pointer relative"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                {/* Enhanced Background */}
-                <div className="absolute inset-0 bg-white/25 backdrop-blur-sm rounded-2xl border border-white/25 group-hover:bg-white/35 group-hover:border-white/35 transition-all duration-300 shadow-lg group-hover:shadow-xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {/* Subtle Background */}
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/20 group-hover:bg-white/30 group-hover:border-white/30 transition-all duration-300 shadow-sm group-hover:shadow-md"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 <div className="relative flex items-center p-6 z-10">
-                  <div className={`bg-gradient-to-r ${feature.color} p-3 rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                  <div className={`bg-gradient-to-r ${feature.color} p-3 rounded-xl group-hover:scale-105 transition-all duration-300 shadow-sm`}>
                     <div className="text-white">
                       {feature.icon}
                     </div>
@@ -275,49 +256,41 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
             ))}
           </div>
 
-          {/* Enhanced Decorative Elements */}
-          <div className={`absolute top-20 right-16 animate-float opacity-60 transition-all duration-700 ${isTransitioning ? 'scale-150 rotate-180' : 'scale-100 rotate-0'}`}>
-            <div className="bg-white/40 backdrop-blur-sm rounded-full p-3 border border-white/30 shadow-lg">
+          {/* Subtle Decorative Elements */}
+          <div className="absolute top-20 right-16 animate-float opacity-60">
+            <div className="bg-white/30 backdrop-blur-sm rounded-full p-3 border border-white/20 shadow-sm">
               <Star className="w-6 h-6 text-yellow-500" />
             </div>
           </div>
-          <div className={`absolute bottom-32 right-24 animate-float opacity-50 transition-all duration-700 ${isTransitioning ? 'scale-150 -rotate-180' : 'scale-100 rotate-0'}`} style={{ animationDelay: '2s' }}>
-            <div className="bg-white/40 backdrop-blur-sm rounded-full p-2 border border-white/30 shadow-lg">
+          <div className="absolute bottom-32 right-24 animate-float opacity-50" style={{ animationDelay: '2s' }}>
+            <div className="bg-white/30 backdrop-blur-sm rounded-full p-2 border border-white/20 shadow-sm">
               <Heart className="w-5 h-5 text-pink-500" />
             </div>
           </div>
         </div>
 
-        {/* Right Side - Enhanced Auth Form with Dramatic Transitions */}
+        {/* Right Side - Refined Auth Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
-            {/* Enhanced Form Container with Dramatic Transitions */}
+            {/* Refined Form Container */}
             <div className="relative group">
-              {/* Enhanced Glow */}
-              <div className={`absolute -inset-3 bg-gradient-to-r from-blue-400/20 via-purple-400/15 to-indigo-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 ${isTransitioning ? 'animate-pulse scale-150' : ''}`}></div>
+              {/* Subtle Glow */}
+              <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/15 via-purple-400/10 to-indigo-400/15 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               
-              {/* Main Form with Dramatic Transitions */}
-              <div className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-10 border border-white/50 shadow-2xl transition-all duration-700 ease-in-out ${
-                isTransitioning 
-                  ? isLogin 
-                    ? 'form-exit-login transform scale-75 rotateY-90 opacity-0 blur-sm' 
-                    : 'form-exit-signup transform scale-75 rotateY-90 opacity-0 blur-sm'
-                  : isLogin
-                    ? 'form-enter-login transform scale-100 rotateY-0 opacity-100 blur-0'
-                    : 'form-enter-signup transform scale-100 rotateY-0 opacity-100 blur-0'
-              }`}>
-                {/* Enhanced Inner Layers */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
+              {/* Main Form */}
+              <div className="relative bg-white/60 backdrop-blur-md rounded-3xl p-10 border border-white/40 shadow-xl">
+                {/* Subtle Inner Layers */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-3xl"></div>
                 
                 <div className="relative z-10">
                   {/* Header */}
                   <div className="text-center mb-10">
-                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-xl transition-all duration-700 ${
+                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg transition-all duration-500 ${
                       isLogin 
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
                         : 'bg-gradient-to-r from-emerald-500 to-teal-500'
-                    } ${isTransitioning ? 'animate-spin scale-125' : ''}`}>
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-white/15 rounded-2xl"></div>
+                    }`}>
+                      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
                       
                       {isLogin ? (
                         <User className="w-8 h-8 text-white relative z-10" />
@@ -325,7 +298,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         <Rocket className="w-8 h-8 text-white relative z-10" />
                       )}
                     </div>
-                    <h3 className={`text-3xl font-bold text-gray-900 mb-3 transition-all duration-500 ${isTransitioning ? 'blur-sm scale-110' : 'blur-0 scale-100'}`}>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-3">
                       {isLogin ? 'Welcome Back' : 'Join Us Today'}
                     </h3>
                     <p className="text-gray-600 text-lg">
@@ -338,9 +311,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
                   {/* Error Message */}
                   {error && (
-                    <div className="mb-6 relative animate-shake">
-                      <div className="absolute inset-0 bg-red-50/90 backdrop-blur-sm rounded-2xl border border-red-200/60"></div>
-                      <div className="relative p-4">
+                    <div className="mb-6 relative">
+                      <div className="absolute inset-0 bg-red-50/80 backdrop-blur-sm rounded-2xl border border-red-200/50"></div>
+                      <div className="relative p-4 animate-shake">
                         <div className="flex items-center">
                           <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
                           <p className="text-red-700 font-medium">{error}</p>
@@ -351,8 +324,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
                   {/* Success Message */}
                   {success && (
-                    <div className="mb-6 relative animate-bounce">
-                      <div className="absolute inset-0 bg-emerald-50/90 backdrop-blur-sm rounded-2xl border border-emerald-200/60"></div>
+                    <div className="mb-6 relative">
+                      <div className="absolute inset-0 bg-emerald-50/80 backdrop-blur-sm rounded-2xl border border-emerald-200/50"></div>
                       <div className="relative p-4">
                         <div className="flex items-center">
                           <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
@@ -370,7 +343,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         Email Address
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-xl border border-white/40 group-focus-within:border-blue-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
+                        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-blue-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
                         
                         <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 z-10" size={20} />
                         <input
@@ -391,7 +364,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         Password
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-xl border border-white/40 group-focus-within:border-blue-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
+                        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-blue-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
                         
                         <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 z-10" size={20} />
                         <input
@@ -416,7 +389,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                     </div>
 
                     {/* Confirm Password (Sign Up only) */}
-                    <div className={`transition-all duration-700 overflow-hidden ${
+                    <div className={`transition-all duration-500 overflow-hidden ${
                       !isLogin ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
                     }`}>
                       <div className="relative group">
@@ -424,7 +397,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                           Confirm Password
                         </label>
                         <div className="relative">
-                          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-xl border border-white/40 group-focus-within:border-emerald-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
+                          <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-emerald-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
                           
                           <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
                           <input
@@ -445,14 +418,14 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`relative w-full group overflow-hidden mt-8 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ${isTransitioning ? 'scale-105 animate-pulse' : 'scale-100'}`}
+                      className="relative w-full group overflow-hidden mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <div className={`absolute inset-0 rounded-xl transition-all duration-500 ${
                         isLogin 
                           ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
                           : 'bg-gradient-to-r from-emerald-500 to-teal-500'
                       }`}></div>
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-xl"></div>
                       <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
                         isLogin 
                           ? 'bg-gradient-to-r from-blue-600 to-cyan-600' 
@@ -479,7 +452,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       <button
                         type="button"
                         onClick={handleModeSwitch}
-                        className={`text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg cursor-pointer ${isTransitioning ? 'animate-pulse' : ''}`}
+                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg"
                         disabled={loading}
                       >
                         {isLogin 
@@ -499,9 +472,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
 
                   {/* Features for Sign Up */}
                   {!isLogin && (
-                    <div className={`mt-8 space-y-3 transition-all duration-700 ${
-                      isTransitioning ? 'opacity-0 transform translate-y-4 blur-sm' : 'opacity-100 transform translate-y-0 blur-0'
-                    }`}>
+                    <div className="mt-8 space-y-3">
                       <div className="flex items-center text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
                         Secure cloud storage with encryption
@@ -521,7 +492,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
             </div>
 
             {/* Bottom Text with Badge */}
-            <div className={`text-center mt-8 transition-all duration-500 ${isTransitioning ? 'opacity-50 blur-sm' : 'opacity-100 blur-0'}`}>
+            <div className="text-center mt-8">
               {/* Bolt Badge */}
               <div className="mb-6">
                 <img 
@@ -546,97 +517,31 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         </div>
       </div>
 
-      {/* Enhanced Custom Styles with Dramatic Animations */}
+      {/* Refined Custom Styles */}
       <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-          33% { transform: translateY(-20px) rotate(120deg) scale(1.05); }
-          66% { transform: translateY(-10px) rotate(240deg) scale(0.95); }
+          33% { transform: translateY(-15px) rotate(60deg) scale(1.02); }
+          66% { transform: translateY(-8px) rotate(120deg) scale(0.98); }
         }
         
         .animate-float {
-          animation: float 20s ease-in-out infinite;
+          animation: float 15s ease-in-out infinite;
         }
         
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
-          20%, 40%, 60%, 80% { transform: translateX(8px); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+          20%, 40%, 60%, 80% { transform: translateX(4px); }
         }
         
         .animate-shake {
-          animation: shake 0.8s ease-in-out;
-        }
-        
-        /* Dramatic Form Transitions */
-        .form-exit-login {
-          transform: scale(0.7) rotateY(90deg) rotateX(15deg);
-          opacity: 0;
-          filter: blur(8px);
-        }
-        
-        .form-exit-signup {
-          transform: scale(0.7) rotateY(-90deg) rotateX(-15deg);
-          opacity: 0;
-          filter: blur(8px);
-        }
-        
-        .form-enter-login {
-          transform: scale(1) rotateY(0deg) rotateX(0deg);
-          opacity: 1;
-          filter: blur(0px);
-        }
-        
-        .form-enter-signup {
-          transform: scale(1) rotateY(0deg) rotateX(0deg);
-          opacity: 1;
-          filter: blur(0px);
-        }
-        
-        /* Dramatic Panel Transitions */
-        .panel-exit-login {
-          transform: translateX(100%) skewX(15deg) scale(0.8);
-          opacity: 0;
-          filter: blur(4px);
-        }
-        
-        .panel-exit-signup {
-          transform: translateX(-100%) skewX(-15deg) scale(0.8);
-          opacity: 0;
-          filter: blur(4px);
-        }
-        
-        .panel-enter-login {
-          transform: translateX(0%) skewX(0deg) scale(1);
-          opacity: 1;
-          filter: blur(0px);
-        }
-        
-        .panel-enter-signup {
-          transform: translateX(0%) skewX(0deg) scale(1);
-          opacity: 1;
-          filter: blur(0px);
-        }
-        
-        /* 3D Rotation Effects */
-        .rotateY-90 {
-          transform: rotateY(90deg);
-        }
-        
-        .rotateY-0 {
-          transform: rotateY(0deg);
+          animation: shake 0.6s ease-in-out;
         }
         
         @keyframes pulse {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        
-        @keyframes bounce {
-          0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
-          40%, 43% { transform: translate3d(0,-15px,0); }
-          70% { transform: translate3d(0,-7px,0); }
-          90% { transform: translate3d(0,-2px,0); }
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.02); }
         }
       `}</style>
     </div>
