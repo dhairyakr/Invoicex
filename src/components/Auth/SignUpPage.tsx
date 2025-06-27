@@ -99,21 +99,6 @@ const SignUpPage: React.FC = () => {
             <h1 className="text-4xl font-bold text-emerald-500 mb-8">
               Create Account
             </h1>
-            
-            {/* Social Login Buttons */}
-            <div className="flex justify-center space-x-4 mb-6">
-              <button className="w-12 h-12 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <span className="text-blue-600 font-bold">f</span>
-              </button>
-              <button className="w-12 h-12 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <span className="text-red-500 font-bold">G+</span>
-              </button>
-              <button className="w-12 h-12 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                <span className="text-blue-700 font-bold">in</span>
-              </button>
-            </div>
-            
-            <p className="text-gray-500 text-sm mb-6">or use your email for registration</p>
           </div>
 
           {/* Error Message */}
