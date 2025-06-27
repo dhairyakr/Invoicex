@@ -32,6 +32,7 @@ interface AuthPageProps {
 }
 
 const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
+  const [isLogin, setIsLogin] = useState(false); // Default to sign-up
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -40,8 +41,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const { signUp } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   // Mouse tracking for subtle interactive effects
   useEffect(() => {
@@ -91,29 +93,35 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (!isLogin && password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    if (password.length < 6) {
+    if (!isLogin && password.length < 6) {
       setError('Password must be at least 6 characters long');
       setLoading(false);
       return;
     }
 
     try {
-      const result = await signUp(email.trim(), password);
+      const result = isLogin 
+        ? await signIn(email.trim(), password)
+        : await signUp(email.trim(), password);
 
       if (result.error) {
         setError(result.error.message);
       } else {
-        // Check if there's a specific message from the sign up process
-        if ((result as any).message) {
-          setSuccess((result as any).message);
+        if (!isLogin) {
+          // Check if there's a specific message from the sign up process
+          if ((result as any).message) {
+            setSuccess((result as any).message);
+          } else {
+            setSuccess('Account created successfully! You can now sign in.');
+          }
         } else {
-          setSuccess('Account created successfully! You can now sign in.');
+          onSuccess?.();
         }
       }
     } catch (err) {
@@ -122,6 +130,22 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleModeSwitch = () => {
+    setIsTransitioning(true);
+    setError('');
+    setSuccess('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    
+    setTimeout(() => {
+      setIsLogin(!isLogin);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 150);
   };
 
   return (
@@ -191,19 +215,31 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               </div>
             </div>
             
-            <div>
+            <div className={`transition-all duration-500 ${isTransitioning ? 'transform translate-x-4 opacity-50' : ''}`}>
               <h2 className="text-6xl font-bold text-gray-900 mb-8 leading-tight">
-                Start Your
-                <span className="text-emerald-600"> Journey</span>
+                {isLogin ? (
+                  <>
+                    Welcome
+                    <span className="text-blue-600"> Back</span>
+                  </>
+                ) : (
+                  <>
+                    Start Your
+                    <span className="text-emerald-600"> Journey</span>
+                  </>
+                )}
               </h2>
               <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
-                Join thousands of professionals who trust us with their invoicing needs. Create stunning invoices in minutes.
+                {isLogin 
+                  ? "Sign in to access your beautiful invoices and continue creating professional billing experiences."
+                  : "Join thousands of professionals who trust us with their invoicing needs. Create stunning invoices in minutes."
+                }
               </p>
             </div>
           </div>
 
           {/* Refined Features Grid */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className={`grid grid-cols-2 gap-6 transition-all duration-500 ${isTransitioning ? 'transform translate-y-4 opacity-50' : ''}`}>
             {features.map((feature, index) => (
               <div 
                 key={index}
@@ -250,23 +286,36 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/15 via-purple-400/10 to-indigo-400/15 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               
               {/* Main Form */}
-              <div className="relative bg-white/60 backdrop-blur-md rounded-3xl p-10 border border-white/40 shadow-xl">
+              <div className={`relative bg-white/60 backdrop-blur-md rounded-3xl p-10 border border-white/40 shadow-xl transition-all duration-500 ${
+                isTransitioning ? 'transform scale-98 opacity-80' : 'transform scale-100 opacity-100'
+              }`}>
                 {/* Subtle Inner Layers */}
                 <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-3xl"></div>
                 
                 <div className="relative z-10">
                   {/* Header */}
                   <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg transition-all duration-500 bg-gradient-to-r from-emerald-500 to-teal-500">
+                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg transition-all duration-500 ${
+                      isLogin 
+                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
+                        : 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                    }`}>
                       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
                       
-                      <Rocket className="w-8 h-8 text-white relative z-10" />
+                      {isLogin ? (
+                        <User className="w-8 h-8 text-white relative z-10" />
+                      ) : (
+                        <Rocket className="w-8 h-8 text-white relative z-10" />
+                      )}
                     </div>
                     <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                      Join Us Today
+                      {isLogin ? 'Welcome Back' : 'Join Us Today'}
                     </h3>
                     <p className="text-gray-600 text-lg">
-                      Create an account to start building
+                      {isLogin 
+                        ? 'Sign in to access your dashboard' 
+                        : 'Create an account to start building'
+                      }
                     </p>
                   </div>
 
@@ -325,9 +374,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         Password
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-emerald-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
+                        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-blue-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
                         
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
+                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 z-10" size={20} />
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={password}
@@ -349,25 +398,29 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       </div>
                     </div>
 
-                    {/* Confirm Password Field */}
-                    <div className="relative group">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Confirm Password
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-emerald-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
-                        
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="relative z-10 w-full pl-12 pr-4 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg"
-                          placeholder="Confirm your password"
-                          required
-                          minLength={6}
-                          disabled={loading}
-                        />
+                    {/* Confirm Password (Sign Up only) */}
+                    <div className={`transition-all duration-500 overflow-hidden ${
+                      !isLogin ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      <div className="relative group">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Confirm Password
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 group-focus-within:border-emerald-400/50 group-focus-within:bg-white/50 transition-all duration-300"></div>
+                          
+                          <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="relative z-10 w-full pl-12 pr-4 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg"
+                            placeholder="Confirm your password"
+                            required={!isLogin}
+                            minLength={6}
+                            disabled={loading}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -377,41 +430,75 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       disabled={loading}
                       className="relative w-full group overflow-hidden mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <div className="absolute inset-0 rounded-xl transition-all duration-500 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                      <div className={`absolute inset-0 rounded-xl transition-all duration-500 ${
+                        isLogin 
+                          ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
+                          : 'bg-gradient-to-r from-emerald-500 to-teal-500'
+                      }`}></div>
                       <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-xl"></div>
-                      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-emerald-600 to-teal-600"></div>
+                      <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                        isLogin 
+                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600' 
+                          : 'bg-gradient-to-r from-emerald-600 to-teal-600'
+                      }`}></div>
                       
                       <div className="relative px-8 py-4 flex items-center justify-center text-white font-semibold text-lg z-10">
                         {loading ? (
                           <div className="flex items-center">
                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                            Creating Account...
+                            {isLogin ? 'Signing In...' : 'Creating Account...'}
                           </div>
                         ) : (
                           <div className="flex items-center">
-                            Create Account
+                            {isLogin ? 'Sign In' : 'Create Account'}
                             <ArrowRight className="ml-3 group-hover:translate-x-1 transition-transform duration-300" size={20} />
                           </div>
                         )}
                       </div>
                     </button>
+
+                    {/* Toggle Mode */}
+                    <div className="text-center pt-6">
+                      <button
+                        type="button"
+                        onClick={handleModeSwitch}
+                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg"
+                        disabled={loading}
+                      >
+                        {isLogin 
+                          ? "Don't have an account? " 
+                          : "Already have an account? "
+                        }
+                        <span className={`transition-colors duration-300 ${
+                          isLogin 
+                            ? 'text-emerald-500 group-hover:text-emerald-600' 
+                            : 'text-blue-500 group-hover:text-blue-600'
+                        }`}>
+                          {isLogin ? 'Sign up' : 'Sign in'}
+                        </span>
+                      </button>
+                    </div>
                   </form>
 
                   {/* Features for Sign Up */}
-                  <div className="mt-8 space-y-3">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
-                      Secure cloud storage with encryption
+                  {!isLogin && (
+                    <div className={`mt-8 space-y-3 transition-all duration-500 ${
+                      isTransitioning ? 'opacity-0 transform translate-y-2' : 'opacity-100 transform translate-y-0'
+                    }`}>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
+                        Secure cloud storage with encryption
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
+                        Real-time sync across devices
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
+                        Professional templates
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
-                      Real-time sync across devices
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 mr-3 text-emerald-500" />
-                      Professional templates
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
