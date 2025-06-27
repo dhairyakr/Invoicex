@@ -289,7 +289,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="relative z-10 w-full pl-12 pr-4 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg font-medium"
+                          className="relative z-10 w-full pl-12 pr-4 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg"
                           placeholder="Enter your email"
                           required
                           disabled={loading}
@@ -310,7 +310,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="relative z-10 w-full pl-12 pr-12 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg font-medium"
+                          className="relative z-10 w-full pl-12 pr-12 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-lg"
                           placeholder="Enter your password"
                           required
                           minLength={6}
@@ -371,7 +371,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
               </div>
             </div>
 
-            {/* Bottom Text with Bolt Badge */}
+            {/* Bottom Text with Badge */}
             <div className="text-center mt-8">
               {/* Bolt Badge */}
               <div className="mb-6">
