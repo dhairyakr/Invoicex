@@ -23,7 +23,8 @@ import {
   Gem,
   Coffee,
   Palette,
-  AlertCircle
+  AlertCircle,
+  TestTube
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -44,6 +45,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const { signIn, signUp } = useAuth();
+
+  // Dummy credentials
+  const DUMMY_CREDENTIALS = {
+    email: 'demo@invoicebeautifier.com',
+    password: 'demo123456'
+  };
 
   // Mouse tracking for subtle interactive effects
   useEffect(() => {
@@ -127,6 +134,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
     } catch (err) {
       console.error('Authentication error:', err);
       setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle dummy login
+  const handleDummyLogin = async () => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await signIn(DUMMY_CREDENTIALS.email, DUMMY_CREDENTIALS.password);
+
+      if (result.error) {
+        setError(result.error.message);
+      } else {
+        onSuccess?.();
+      }
+    } catch (err) {
+      console.error('Dummy login error:', err);
+      setError('An unexpected error occurred during demo login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -357,6 +386,58 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                         <div className="flex items-center">
                           <CheckCircle className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
                           <p className="text-emerald-700 font-medium">{success}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Demo Login Button - Only show on login page */}
+                  {isLogin && (
+                    <div className="mb-6">
+                      <button
+                        type="button"
+                        onClick={handleDummyLogin}
+                        disabled={loading}
+                        className="relative w-full group overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        <div className="relative px-6 py-3 flex items-center justify-center text-white font-semibold text-lg z-10">
+                          {loading ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                              Signing In...
+                            </div>
+                          ) : (
+                            <div className="flex items-center">
+                              <TestTube className="mr-3" size={20} />
+                              Try Demo Login
+                              <Sparkles className="ml-3" size={16} />
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                      
+                      {/* Demo credentials info */}
+                      <div className="mt-3 p-3 bg-orange-50/80 backdrop-blur-sm rounded-xl border border-orange-200/60">
+                        <div className="text-center">
+                          <p className="text-sm text-orange-800 font-medium mb-2">Demo Credentials:</p>
+                          <div className="text-xs text-orange-700 space-y-1">
+                            <p><strong>Email:</strong> {DUMMY_CREDENTIALS.email}</p>
+                            <p><strong>Password:</strong> {DUMMY_CREDENTIALS.password}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Divider */}
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-4 bg-white/70 text-gray-500 font-medium">Or continue with your account</span>
                         </div>
                       </div>
                     </div>
