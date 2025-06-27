@@ -199,7 +199,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 {/* Subtle Glow */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-400/15 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
                 
-                {/* Main Container */}
+                {/* Glass Container */}
                 <div className="relative bg-white/40 backdrop-blur-md border border-white/30 rounded-3xl p-6 shadow-lg group-hover:scale-105 transition-all duration-500">
                   <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/5 rounded-3xl"></div>
                   
@@ -462,7 +462,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                       <button
                         type="button"
                         onClick={handleModeSwitch}
-                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg"
+                        className="text-gray-600 hover:text-gray-900 transition-colors font-medium group text-lg cursor-pointer"
                         disabled={loading}
                       >
                         {isLogin 
