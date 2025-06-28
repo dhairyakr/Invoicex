@@ -2,13 +2,20 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 export const exportToPDF = async (
-  elementId: string, 
+  elementOrId: string | HTMLElement, 
   fileName: string = 'invoice.pdf',
   returnBlob: boolean = false
 ): Promise<Blob | void> => {
-  const element = document.getElementById(elementId);
-  if (!element) {
-    throw new Error('Element not found');
+  let element: HTMLElement;
+  
+  if (typeof elementOrId === 'string') {
+    const foundElement = document.getElementById(elementOrId);
+    if (!foundElement) {
+      throw new Error('Element not found');
+    }
+    element = foundElement;
+  } else {
+    element = elementOrId;
   }
 
   try {
@@ -44,16 +51,18 @@ export const exportToPDF = async (
       width: element.offsetWidth || 793.7,
       height: element.offsetHeight || 1122.5,
       onclone: (clonedDoc) => {
-        const clonedElement = clonedDoc.getElementById(elementId);
+        const clonedElement = clonedDoc.querySelector('[data-invoice-preview]') || 
+                             clonedDoc.getElementById('invoice-preview') ||
+                             clonedDoc.body.firstElementChild;
         if (clonedElement) {
           // Ensure the cloned element has proper dimensions
-          clonedElement.style.width = '210mm';
-          clonedElement.style.height = 'auto';
-          clonedElement.style.margin = '0';
-          clonedElement.style.padding = '20mm';
-          clonedElement.style.boxSizing = 'border-box';
-          clonedElement.style.display = 'block';
-          clonedElement.style.visibility = 'visible';
+          (clonedElement as HTMLElement).style.width = '210mm';
+          (clonedElement as HTMLElement).style.height = 'auto';
+          (clonedElement as HTMLElement).style.margin = '0';
+          (clonedElement as HTMLElement).style.padding = '20mm';
+          (clonedElement as HTMLElement).style.boxSizing = 'border-box';
+          (clonedElement as HTMLElement).style.display = 'block';
+          (clonedElement as HTMLElement).style.visibility = 'visible';
           
           // Ensure all child elements are visible
           const allElements = clonedElement.querySelectorAll('*');

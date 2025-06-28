@@ -40,7 +40,7 @@ const emailServices = [
   }
 ];
 
-export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) => {
+export const sendEmailInvoice = async (invoice: any, pdfBlob?: Blob, recipientEmail?: string) => {
   try {
     // Calculate total for display
     const subtotal = invoice.items.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0);
@@ -54,9 +54,21 @@ export const sendEmailInvoice = async (invoice: any, recipientEmail?: string) =>
     const taxAmount = (invoice.taxRates || []).reduce((sum: number, tax: any) => sum + (afterDiscount * tax.rate) / 100, 0);
     const total = afterDiscount + taxAmount;
 
-    // Generate and download PDF first
-    const fileName = `invoice-${invoice.number}.pdf`;
-    await exportToPDF('invoice-preview', fileName);
+    // Generate and download PDF if not provided
+    let fileName = `invoice-${invoice.number}.pdf`;
+    if (!pdfBlob) {
+      await exportToPDF('invoice-preview', fileName);
+    } else {
+      // Create download link for the provided blob
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
     
     // Use client email from invoice if not provided
     const clientEmail = recipientEmail || invoice.client?.email || '';

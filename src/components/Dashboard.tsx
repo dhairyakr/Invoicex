@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
 import { useInvoice } from '../context/InvoiceContext';
 import { formatDate } from '../utils/helpers';
 import { sendEmailInvoice } from '../utils/communication';
+import { exportToPDF } from '../utils/pdfExport';
+import InvoicePreview from './InvoicePreview';
 import { 
   FileText, 
   Plus, 
@@ -138,7 +141,36 @@ const Dashboard: React.FC = () => {
 
   const handleEmailSend = async (invoice: any) => {
     try {
-      await sendEmailInvoice(invoice);
+      // Create a temporary container for rendering the invoice
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '-9999px';
+      tempContainer.style.width = '210mm';
+      tempContainer.style.height = 'auto';
+      tempContainer.setAttribute('data-invoice-preview', 'true');
+      document.body.appendChild(tempContainer);
+
+      // Create a React root and render the InvoicePreview
+      const root = createRoot(tempContainer);
+      
+      // Render the invoice preview
+      root.render(React.createElement(InvoicePreview, { invoice }));
+      
+      // Wait for the component to render
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      try {
+        // Generate PDF from the temporary container
+        const pdfBlob = await exportToPDF(tempContainer, `invoice-${invoice.number}.pdf`, true) as Blob;
+        
+        // Send email with the generated PDF
+        await sendEmailInvoice(invoice, pdfBlob);
+      } finally {
+        // Clean up: unmount and remove the temporary container
+        root.unmount();
+        document.body.removeChild(tempContainer);
+      }
     } catch (error) {
       console.error('Error sending email:', error);
       alert('❌ Error sending email. Please try again.');
