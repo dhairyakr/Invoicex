@@ -288,11 +288,6 @@ const Dashboard: React.FC = () => {
                   <FileText className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="flex items-center text-sm">
-                <ArrowUpRight className="w-4 h-4 text-emerald-500 mr-2" />
-                <span className="text-emerald-600 font-semibold">+12%</span>
-                <span className="text-gray-600 ml-2">from last month</span>
-              </div>
             </div>
           </div>
 
@@ -308,11 +303,6 @@ const Dashboard: React.FC = () => {
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/80 to-green-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                   <DollarSign className="w-8 h-8 text-white" />
                 </div>
-              </div>
-              <div className="flex items-center text-sm">
-                <ArrowUpRight className="w-4 h-4 text-emerald-500 mr-2" />
-                <span className="text-emerald-600 font-semibold">+8%</span>
-                <span className="text-gray-600 ml-2">from last month</span>
               </div>
             </div>
           </div>
