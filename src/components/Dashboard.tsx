@@ -578,7 +578,7 @@ const Dashboard: React.FC = () => {
                             </button>
                             
                             {statusDropdowns[invoice.id] && (
-                              <div className="absolute top-full left-0 mt-2 bg-white/40 backdrop-blur-md border border-white/50 rounded-2xl shadow-2xl z-10 min-w-[140px] overflow-hidden">
+                              <div className="absolute top-full left-0 mt-2 bg-white/90 backdrop-blur-xl border border-white/50 rounded-2xl shadow-2xl z-50 min-w-[140px]">
                                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
                                 {['draft', 'sent', 'paid', 'overdue'].map(status => (
                                   <button
