@@ -21,15 +21,6 @@ export const exportToPDF = async (
       // Ensure proper dimensions
       width: 793.7, // A4 width in pixels at 96 DPI
       height: 1122.5, // A4 height in pixels at 96 DPI
-      onclone: (document) => {
-        const el = document.getElementById(elementId);
-        if (el) {
-          el.style.width = '210mm';
-          el.style.height = '297mm';
-          el.style.margin = '0';
-          el.style.padding = '0';
-        }
-      }
     });
 
     const imgWidth = 210; // A4 width in mm
