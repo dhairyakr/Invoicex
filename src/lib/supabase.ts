@@ -143,17 +143,30 @@ export const signIn = async (email: string, password: string) => {
 }
 
 export const signOut = async () => {
-  const { error } = await supabase.auth.signOut()
-  
-  // Handle the case where the session is already invalidated
-  if (error && error.message?.includes('session_not_found')) {
-    console.warn('Session already invalidated on server side - user is effectively logged out')
-    // Clear local session data when server reports session doesn't exist
-    await clearInvalidSession()
-    return { error: null } // Return success since user is already logged out
+  try {
+    const { error } = await supabase.auth.signOut()
+    
+    // Handle the case where the session is already invalidated
+    if (error && (error.message?.includes('session_not_found') || error.message?.includes('Invalid Refresh Token'))) {
+      console.warn('Session already invalidated on server side - user is effectively logged out')
+      // Clear local session data when server reports session doesn't exist
+      await clearInvalidSession()
+      return { error: null } // Return success since user is already logged out
+    }
+    
+    return { error }
+  } catch (err: any) {
+    // Handle cases where Supabase throws an error instead of returning it
+    if (err.message?.includes('session_not_found') || err.message?.includes('Invalid Refresh Token')) {
+      console.warn('Session already invalidated on server side - user is effectively logged out')
+      // Clear local session data when server reports session doesn't exist
+      await clearInvalidSession()
+      return { error: null } // Return success since user is already logged out
+    }
+    
+    console.error('❌ Supabase signOut error:', err);
+    return { error: { message: err.message || 'Unknown sign out error' } }
   }
-  
-  return { error }
 }
 
 export const getCurrentUser = async () => {
