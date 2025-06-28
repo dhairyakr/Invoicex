@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { createRoot } from 'react-dom/client';
 import { useInvoice } from '../context/InvoiceContext';
 import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, Tag, X, Package, Search, Printer } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
@@ -129,73 +128,25 @@ const InvoiceForm: React.FC = () => {
     }
   };
 
-  const renderInvoiceToTempElement = async (): Promise<HTMLElement> => {
-    return new Promise((resolve) => {
-      // Create temporary container
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '-9999px';
-      tempContainer.style.width = '794px'; // A4 width in pixels at 96 DPI
-      tempContainer.style.height = 'auto';
-      tempContainer.style.backgroundColor = 'white';
-      tempContainer.style.padding = '0';
-      tempContainer.style.margin = '0';
-      
-      document.body.appendChild(tempContainer);
-      
-      // Create React root and render invoice
-      const root = createRoot(tempContainer);
-      root.render(React.createElement(InvoicePreview, { invoice: currentInvoice! }));
-      
-      // Wait for rendering to complete
-      setTimeout(() => {
-        resolve(tempContainer);
-      }, 100);
-    });
-  };
-
-  const cleanupTempElement = (element: HTMLElement) => {
-    if (element && element.parentNode) {
-      element.parentNode.removeChild(element);
-    }
-  };
-
   const handleExportPDF = async () => {
     if (!currentInvoice) return;
-    
-    let tempElement: HTMLElement | null = null;
-    
     try {
-      tempElement = await renderInvoiceToTempElement();
       const fileName = `invoice-${currentInvoice.number}.pdf`;
-      await exportToPDF(tempElement, fileName);
+      await exportToPDF('invoice-preview', fileName);
     } catch (error) {
       console.error('Error exporting PDF:', error);
       alert('❌ Error generating PDF. Please try again.');
-    } finally {
-      if (tempElement) {
-        cleanupTempElement(tempElement);
-      }
     }
   };
 
   const handlePrintInvoice = async () => {
     if (!currentInvoice) return;
-    
-    let tempElement: HTMLElement | null = null;
-    
     try {
-      tempElement = await renderInvoiceToTempElement();
       const fileName = `invoice-${currentInvoice.number}.pdf`;
-      await exportToPDF(tempElement, fileName, false, true);
+      await exportToPDF('invoice-preview', fileName, false, true);
     } catch (error) {
       console.error('Error printing invoice:', error);
       alert('❌ Error printing invoice. Please try again.');
-    } finally {
-      if (tempElement) {
-        cleanupTempElement(tempElement);
-      }
     }
   };
 
@@ -207,25 +158,15 @@ const InvoiceForm: React.FC = () => {
 
   const handleEmailSend = async () => {
     if (!currentInvoice) return;
-    
-    let tempElement: HTMLElement | null = null;
-    
     try {
-      tempElement = await renderInvoiceToTempElement();
-      const fileName = `invoice-${currentInvoice.number}.pdf`;
-      
       // Generate PDF blob first
-      const pdfBlob = await exportToPDF(tempElement, fileName, true) as Blob;
+      const pdfBlob = await exportToPDF('invoice-preview', `invoice-${currentInvoice.number}.pdf`, true) as Blob;
       
       // Send email with the PDF blob
       await sendEmailInvoice(currentInvoice, pdfBlob);
     } catch (error) {
       console.error('Error sending email:', error);
       alert('❌ Error sending email. Please try again.');
-    } finally {
-      if (tempElement) {
-        cleanupTempElement(tempElement);
-      }
     }
   };
 

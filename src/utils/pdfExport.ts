@@ -103,11 +103,10 @@ export const exportToPDF = async (
     );
     
     if (printMode) {
-      // Print mode: Create a blob URL and use iframe with proper sandbox attributes
-      const pdfBlob = pdf.output('blob');
-      const blobUrl = URL.createObjectURL(pdfBlob);
+      // Print mode: Create a hidden iframe and trigger print
+      const pdfDataUri = pdf.output('datauristring');
       
-      // Create hidden iframe with proper sandbox attributes
+      // Create hidden iframe
       const iframe = document.createElement('iframe');
       iframe.style.position = 'absolute';
       iframe.style.left = '-9999px';
@@ -116,13 +115,10 @@ export const exportToPDF = async (
       iframe.style.height = '1px';
       iframe.style.border = 'none';
       
-      // Set sandbox attributes to allow modals, popups, and scripts for printing
-      iframe.setAttribute('sandbox', 'allow-modals allow-popups allow-scripts allow-same-origin');
-      
       document.body.appendChild(iframe);
       
-      // Set the PDF blob URL as the iframe source
-      iframe.src = blobUrl;
+      // Set the PDF as the iframe source
+      iframe.src = pdfDataUri;
       
       // Wait for the iframe to load, then trigger print
       iframe.onload = () => {
@@ -131,14 +127,12 @@ export const exportToPDF = async (
           iframe.contentWindow?.focus();
           iframe.contentWindow?.print();
           
-          // Clean up after a delay (increased to 3 seconds for print dialog)
+          // Clean up after a delay
           setTimeout(() => {
             if (document.body.contains(iframe)) {
               document.body.removeChild(iframe);
             }
-            // Revoke the blob URL to free memory
-            URL.revokeObjectURL(blobUrl);
-          }, 3000);
+          }, 1000);
         } catch (error) {
           console.error('Error printing PDF:', error);
           // Fallback: download the PDF if printing fails
@@ -147,7 +141,6 @@ export const exportToPDF = async (
           if (document.body.contains(iframe)) {
             document.body.removeChild(iframe);
           }
-          URL.revokeObjectURL(blobUrl);
         }
       };
       
@@ -158,7 +151,6 @@ export const exportToPDF = async (
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe);
         }
-        URL.revokeObjectURL(blobUrl);
       };
       
       return;
