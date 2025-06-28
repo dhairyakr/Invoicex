@@ -137,7 +137,12 @@ const Dashboard: React.FC = () => {
   };
 
   const handleEmailSend = async (invoice: any) => {
-    await sendEmailInvoice(invoice);
+    try {
+      await sendEmailInvoice(invoice);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('❌ Error sending email. Please try again.');
+    }
   };
 
   const toggleStatusDropdown = (invoiceId: string) => {
