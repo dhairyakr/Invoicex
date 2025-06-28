@@ -10,8 +10,6 @@ import { FontType, Product } from '../types';
 import { handleLogoUpload } from '../utils/fileHandling';
 import { exportToPDF } from '../utils/pdfExport';
 import { sendEmailInvoice } from '../utils/communication';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 
 const fonts: FontType[] = [
   { id: 'inter', name: 'Inter' },
@@ -60,28 +58,6 @@ const InvoiceForm: React.FC = () => {
   const [newTag, setNewTag] = useState('');
   const [showQRGenerator, setShowQRGenerator] = useState(false);
   const [showProductSelector, setShowProductSelector] = useState(false);
-
-  // Rich text editor configuration
-  const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'font': [] }],
-      [{ 'align': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['blockquote', 'code-block'],
-      ['link'],
-      ['clean']
-    ],
-  };
-
-  const quillFormats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link', 'color', 'background', 'align', 'code-block'
-  ];
 
   useEffect(() => {
     if (id) {
@@ -654,17 +630,13 @@ const InvoiceForm: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Notes
               </label>
-              <div className="border border-gray-300 rounded-md">
-                <ReactQuill
-                  theme="snow"
-                  value={currentInvoice.notes}
-                  onChange={(value) => updateInvoiceField('notes', value)}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  placeholder="Any additional notes..."
-                  style={{ minHeight: '120px' }}
-                />
-              </div>
+              <textarea
+                value={currentInvoice.notes}
+                onChange={(e) => updateInvoiceField('notes', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Any additional notes..."
+                rows={4}
+              />
             </div>
 
             <div className="flex items-center">
