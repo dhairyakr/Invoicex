@@ -279,7 +279,7 @@ const InvoiceForm: React.FC = () => {
                 {currentInvoice.company.logo && (
                   <button
                     type="button"
-                    onClick={() => updateInvoiceField('company.logo', '')}
+                    onClick={() => updateInvoiceField('company.logo', undefined)}
                     className="text-red-600 hover:text-red-900"
                   >
                     <Trash2 size={16} />
