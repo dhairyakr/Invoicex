@@ -24,6 +24,37 @@ const fonts: FontType[] = [
   { id: 'merriweather', name: 'Merriweather' },
   { id: 'raleway', name: 'Raleway' },
   { id: 'crimson', name: 'Crimson Text' },
+  { id: 'georgia', name: 'Georgia' },
+  { id: 'times', name: 'Times New Roman' },
+  { id: 'arial', name: 'Arial' },
+  { id: 'helvetica', name: 'Helvetica' },
+  { id: 'verdana', name: 'Verdana' },
+  { id: 'trebuchet', name: 'Trebuchet MS' },
+  { id: 'tahoma', name: 'Tahoma' },
+  { id: 'palatino', name: 'Palatino' },
+];
+
+const accentColors = [
+  { name: 'Midnight Blue', value: '#223141' },
+  { name: 'Royal Blue', value: '#2563eb' },
+  { name: 'Emerald Green', value: '#059669' },
+  { name: 'Purple', value: '#7c3aed' },
+  { name: 'Rose', value: '#e11d48' },
+  { name: 'Orange', value: '#ea580c' },
+  { name: 'Teal', value: '#0d9488' },
+  { name: 'Indigo', value: '#4f46e5' },
+  { name: 'Pink', value: '#ec4899' },
+  { name: 'Amber', value: '#d97706' },
+  { name: 'Cyan', value: '#0891b2' },
+  { name: 'Lime', value: '#65a30d' },
+  { name: 'Slate', value: '#475569' },
+  { name: 'Gray', value: '#6b7280' },
+  { name: 'Red', value: '#dc2626' },
+  { name: 'Yellow', value: '#ca8a04' },
+  { name: 'Green', value: '#16a34a' },
+  { name: 'Blue', value: '#2563eb' },
+  { name: 'Violet', value: '#8b5cf6' },
+  { name: 'Fuchsia', value: '#c026d3' },
 ];
 
 const currencies = [
@@ -666,7 +697,7 @@ const InvoiceForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Section - Template Selection */}
+      {/* Right Section - Enhanced Template Selection */}
       <div className="w-[15%] bg-white overflow-y-auto">
         <div className="p-3">
           <h2 className="text-sm font-semibold mb-3">Choose Template</h2>
@@ -709,35 +740,57 @@ const InvoiceForm: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-3 space-y-2">
+          {/* Enhanced Accent Color Section */}
+          <div className="mt-4 space-y-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-gray-700 mb-2">
                 Accent Color
               </label>
+              
+              {/* Color Picker Grid */}
+              <div className="grid grid-cols-4 gap-1 mb-2">
+                {accentColors.map((color) => (
+                  <button
+                    key={color.value}
+                    onClick={() => updateInvoiceField('accentColor', color.value)}
+                    className={`w-6 h-6 rounded border-2 transition-all ${
+                      currentInvoice.accentColor === color.value
+                        ? 'border-gray-800 scale-110'
+                        : 'border-gray-300 hover:border-gray-500'
+                    }`}
+                    style={{ backgroundColor: color.value }}
+                    title={color.name}
+                  />
+                ))}
+              </div>
+              
+              {/* Custom Color Input */}
               <div className="flex items-center space-x-1">
                 <input
                   type="color"
                   value={currentInvoice.accentColor}
                   onChange={(e) => updateInvoiceField('accentColor', e.target.value)}
-                  className="h-5 w-5 border-0 p-0 rounded"
+                  className="h-5 w-5 border-0 p-0 rounded cursor-pointer"
                 />
                 <input
                   type="text"
                   value={currentInvoice.accentColor}
                   onChange={(e) => updateInvoiceField('accentColor', e.target.value)}
-                  className="flex-1 px-1 py-1 text-xs border border-gray-300 rounded-md"
+                  className="flex-1 px-1 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="#223141"
                 />
               </div>
             </div>
 
+            {/* Enhanced Font Section */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Font
+              <label className="block text-xs font-medium text-gray-700 mb-2">
+                Font Family
               </label>
               <select
                 value={currentInvoice.font}
                 onChange={(e) => updateInvoiceField('font', e.target.value)}
-                className="w-full px-1 py-1 text-xs border border-gray-300 rounded-md"
+                className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 {fonts.map((font) => (
                   <option key={font.id} value={font.id}>
@@ -745,10 +798,42 @@ const InvoiceForm: React.FC = () => {
                   </option>
                 ))}
               </select>
+              
+              {/* Font Preview */}
+              <div className="mt-2 p-2 bg-gray-50 rounded text-xs border">
+                <div 
+                  style={{ 
+                    fontFamily: currentInvoice.font === 'inter' ? 'Inter, sans-serif' :
+                               currentInvoice.font === 'roboto' ? 'Roboto, sans-serif' :
+                               currentInvoice.font === 'montserrat' ? 'Montserrat, sans-serif' :
+                               currentInvoice.font === 'playfair' ? 'Playfair Display, serif' :
+                               currentInvoice.font === 'opensans' ? 'Open Sans, sans-serif' :
+                               currentInvoice.font === 'lato' ? 'Lato, sans-serif' :
+                               currentInvoice.font === 'poppins' ? 'Poppins, sans-serif' :
+                               currentInvoice.font === 'sourcesans' ? 'Source Sans Pro, sans-serif' :
+                               currentInvoice.font === 'nunito' ? 'Nunito, sans-serif' :
+                               currentInvoice.font === 'merriweather' ? 'Merriweather, serif' :
+                               currentInvoice.font === 'raleway' ? 'Raleway, sans-serif' :
+                               currentInvoice.font === 'crimson' ? 'Crimson Text, serif' :
+                               currentInvoice.font === 'georgia' ? 'Georgia, serif' :
+                               currentInvoice.font === 'times' ? 'Times New Roman, serif' :
+                               currentInvoice.font === 'arial' ? 'Arial, sans-serif' :
+                               currentInvoice.font === 'helvetica' ? 'Helvetica, sans-serif' :
+                               currentInvoice.font === 'verdana' ? 'Verdana, sans-serif' :
+                               currentInvoice.font === 'trebuchet' ? 'Trebuchet MS, sans-serif' :
+                               currentInvoice.font === 'tahoma' ? 'Tahoma, sans-serif' :
+                               currentInvoice.font === 'palatino' ? 'Palatino, serif' :
+                               'Inter, sans-serif'
+                  }}
+                  className="text-gray-700"
+                >
+                  Sample Text 123
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="mt-3 space-y-1">
+          <div className="mt-4 space-y-1">
             <button
               type="button"
               onClick={handleSave}
