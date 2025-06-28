@@ -34,6 +34,30 @@ const fonts: FontType[] = [
   { id: 'palatino', name: 'Palatino' },
 ];
 
+// Font family mapping for proper CSS application
+const fontFamilyMap: { [key: string]: string } = {
+  inter: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  roboto: '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  montserrat: '"Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  playfair: '"Playfair Display", Georgia, "Times New Roman", serif',
+  opensans: '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  lato: '"Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  poppins: '"Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  sourcesans: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  nunito: '"Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  merriweather: '"Merriweather", Georgia, "Times New Roman", serif',
+  raleway: '"Raleway", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  crimson: '"Crimson Text", Georgia, "Times New Roman", serif',
+  georgia: 'Georgia, "Times New Roman", serif',
+  times: '"Times New Roman", Georgia, serif',
+  arial: 'Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  verdana: 'Verdana, Geneva, sans-serif',
+  trebuchet: '"Trebuchet MS", Arial, sans-serif',
+  tahoma: 'Tahoma, Geneva, sans-serif',
+  palatino: '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+};
+
 const accentColors = [
   { name: 'Midnight Blue', value: '#223141' },
   { name: 'Royal Blue', value: '#2563eb' },
@@ -803,27 +827,8 @@ const InvoiceForm: React.FC = () => {
               <div className="mt-2 p-2 bg-gray-50 rounded text-xs border">
                 <div 
                   style={{ 
-                    fontFamily: currentInvoice.font === 'inter' ? 'Inter, sans-serif' :
-                               currentInvoice.font === 'roboto' ? 'Roboto, sans-serif' :
-                               currentInvoice.font === 'montserrat' ? 'Montserrat, sans-serif' :
-                               currentInvoice.font === 'playfair' ? 'Playfair Display, serif' :
-                               currentInvoice.font === 'opensans' ? 'Open Sans, sans-serif' :
-                               currentInvoice.font === 'lato' ? 'Lato, sans-serif' :
-                               currentInvoice.font === 'poppins' ? 'Poppins, sans-serif' :
-                               currentInvoice.font === 'sourcesans' ? 'Source Sans Pro, sans-serif' :
-                               currentInvoice.font === 'nunito' ? 'Nunito, sans-serif' :
-                               currentInvoice.font === 'merriweather' ? 'Merriweather, serif' :
-                               currentInvoice.font === 'raleway' ? 'Raleway, sans-serif' :
-                               currentInvoice.font === 'crimson' ? 'Crimson Text, serif' :
-                               currentInvoice.font === 'georgia' ? 'Georgia, serif' :
-                               currentInvoice.font === 'times' ? 'Times New Roman, serif' :
-                               currentInvoice.font === 'arial' ? 'Arial, sans-serif' :
-                               currentInvoice.font === 'helvetica' ? 'Helvetica, sans-serif' :
-                               currentInvoice.font === 'verdana' ? 'Verdana, sans-serif' :
-                               currentInvoice.font === 'trebuchet' ? 'Trebuchet MS, sans-serif' :
-                               currentInvoice.font === 'tahoma' ? 'Tahoma, sans-serif' :
-                               currentInvoice.font === 'palatino' ? 'Palatino, serif' :
-                               'Inter, sans-serif'
+                    fontFamily: fontFamilyMap[currentInvoice.font] || fontFamilyMap.inter,
+                    color: currentInvoice.accentColor
                   }}
                   className="text-gray-700"
                 >
