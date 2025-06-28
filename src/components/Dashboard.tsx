@@ -34,8 +34,7 @@ import {
   Download,
   Sparkles,
   Star,
-  Activity,
-  Printer
+  Activity
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -175,41 +174,6 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Error sending email:', error);
       alert('❌ Error sending email. Please try again.');
-    }
-  };
-
-  const handlePrintInvoice = async (invoice: any) => {
-    try {
-      // Create a temporary container for rendering the invoice
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.left = '-9999px';
-      tempContainer.style.top = '-9999px';
-      tempContainer.style.width = '210mm';
-      tempContainer.style.height = 'auto';
-      tempContainer.setAttribute('data-invoice-preview', 'true');
-      document.body.appendChild(tempContainer);
-
-      // Create a React root and render the InvoicePreview
-      const root = createRoot(tempContainer);
-      
-      // Render the invoice preview
-      root.render(React.createElement(InvoicePreview, { invoice }));
-      
-      // Wait for the component to render
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      try {
-        // Print the invoice from the temporary container
-        await exportToPDF(tempContainer, `invoice-${invoice.number}.pdf`, false, true);
-      } finally {
-        // Clean up: unmount and remove the temporary container
-        root.unmount();
-        document.body.removeChild(tempContainer);
-      }
-    } catch (error) {
-      console.error('Error printing invoice:', error);
-      alert('❌ Error printing invoice. Please try again.');
     }
   };
 
@@ -694,14 +658,6 @@ const Dashboard: React.FC = () => {
                             >
                               <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
                               <Copy size={18} className="relative z-10" />
-                            </button>
-                            <button
-                              onClick={() => handlePrintInvoice(invoice)}
-                              className="relative p-3 text-orange-600 hover:text-orange-800 hover:bg-orange-100/60 backdrop-blur-sm rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/50"
-                              title="Print Invoice"
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                              <Printer size={18} className="relative z-10" />
                             </button>
                             <button
                               onClick={() => handleEmailSend(invoice)}
