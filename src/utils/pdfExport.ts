@@ -4,7 +4,8 @@ import { jsPDF } from 'jspdf';
 export const exportToPDF = async (
   elementOrId: string | HTMLElement, 
   fileName: string = 'invoice.pdf',
-  returnBlob: boolean = false
+  returnBlob: boolean = false,
+  printMode: boolean = false
 ): Promise<Blob | void> => {
   let element: HTMLElement;
   
@@ -101,7 +102,59 @@ export const exportToPDF = async (
       'FAST'
     );
     
-    if (returnBlob) {
+    if (printMode) {
+      // Print mode: Create a hidden iframe and trigger print
+      const pdfDataUri = pdf.output('datauristring');
+      
+      // Create hidden iframe
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'absolute';
+      iframe.style.left = '-9999px';
+      iframe.style.top = '-9999px';
+      iframe.style.width = '1px';
+      iframe.style.height = '1px';
+      iframe.style.border = 'none';
+      
+      document.body.appendChild(iframe);
+      
+      // Set the PDF as the iframe source
+      iframe.src = pdfDataUri;
+      
+      // Wait for the iframe to load, then trigger print
+      iframe.onload = () => {
+        try {
+          // Focus the iframe and trigger print
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+          
+          // Clean up after a delay
+          setTimeout(() => {
+            if (document.body.contains(iframe)) {
+              document.body.removeChild(iframe);
+            }
+          }, 1000);
+        } catch (error) {
+          console.error('Error printing PDF:', error);
+          // Fallback: download the PDF if printing fails
+          pdf.save(fileName);
+          // Clean up
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+        }
+      };
+      
+      // Fallback: if iframe fails to load, clean up and download
+      iframe.onerror = () => {
+        console.warn('Print failed, downloading PDF instead');
+        pdf.save(fileName);
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      };
+      
+      return;
+    } else if (returnBlob) {
       // Return blob for email/WhatsApp attachment
       return pdf.output('blob');
     } else {

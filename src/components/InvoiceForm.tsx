@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useInvoice } from '../context/InvoiceContext';
-import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, Tag, X, Package, Search } from 'lucide-react';
+import { Plus, Trash2, Upload, Percent, DollarSign, QrCode, Mail, Tag, X, Package, Search, Printer } from 'lucide-react';
 import InvoicePreview from './InvoicePreview';
 import PaymentQRGenerator from './PaymentQRGenerator';
 import ProductSelector from './Products/ProductSelector';
@@ -136,6 +136,17 @@ const InvoiceForm: React.FC = () => {
     } catch (error) {
       console.error('Error exporting PDF:', error);
       alert('❌ Error generating PDF. Please try again.');
+    }
+  };
+
+  const handlePrintInvoice = async () => {
+    if (!currentInvoice) return;
+    try {
+      const fileName = `invoice-${currentInvoice.number}.pdf`;
+      await exportToPDF('invoice-preview', fileName, false, true);
+    } catch (error) {
+      console.error('Error printing invoice:', error);
+      alert('❌ Error printing invoice. Please try again.');
     }
   };
 
@@ -791,6 +802,14 @@ const InvoiceForm: React.FC = () => {
               className="w-full px-2 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs"
             >
               Export PDF
+            </button>
+            <button
+              type="button"
+              onClick={handlePrintInvoice}
+              className="w-full px-2 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-xs flex items-center justify-center"
+            >
+              <Printer size={12} className="mr-1" />
+              Print Invoice
             </button>
             <button
               type="button"
