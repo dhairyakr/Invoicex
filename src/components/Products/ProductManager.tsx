@@ -50,7 +50,7 @@ const ProductManager: React.FC = () => {
   const categories = Array.from(new Set(products.map(p => p.category)));
   const allTags = Array.from(new Set(products.flatMap(p => p.tags)));
 
-  // Calculate statistics with proper currency handling
+  // Calculate statistics
   const stats = {
     total: products.length,
     active: products.filter(p => p.isActive).length,
@@ -251,7 +251,7 @@ const ProductManager: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Value</p>
-                  <p className="text-3xl font-bold text-indigo-600">Mixed</p>
+                  <p className="text-3xl font-bold text-indigo-600">₹{stats.totalValue.toFixed(0)}</p>
                 </div>
                 <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/80 to-blue-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                   <TrendingUp className="w-8 h-8 text-white" />
@@ -459,7 +459,7 @@ const ProductManager: React.FC = () => {
             {/* Quick Add Table */}
             <QuickAddTable />
             
-            {/* Existing Products Summary - Only show if there are products */}
+            {/* Existing Products Summary */}
             {products.length > 0 && (
               <div className="relative bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl shadow-gray-500/20 border border-white/50 p-8">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
