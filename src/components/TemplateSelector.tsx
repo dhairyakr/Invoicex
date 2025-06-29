@@ -1,9 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Printer } from 'lucide-react';
+import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
-import { exportToPDF } from '../utils/pdfExport';
 
 const templates: (TemplateType & { 
   icon: React.ReactNode; 
@@ -148,47 +147,14 @@ const TemplateSelector: React.FC = () => {
     }
   };
 
-  const handlePrintTemplate = async (templateId: string) => {
-    // Create a temporary invoice with the selected template for printing
-    if (!currentInvoice) {
-      createInvoice();
-      setTimeout(async () => {
-        updateInvoiceField('template', templateId);
-        // Wait a bit more for the template to be applied
-        setTimeout(async () => {
-          try {
-            await exportToPDF('invoice-preview', `template-${templateId}-preview.pdf`);
-          } catch (error) {
-            console.error('Error printing template:', error);
-            alert('❌ Error generating template preview. Please try again.');
-          }
-        }, 500);
-      }, 100);
-    } else {
-      // Update current invoice template and print
-      const originalTemplate = currentInvoice.template;
-      updateInvoiceField('template', templateId);
-      
-      setTimeout(async () => {
-        try {
-          await exportToPDF('invoice-preview', `template-${templateId}-preview.pdf`);
-          // Restore original template
-          updateInvoiceField('template', originalTemplate);
-        } catch (error) {
-          console.error('Error printing template:', error);
-          alert('❌ Error generating template preview. Please try again.');
-          // Restore original template on error
-          updateInvoiceField('template', originalTemplate);
-        }
-      }, 500);
-    }
-  };
-
   const popularTemplates = templates.filter(t => t.popular);
   const premiumTemplates = templates.filter(t => t.premium);
 
   const TemplateCard = ({ template }: { template: typeof templates[0] }) => (
-    <div className="group relative bg-white/30 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 hover:scale-105 border border-white/40 hover:border-white/60">
+    <div 
+      onClick={() => handleTemplateSelect(template.id)}
+      className="group relative bg-white/30 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 hover:scale-105 border border-white/40 hover:border-white/60"
+    >
       {/* Aero Glass Background with Gradient Tint */}
       <div className={`absolute inset-0 bg-gradient-to-br ${template.gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
       
@@ -234,25 +200,13 @@ const TemplateSelector: React.FC = () => {
 
         {/* Template Info */}
         <div className="mb-4">
-          <div className="flex items-start justify-between mb-2 gap-2">
-            <h3 className="text-xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2 break-words flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300">
               {template.name}
             </h3>
-            <div className="flex items-center space-x-2 flex-shrink-0">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrintTemplate(template.id);
-                }}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-white/20 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100"
-                title="Print Template Preview"
-              >
-                <Printer size={16} />
-              </button>
-              <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-gray-700 group-hover:translate-x-1 transition-all duration-300" />
-            </div>
+            <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-gray-700 group-hover:translate-x-1 transition-all duration-300" />
           </div>
-          <p className="text-sm text-gray-700 leading-relaxed mb-3 line-clamp-3 break-words">
+          <p className="text-sm text-gray-700 leading-relaxed mb-3">
             {template.description}
           </p>
           <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/40 backdrop-blur-sm text-gray-700 border border-white/50">
@@ -263,9 +217,9 @@ const TemplateSelector: React.FC = () => {
         {/* Features */}
         <div className="space-y-2">
           {template.features.map((feature, index) => (
-            <div key={index} className="flex items-start text-sm text-gray-700 gap-3">
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} opacity-70 group-hover:opacity-100 transition-opacity duration-300 shadow-sm flex-shrink-0 mt-1.5`}></div>
-              <span className="break-words leading-relaxed flex-1 min-w-0">{feature}</span>
+            <div key={index} className="flex items-center text-sm text-gray-700">
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} mr-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300 shadow-sm`}></div>
+              <span>{feature}</span>
             </div>
           ))}
         </div>
@@ -276,12 +230,6 @@ const TemplateSelector: React.FC = () => {
 
       {/* Bottom Glossy Accent */}
       <div className={`h-1 bg-gradient-to-r ${template.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left opacity-60`}></div>
-      
-      {/* Click handler for the entire card */}
-      <div 
-        className="absolute inset-0 z-30 cursor-pointer"
-        onClick={() => handleTemplateSelect(template.id)}
-      />
     </div>
   );
 
@@ -374,29 +322,6 @@ const TemplateSelector: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Custom CSS for line-clamp */}
-      <style jsx>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-          hyphens: auto;
-        }
-        
-        .line-clamp-3 {
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-          hyphens: auto;
-        }
-      `}</style>
     </div>
   );
 };
