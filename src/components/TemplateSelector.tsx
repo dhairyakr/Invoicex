@@ -234,11 +234,11 @@ const TemplateSelector: React.FC = () => {
 
         {/* Template Info */}
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2 break-words">
+          <div className="flex items-start justify-between mb-2 gap-2">
+            <h3 className="text-xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2 break-words flex-1 min-w-0">
               {template.name}
             </h3>
-            <div className="flex items-center space-x-2 ml-2 flex-shrink-0">
+            <div className="flex items-center space-x-2 flex-shrink-0">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -263,9 +263,9 @@ const TemplateSelector: React.FC = () => {
         {/* Features */}
         <div className="space-y-2">
           {template.features.map((feature, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-700">
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} mr-3 opacity-70 group-hover:opacity-100 transition-opacity duration-300 shadow-sm flex-shrink-0`}></div>
-              <span className="break-words">{feature}</span>
+            <div key={index} className="flex items-start text-sm text-gray-700 gap-3">
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${template.gradient} opacity-70 group-hover:opacity-100 transition-opacity duration-300 shadow-sm flex-shrink-0 mt-1.5`}></div>
+              <span className="break-words leading-relaxed flex-1 min-w-0">{feature}</span>
             </div>
           ))}
         </div>
@@ -382,6 +382,9 @@ const TemplateSelector: React.FC = () => {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          hyphens: auto;
         }
         
         .line-clamp-3 {
@@ -389,6 +392,9 @@ const TemplateSelector: React.FC = () => {
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          hyphens: auto;
         }
       `}</style>
     </div>
