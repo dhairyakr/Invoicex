@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Calculate dashboard statistics
+  // Calculate dashboard statistics with proper currency handling
   const stats = {
     total: invoices.length,
     paid: invoices.filter(inv => inv.status === 'paid').length,
@@ -298,7 +298,7 @@ const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Revenue</p>
-                  <p className="text-4xl font-bold text-gray-900">₹{stats.totalAmount.toFixed(0)}</p>
+                  <p className="text-4xl font-bold text-gray-900">Mixed</p>
                 </div>
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/80 to-green-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                   <DollarSign className="w-8 h-8 text-white" />
@@ -321,7 +321,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center text-sm">
-                <span className="text-green-600 font-semibold">₹{stats.paidAmount.toFixed(0)}</span>
+                <span className="text-green-600 font-semibold">Mixed currencies</span>
                 <span className="text-gray-600 ml-2">collected</span>
               </div>
             </div>
