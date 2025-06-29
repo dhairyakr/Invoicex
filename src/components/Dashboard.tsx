@@ -78,14 +78,13 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Calculate dashboard statistics with proper currency handling
+  // Calculate dashboard statistics
   const stats = {
     total: invoices.length,
     paid: invoices.filter(inv => inv.status === 'paid').length,
     pending: invoices.filter(inv => inv.status === 'sent').length,
     overdue: invoices.filter(inv => inv.status === 'overdue').length,
-    // Group totals by currency
-    totalAmountByCurrency: invoices.reduce((acc, inv) => {
+    totalAmount: invoices.reduce((sum, inv) => {
       const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0);
       let discountAmount = 0;
       if (inv.discountValue > 0) {
@@ -95,14 +94,9 @@ const Dashboard: React.FC = () => {
       }
       const afterDiscount = subtotal - discountAmount;
       const taxAmount = (inv.taxRates || []).reduce((s, tax) => s + (afterDiscount * tax.rate) / 100, 0);
-      const total = afterDiscount + taxAmount;
-      
-      const currency = inv.currency || 'USD';
-      acc[currency] = (acc[currency] || 0) + total;
-      return acc;
-    }, {} as Record<string, number>),
-    // Group paid amounts by currency
-    paidAmountByCurrency: invoices.filter(inv => inv.status === 'paid').reduce((acc, inv) => {
+      return sum + (afterDiscount + taxAmount);
+    }, 0),
+    paidAmount: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => {
       const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0);
       let discountAmount = 0;
       if (inv.discountValue > 0) {
@@ -112,27 +106,8 @@ const Dashboard: React.FC = () => {
       }
       const afterDiscount = subtotal - discountAmount;
       const taxAmount = (inv.taxRates || []).reduce((s, tax) => s + (afterDiscount * tax.rate) / 100, 0);
-      const total = afterDiscount + taxAmount;
-      
-      const currency = inv.currency || 'USD';
-      acc[currency] = (acc[currency] || 0) + total;
-      return acc;
-    }, {} as Record<string, number>)
-  };
-
-  // Helper function to format currency amounts
-  const formatCurrencyAmount = (amountsByCurrency: Record<string, number>) => {
-    const currencies = Object.keys(amountsByCurrency);
-    if (currencies.length === 0) return '$0';
-    if (currencies.length === 1) {
-      const currency = currencies[0];
-      return `${getCurrencySymbol(currency)}${amountsByCurrency[currency].toFixed(0)}`;
-    }
-    // Multiple currencies - show the primary one and indicate there are more
-    const primaryCurrency = currencies[0];
-    const primaryAmount = amountsByCurrency[primaryCurrency];
-    const otherCount = currencies.length - 1;
-    return `${getCurrencySymbol(primaryCurrency)}${primaryAmount.toFixed(0)} +${otherCount} more`;
+      return sum + (afterDiscount + taxAmount);
+    }, 0)
   };
 
   const handleSearchChange = (search: string) => {
@@ -323,7 +298,7 @@ const Dashboard: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Revenue</p>
-                  <p className="text-3xl font-bold text-gray-900">{formatCurrencyAmount(stats.totalAmountByCurrency)}</p>
+                  <p className="text-4xl font-bold text-gray-900">₹{stats.totalAmount.toFixed(0)}</p>
                 </div>
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/80 to-green-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                   <DollarSign className="w-8 h-8 text-white" />
@@ -346,7 +321,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center text-sm">
-                <span className="text-green-600 font-semibold">{formatCurrencyAmount(stats.paidAmountByCurrency)}</span>
+                <span className="text-green-600 font-semibold">₹{stats.paidAmount.toFixed(0)}</span>
                 <span className="text-gray-600 ml-2">collected</span>
               </div>
             </div>
