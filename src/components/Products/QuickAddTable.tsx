@@ -264,16 +264,16 @@ const QuickAddTable: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* Price */}
+                    {/* Price - Enhanced visibility */}
                     <td className="px-6 py-4">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
                         <input
                           type="number"
-                          value={product.price}
-                          onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value))}
+                          value={product.price || ''}
+                          onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value) || 0)}
                           onKeyPress={(e) => handleKeyPress(e, product)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-lg font-bold text-gray-900 bg-white/60 backdrop-blur-sm shadow-lg transition-all duration-300 placeholder-gray-500"
                           placeholder="0.00"
                           min="0"
                           step="0.01"
