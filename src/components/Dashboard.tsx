@@ -78,36 +78,77 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Calculate dashboard statistics
+  // Calculate dashboard statistics with multi-currency support
   const stats = {
     total: invoices.length,
     paid: invoices.filter(inv => inv.status === 'paid').length,
     pending: invoices.filter(inv => inv.status === 'sent').length,
     overdue: invoices.filter(inv => inv.status === 'overdue').length,
-    totalAmount: invoices.reduce((sum, inv) => {
-      const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0);
-      let discountAmount = 0;
-      if (inv.discountValue > 0) {
-        discountAmount = inv.discountType === 'percentage' 
-          ? (subtotal * inv.discountValue) / 100 
-          : inv.discountValue;
+    totalAmountByCurrency: {} as Record<string, number>,
+    paidAmountByCurrency: {} as Record<string, number>
+  };
+
+  // Calculate totals by currency
+  invoices.forEach(inv => {
+    const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0);
+    let discountAmount = 0;
+    if (inv.discountValue > 0) {
+      discountAmount = inv.discountType === 'percentage' 
+        ? (subtotal * inv.discountValue) / 100 
+        : inv.discountValue;
+    }
+    const afterDiscount = subtotal - discountAmount;
+    const taxAmount = (inv.taxRates || []).reduce((s, tax) => s + (afterDiscount * tax.rate) / 100, 0);
+    const total = afterDiscount + taxAmount;
+
+    // Add to total amounts by currency
+    if (!stats.totalAmountByCurrency[inv.currency]) {
+      stats.totalAmountByCurrency[inv.currency] = 0;
+    }
+    stats.totalAmountByCurrency[inv.currency] += total;
+
+    // Add to paid amounts by currency if invoice is paid
+    if (inv.status === 'paid') {
+      if (!stats.paidAmountByCurrency[inv.currency]) {
+        stats.paidAmountByCurrency[inv.currency] = 0;
       }
-      const afterDiscount = subtotal - discountAmount;
-      const taxAmount = (inv.taxRates || []).reduce((s, tax) => s + (afterDiscount * tax.rate) / 100, 0);
-      return sum + (afterDiscount + taxAmount);
-    }, 0),
-    paidAmount: invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => {
-      const subtotal = inv.items.reduce((s, item) => s + (item.quantity * item.rate), 0);
-      let discountAmount = 0;
-      if (inv.discountValue > 0) {
-        discountAmount = inv.discountType === 'percentage' 
-          ? (subtotal * inv.discountValue) / 100 
-          : inv.discountValue;
-      }
-      const afterDiscount = subtotal - discountAmount;
-      const taxAmount = (inv.taxRates || []).reduce((s, tax) => s + (afterDiscount * tax.rate) / 100, 0);
-      return sum + (afterDiscount + taxAmount);
-    }, 0)
+      stats.paidAmountByCurrency[inv.currency] += total;
+    }
+  });
+
+  // Helper function to format currency amounts
+  const formatCurrencyAmounts = (amountsByCurrency: Record<string, number>) => {
+    const currencies = Object.keys(amountsByCurrency);
+    
+    if (currencies.length === 0) {
+      return <span className="text-gray-500">No data</span>;
+    }
+    
+    if (currencies.length === 1) {
+      const currency = currencies[0];
+      const amount = amountsByCurrency[currency];
+      return (
+        <span className="text-4xl font-bold text-gray-900">
+          {getCurrencySymbol(currency)}{amount.toFixed(0)}
+        </span>
+      );
+    }
+    
+    // Multiple currencies - show them in a compact format
+    return (
+      <div className="space-y-1">
+        {currencies.slice(0, 2).map(currency => (
+          <div key={currency} className="text-2xl font-bold text-gray-900">
+            {getCurrencySymbol(currency)}{amountsByCurrency[currency].toFixed(0)}
+          </div>
+        ))}
+        {currencies.length > 2 && (
+          <div className="text-sm text-gray-600 font-medium">
+            +{currencies.length - 2} more currencies
+          </div>
+        )}
+      </div>
+    );
   };
 
   const handleSearchChange = (search: string) => {
@@ -296,9 +337,11 @@ const Dashboard: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <div>
+                <div className="flex-1">
                   <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Revenue</p>
-                  <p className="text-4xl font-bold text-gray-900">₹{stats.totalAmount.toFixed(0)}</p>
+                  <div className="min-h-[3rem] flex items-center">
+                    {formatCurrencyAmounts(stats.totalAmountByCurrency)}
+                  </div>
                 </div>
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-500/80 to-green-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                   <DollarSign className="w-8 h-8 text-white" />
@@ -312,7 +355,7 @@ const Dashboard: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <div>
+                <div className="flex-1">
                   <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Paid Invoices</p>
                   <p className="text-4xl font-bold text-gray-900">{stats.paid}</p>
                 </div>
@@ -321,8 +364,27 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center text-sm">
-                <span className="text-green-600 font-semibold">₹{stats.paidAmount.toFixed(0)}</span>
-                <span className="text-gray-600 ml-2">collected</span>
+                <div className="min-h-[1.5rem] flex items-center">
+                  {Object.keys(stats.paidAmountByCurrency).length > 0 ? (
+                    <div className="space-y-1">
+                      {Object.entries(stats.paidAmountByCurrency).slice(0, 2).map(([currency, amount]) => (
+                        <div key={currency} className="flex items-center">
+                          <span className="text-green-600 font-semibold">
+                            {getCurrencySymbol(currency)}{amount.toFixed(0)}
+                          </span>
+                          <span className="text-gray-600 ml-2">collected</span>
+                        </div>
+                      ))}
+                      {Object.keys(stats.paidAmountByCurrency).length > 2 && (
+                        <div className="text-xs text-gray-500">
+                          +{Object.keys(stats.paidAmountByCurrency).length - 2} more
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-gray-500">No payments yet</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>

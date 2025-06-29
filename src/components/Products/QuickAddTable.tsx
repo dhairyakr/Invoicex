@@ -128,6 +128,12 @@ const QuickAddTable: React.FC = () => {
     return { color: 'text-green-600', bg: 'bg-green-100/60', text: 'In Stock' };
   };
 
+  // Get currency symbol
+  const getCurrencySymbol = (currencyCode: string) => {
+    const currency = currencies.find(c => c.code === currencyCode);
+    return currency?.symbol || '$';
+  };
+
   return (
     <div className="relative bg-white/25 backdrop-blur-md rounded-3xl shadow-2xl shadow-gray-500/20 border border-white/50 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
@@ -243,7 +249,7 @@ const QuickAddTable: React.FC = () => {
                           value={product.name}
                           onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
                           onKeyPress={(e) => handleKeyPress(e, product)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base font-medium bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                           placeholder="Enter product name"
                         />
                       </div>
@@ -258,7 +264,7 @@ const QuickAddTable: React.FC = () => {
                           value={product.description}
                           onChange={(e) => updateProduct(product.id, 'description', e.target.value)}
                           onKeyPress={(e) => handleKeyPress(e, product)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                           placeholder="Brief description"
                         />
                       </div>
@@ -268,16 +274,21 @@ const QuickAddTable: React.FC = () => {
                     <td className="px-6 py-4">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                        <input
-                          type="number"
-                          value={product.price}
-                          onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value))}
-                          onKeyPress={(e) => handleKeyPress(e, product)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
-                          placeholder="0.00"
-                          min="0"
-                          step="0.01"
-                        />
+                        <div className="relative">
+                          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-700 font-bold text-base z-10">
+                            {getCurrencySymbol(product.currency)}
+                          </span>
+                          <input
+                            type="number"
+                            value={product.price || ''}
+                            onChange={(e) => updateProduct(product.id, 'price', Number(e.target.value) || 0)}
+                            onKeyPress={(e) => handleKeyPress(e, product)}
+                            className="relative z-10 w-full pl-8 pr-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base font-bold text-gray-900 bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                            placeholder=""
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
                       </div>
                     </td>
 
@@ -288,7 +299,7 @@ const QuickAddTable: React.FC = () => {
                         <select
                           value={product.currency}
                           onChange={(e) => updateProduct(product.id, 'currency', e.target.value)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                         >
                           {currencies.map(currency => (
                             <option key={currency.code} value={currency.code}>
@@ -306,7 +317,7 @@ const QuickAddTable: React.FC = () => {
                         <select
                           value={product.category}
                           onChange={(e) => updateProduct(product.id, 'category', e.target.value)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                         >
                           <option value="">Select category</option>
                           {categories.map(category => (
@@ -325,7 +336,7 @@ const QuickAddTable: React.FC = () => {
                         <select
                           value={product.unit}
                           onChange={(e) => updateProduct(product.id, 'unit', e.target.value)}
-                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                          className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                         >
                           {units.map(unit => (
                             <option key={unit} value={unit}>
@@ -346,7 +357,7 @@ const QuickAddTable: React.FC = () => {
                             value={product.stock || ''}
                             onChange={(e) => updateProduct(product.id, 'stock', e.target.value ? Number(e.target.value) : undefined)}
                             onKeyPress={(e) => handleKeyPress(e, product)}
-                            className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-sm bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
+                            className="relative z-10 w-full px-4 py-3 border border-white/50 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-500/30 focus:border-purple-500/50 text-base bg-white/40 backdrop-blur-sm shadow-lg transition-all duration-300"
                             placeholder="0"
                             min="0"
                           />
