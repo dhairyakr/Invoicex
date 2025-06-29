@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Sparkles, Zap, ArrowRight, Star, Crown, Palette, Code, Briefcase, Heart, Rocket, Cpu, Clock, Brush, Shield, Coffee, Gem, Layers, Zap as Lightning, Eye, Printer } from 'lucide-react';
 import { useInvoice } from '../context/InvoiceContext';
 import { TemplateType } from '../types';
 import { exportToPDF } from '../utils/pdfExport';
+import InvoicePreview from './InvoicePreview';
 
 const templates: (TemplateType & { 
   icon: React.ReactNode; 
@@ -134,6 +135,7 @@ const templates: (TemplateType & {
 const TemplateSelector: React.FC = () => {
   const navigate = useNavigate();
   const { createInvoice, updateInvoiceField, currentInvoice } = useInvoice();
+  const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
   
   const handleTemplateSelect = (templateId: string) => {
     if (!currentInvoice) {
@@ -149,39 +151,90 @@ const TemplateSelector: React.FC = () => {
   };
 
   const handlePrintTemplate = async (templateId: string) => {
-    // Create a temporary invoice with the selected template for printing
-    if (!currentInvoice) {
-      createInvoice();
-      setTimeout(async () => {
-        updateInvoiceField('template', templateId);
-        // Wait a bit more for the template to be applied
-        setTimeout(async () => {
-          try {
-            await exportToPDF('invoice-preview', `template-${templateId}-preview.pdf`);
-          } catch (error) {
-            console.error('Error printing template:', error);
-            alert('❌ Error generating template preview. Please try again.');
-          }
-        }, 500);
-      }, 100);
-    } else {
-      // Update current invoice template and print
-      const originalTemplate = currentInvoice.template;
-      updateInvoiceField('template', templateId);
+    try {
+      // Create a sample invoice if none exists
+      if (!currentInvoice) {
+        createInvoice();
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      // Set the preview template to render the hidden preview
+      setPreviewTemplate(templateId);
       
-      setTimeout(async () => {
-        try {
-          await exportToPDF('invoice-preview', `template-${templateId}-preview.pdf`);
-          // Restore original template
-          updateInvoiceField('template', originalTemplate);
-        } catch (error) {
-          console.error('Error printing template:', error);
-          alert('❌ Error generating template preview. Please try again.');
-          // Restore original template on error
-          updateInvoiceField('template', originalTemplate);
-        }
-      }, 500);
+      // Wait for the component to render
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Export the PDF
+      await exportToPDF('template-preview', `template-${templateId}-preview.pdf`);
+      
+      // Clear the preview template
+      setPreviewTemplate(null);
+    } catch (error) {
+      console.error('Error printing template:', error);
+      alert('❌ Error generating template preview. Please try again.');
+      setPreviewTemplate(null);
     }
+  };
+
+  // Create a sample invoice for preview
+  const getSampleInvoice = (templateId: string) => {
+    return {
+      id: 'sample-preview',
+      number: 'INV-2024-001',
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      company: {
+        name: 'Your Company Name',
+        email: 'hello@yourcompany.com',
+        phone: '+1 (555) 123-4567',
+        address: '123 Business Street\nSuite 100\nBusiness City, BC 12345',
+        logo: undefined,
+      },
+      client: {
+        name: 'Client Company Ltd.',
+        email: 'client@example.com',
+        address: '456 Client Avenue\nClient City, CC 67890',
+      },
+      items: [
+        {
+          id: '1',
+          description: 'Web Development Services',
+          quantity: 40,
+          rate: 75,
+        },
+        {
+          id: '2',
+          description: 'Logo Design',
+          quantity: 1,
+          rate: 500,
+        },
+        {
+          id: '3',
+          description: 'SEO Optimization',
+          quantity: 1,
+          rate: 300,
+        },
+      ],
+      notes: 'Thank you for your business! Payment is due within 30 days.',
+      template: templateId,
+      accentColor: '#223141',
+      font: 'inter',
+      showFooter: true,
+      discountType: 'percentage' as const,
+      discountValue: 10,
+      taxRates: [
+        {
+          id: '1',
+          name: 'Sales Tax',
+          rate: 8.5,
+        },
+      ],
+      currency: 'USD',
+      status: 'draft' as const,
+      tags: ['sample', 'preview'],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
   };
 
   const popularTemplates = templates.filter(t => t.popular);
@@ -374,6 +427,15 @@ const TemplateSelector: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Hidden Invoice Preview for Template Printing */}
+      {previewTemplate && (
+        <div className="fixed -left-[9999px] -top-[9999px] w-[210mm] h-auto">
+          <div id="template-preview">
+            <InvoicePreview invoice={getSampleInvoice(previewTemplate)} />
+          </div>
+        </div>
+      )}
 
       {/* Custom CSS for line-clamp */}
       <style jsx>{`
