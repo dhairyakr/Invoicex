@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown } from 'lucide-react';
+import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
@@ -99,6 +99,21 @@ const Header: React.FC = () => {
                 <span className="relative z-10 flex items-center">
                   <Package size={16} className="mr-2" />
                   Products
+                </span>
+              </Link>
+
+              <Link 
+                to="/reports" 
+                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                  location.pathname === '/reports' 
+                    ? 'bg-white/15 backdrop-blur-sm text-white shadow-lg border border-white/20' 
+                    : 'text-blue-100 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-xl"></div>
+                <span className="relative z-10 flex items-center">
+                  <BarChart3 size={16} className="mr-2" />
+                  Reports
                 </span>
               </Link>
             </div>
@@ -237,6 +252,17 @@ const Header: React.FC = () => {
             >
               <Package size={14} className="mr-1" />
               Products
+            </Link>
+            <Link 
+              to="/reports" 
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
+                location.pathname === '/reports' 
+                  ? 'bg-white/15 text-white border border-white/20' 
+                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <BarChart3 size={14} className="mr-1" />
+              Reports
             </Link>
           </div>
         </div>

@@ -11,6 +11,7 @@ import InvoiceForm from './components/InvoiceForm';
 import InvoicePreview from './components/InvoicePreview';
 import TemplateSelector from './components/TemplateSelector';
 import ProductManager from './components/Products/ProductManager';
+import FinancialReports from './components/FinancialReports';
 import ConnectionStatus from './components/ConnectionStatus';
 import SupabaseSetup from './components/SupabaseSetup';
 import { testConnection } from './lib/supabase';
@@ -171,6 +172,14 @@ const AppContent: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <ProductManager />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/reports" 
+              element={
+                <ProtectedRoute>
+                  <FinancialReports />
                 </ProtectedRoute>
               } 
             />
