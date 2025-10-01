@@ -485,15 +485,6 @@ const SignUpPage: React.FC = () => {
 
             {/* Bottom Text with Badge */}
             <div className="text-center mt-10">
-              {/* Bolt Badge */}
-              <div className="mb-8">
-                <img 
-                  src="/black_circle_360x360.png" 
-                  alt="Powered by Bolt" 
-                  className="w-20 h-20 mx-auto opacity-60 hover:opacity-80 transition-opacity duration-300"
-                />
-              </div>
-              
               <p className="text-gray-500 text-lg">
                 By creating an account, you agree to our{' '}
                 <a href="#" className="text-emerald-500 hover:text-emerald-600 transition-colors font-semibold">
