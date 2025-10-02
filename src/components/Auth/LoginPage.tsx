@@ -429,16 +429,18 @@ const LoginPage: React.FC = () => {
 
             {/* Bottom Text with Badge */}
             <div className="text-center mt-10">
-              <p className="text-gray-500 text-lg">
-                By signing in, you agree to our{' '}
-                <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
-                  Privacy Policy
-                </a>
-              </p>
+              <div className="space-y-4">
+                <p className="text-gray-500 text-lg">
+                  By signing in, you agree to our{' '}
+                  <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
+                    Terms of Service
+                  </a>{' '}
+                  and{' '}
+                  <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
+                    Privacy Policy
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
         </div>

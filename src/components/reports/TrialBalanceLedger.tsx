@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calculator, BookOpen, Search, Filter, FileText, CheckCircle, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getTrialBalanceData, getTransactions } from '../../lib/supabase';
 
 interface TrialBalanceLedgerProps {
   dateRange: { start: string; end: string };
@@ -8,34 +10,103 @@ interface TrialBalanceLedgerProps {
 }
 
 const TrialBalanceLedger: React.FC<TrialBalanceLedgerProps> = ({ dateRange, viewPeriod, department }) => {
+  const { user } = useAuth();
   const [activeView, setActiveView] = useState<'trial-balance' | 'ledger'>('trial-balance');
   const [selectedAccount, setSelectedAccount] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [trialBalanceData, setTrialBalanceData] = useState<any>(null);
+  const [ledgerData, setLedgerData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - replace with actual data from Supabase
-  const mockTrialBalance = [
-    { account: 'Cash', debit: 125000, credit: 0, type: 'Asset' },
-    { account: 'Accounts Receivable', debit: 85000, credit: 0, type: 'Asset' },
-    { account: 'Inventory', debit: 45000, credit: 0, type: 'Asset' },
-    { account: 'Equipment', debit: 150000, credit: 0, type: 'Asset' },
-    { account: 'Accounts Payable', debit: 0, credit: 65000, type: 'Liability' },
-    { account: 'Short-term Loans', debit: 0, credit: 35000, type: 'Liability' },
-    { account: 'Share Capital', debit: 0, credit: 200000, type: 'Equity' },
-    { account: 'Sales Revenue', debit: 0, credit: 125000, type: 'Revenue' },
-    { account: 'Cost of Goods Sold', debit: 45000, credit: 0, type: 'Expense' },
-    { account: 'Salaries Expense', debit: 25000, credit: 0, type: 'Expense' },
-  ];
+  useEffect(() => {
+    const loadTrialBalance = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const result = await getTrialBalanceData(user.id, dateRange.end);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setTrialBalanceData(result.data);
+      }
+      
+      setLoading(false);
+    };
 
-  const mockLedgerEntries = [
-    { date: '2024-01-15', ref: 'INV-001', description: 'Sale to ABC Corp', debit: 25000, credit: 0, balance: 25000 },
-    { date: '2024-01-18', ref: 'PAY-001', description: 'Payment from ABC Corp', debit: 0, credit: 25000, balance: 0 },
-    { date: '2024-01-22', ref: 'INV-002', description: 'Sale to XYZ Ltd', debit: 35000, credit: 0, balance: 35000 },
-    { date: '2024-01-25', ref: 'INV-003', description: 'Sale to DEF Inc', debit: 15000, credit: 0, balance: 50000 },
-  ];
+    loadTrialBalance();
+  }, [user, dateRange.end, viewPeriod, department]);
 
-  const totalDebits = mockTrialBalance.reduce((sum, item) => sum + item.debit, 0);
-  const totalCredits = mockTrialBalance.reduce((sum, item) => sum + item.credit, 0);
-  const isBalanced = totalDebits === totalCredits;
+  useEffect(() => {
+    const loadLedgerData = async () => {
+      if (!user || !selectedAccount) return;
+      
+      const { data: transactions, error } = await getTransactions(user.id, dateRange.start, dateRange.end);
+      
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      
+      // Filter transactions for selected account
+      const accountTransactions = transactions?.filter(t => 
+        t.debit_account?.name === selectedAccount || t.credit_account?.name === selectedAccount
+      ) || [];
+      
+      // Transform to ledger format
+      let runningBalance = 0;
+      const ledgerEntries = accountTransactions.map(transaction => {
+        const isDebit = transaction.debit_account?.name === selectedAccount;
+        const amount = isDebit ? transaction.amount : -transaction.amount;
+        runningBalance += amount;
+        
+        return {
+          date: transaction.transaction_date,
+          ref: transaction.reference,
+          description: transaction.description,
+          debit: isDebit ? transaction.amount : 0,
+          credit: isDebit ? 0 : transaction.amount,
+          balance: runningBalance
+        };
+      });
+      
+      setLedgerData(ledgerEntries);
+    };
+
+    loadLedgerData();
+  }, [user, selectedAccount, dateRange.start, dateRange.end]);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 animate-pulse">
+          <div className="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="h-4 bg-gray-300 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !trialBalanceData) {
+    return (
+      <div className="bg-red-50/60 backdrop-blur-md border border-red-200/50 rounded-2xl p-8 text-center">
+        <div className="text-red-600 mb-4">
+          <Calculator size={48} className="mx-auto mb-4" />
+          <h3 className="text-xl font-bold">Error Loading Data</h3>
+          <p className="text-sm mt-2">{error || 'No data available'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isBalanced = trialBalanceData.isBalanced;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -143,7 +214,7 @@ const TrialBalanceLedger: React.FC<TrialBalanceLedgerProps> = ({ dateRange, view
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/30">
-                {mockTrialBalance.map((item, index) => (
+                {trialBalanceData.accounts.map((item: any, index: number) => (
                   <tr key={index} className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/30 transition-all duration-300 group cursor-pointer">
                     <td className="px-8 py-6">
                       <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -171,8 +242,8 @@ const TrialBalanceLedger: React.FC<TrialBalanceLedgerProps> = ({ dateRange, view
               <tfoot className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm border-t border-white/30">
                 <tr>
                   <td colSpan={2} className="px-8 py-6 font-bold text-gray-900 text-lg">Total</td>
-                  <td className="px-8 py-6 text-right font-bold text-xl text-gray-900">{formatCurrency(totalDebits)}</td>
-                  <td className="px-8 py-6 text-right font-bold text-xl text-gray-900">{formatCurrency(totalCredits)}</td>
+                  <td className="px-8 py-6 text-right font-bold text-xl text-gray-900">{formatCurrency(trialBalanceData.totalDebits)}</td>
+                  <td className="px-8 py-6 text-right font-bold text-xl text-gray-900">{formatCurrency(trialBalanceData.totalCredits)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -199,7 +270,7 @@ const TrialBalanceLedger: React.FC<TrialBalanceLedgerProps> = ({ dateRange, view
                 </div>
               </div>
               <div className="p-2 max-h-[500px] overflow-y-auto">
-                {mockTrialBalance.map((item, index) => (
+                {trialBalanceData.accounts.map((item: any, index: number) => (
                   <button
                     key={index}
                     onClick={() => setSelectedAccount(item.account)}
@@ -251,7 +322,7 @@ const TrialBalanceLedger: React.FC<TrialBalanceLedgerProps> = ({ dateRange, view
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/30">
-                      {mockLedgerEntries.map((entry, index) => (
+                      {ledgerData.map((entry, index) => (
                         <tr key={index} className="hover:bg-gradient-to-r hover:from-purple-50/30 hover:to-pink-50/30 transition-all duration-300">
                           <td className="px-6 py-4 text-sm text-gray-900">{entry.date}</td>
                           <td className="px-6 py-4">

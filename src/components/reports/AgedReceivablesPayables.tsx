@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, Users, CreditCard, Mail, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getAgedReceivables } from '../../lib/supabase';
 
 interface AgedReceivablesPayablesProps {
   dateRange: { start: string; end: string };
@@ -8,16 +10,43 @@ interface AgedReceivablesPayablesProps {
 }
 
 const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateRange, viewPeriod, department }) => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'receivables' | 'payables'>('receivables');
+  const [receivablesData, setReceivablesData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - replace with actual data from Supabase
-  const mockReceivables = [
-    { customer: 'ABC Corporation', current: 25000, days30: 15000, days60: 0, days90: 0, total: 40000, overdue: false },
-    { customer: 'XYZ Limited', current: 0, days30: 12000, days60: 8000, days90: 0, total: 20000, overdue: true },
-    { customer: 'DEF Industries', current: 18000, days30: 0, days60: 0, days90: 5000, total: 23000, overdue: true },
-    { customer: 'GHI Enterprises', current: 30000, days30: 0, days60: 0, days90: 0, total: 30000, overdue: false },
-  ];
+  useEffect(() => {
+    const loadReceivables = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const result = await getAgedReceivables(user.id, dateRange.end);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        const transformedData = result.data?.map((item: any) => ({
+          customer: item.customer_name,
+          current: item.current_amount,
+          days30: item.days_30,
+          days60: item.days_60,
+          days90: item.days_90,
+          total: item.total_amount,
+          overdue: (item.days_30 + item.days_60 + item.days_90) > 0
+        })) || [];
+        setReceivablesData(transformedData);
+      }
+      
+      setLoading(false);
+    };
 
+    loadReceivables();
+  }, [user, dateRange.end, viewPeriod, department]);
+
+  // Mock payables data (implement similar to receivables when needed)
   const mockPayables = [
     { vendor: 'Supplier A', current: 15000, days30: 8000, days60: 0, days90: 0, total: 23000, overdue: false },
     { vendor: 'Supplier B', current: 0, days30: 0, days60: 12000, days90: 3000, total: 15000, overdue: true },
@@ -43,14 +72,27 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
     }), { current: 0, days30: 0, days60: 0, days90: 0, total: 0 });
   };
 
-  const receivablesTotals = calculateTotals(mockReceivables);
+  const receivablesTotals = calculateTotals(receivablesData);
   const payablesTotals = calculateTotals(mockPayables);
 
   const renderAgingTable = (
-    data: typeof mockReceivables,
-    totals: typeof receivablesTotals,
+    tableData: any[],
+    totals: any,
     type: 'receivables' | 'payables'
   ) => (
+    <>
+      {loading && (
+        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 animate-pulse">
+          <div className="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-4 bg-gray-300 rounded"></div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {!loading && (
     <div className="relative bg-white/30 backdrop-blur-md rounded-3xl shadow-2xl shadow-gray-500/20 border border-white/50 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
       
@@ -98,7 +140,7 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
             </tr>
           </thead>
           <tbody className="divide-y divide-white/30">
-            {data.map((item, index) => (
+            {tableData.map((item, index) => (
               <tr key={index} className={`hover:bg-gradient-to-r transition-all duration-300 group ${
                 item.overdue 
                   ? 'hover:from-red-50/30 hover:to-pink-50/30 bg-red-50/20' 
@@ -160,6 +202,8 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
         </table>
       </div>
     </div>
+      )}
+    </>
   );
 
   return (
@@ -244,7 +288,7 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
 
       {/* Aging Table */}
       {activeTab === 'receivables' 
-        ? renderAgingTable(mockReceivables, receivablesTotals, 'receivables')
+        ? renderAgingTable(receivablesData, receivablesTotals, 'receivables')
         : renderAgingTable(mockPayables as any, payablesTotals, 'payables')
       }
 
