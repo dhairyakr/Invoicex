@@ -221,6 +221,187 @@ export interface Database {
           created_at?: string;
         };
       };
+      accounts: {
+        Row: {
+          id: string;
+          user_id: string;
+          code: string;
+          name: string;
+          type: string;
+          subtype: string | null;
+          parent_id: string | null;
+          is_active: boolean;
+          balance: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          code: string;
+          name: string;
+          type: string;
+          subtype?: string | null;
+          parent_id?: string | null;
+          is_active?: boolean;
+          balance?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          code?: string;
+          name?: string;
+          type?: string;
+          subtype?: string | null;
+          parent_id?: string | null;
+          is_active?: boolean;
+          balance?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      transactions: {
+        Row: {
+          id: string;
+          user_id: string;
+          reference: string;
+          description: string;
+          transaction_date: string;
+          amount: number;
+          debit_account_id: string;
+          credit_account_id: string;
+          invoice_id: string | null;
+          journal_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          reference: string;
+          description: string;
+          transaction_date: string;
+          amount: number;
+          debit_account_id: string;
+          credit_account_id: string;
+          invoice_id?: string | null;
+          journal_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          reference?: string;
+          description?: string;
+          transaction_date?: string;
+          amount?: number;
+          debit_account_id?: string;
+          credit_account_id?: string;
+          invoice_id?: string | null;
+          journal_id?: string | null;
+          created_at?: string;
+        };
+      };
+      journals: {
+        Row: {
+          id: string;
+          user_id: string;
+          reference: string;
+          description: string;
+          journal_date: string;
+          total_amount: number;
+          status: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          reference: string;
+          description: string;
+          journal_date: string;
+          total_amount: number;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          reference?: string;
+          description?: string;
+          journal_date?: string;
+          total_amount?: number;
+          status?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      payments: {
+        Row: {
+          id: string;
+          user_id: string;
+          invoice_id: string | null;
+          amount: number;
+          payment_date: string;
+          payment_method: string;
+          reference: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          invoice_id?: string | null;
+          amount: number;
+          payment_date: string;
+          payment_method: string;
+          reference?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          invoice_id?: string | null;
+          amount?: number;
+          payment_date?: string;
+          payment_method?: string;
+          reference?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
+      financial_periods: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          start_date: string;
+          end_date: string;
+          is_closed: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          start_date: string;
+          end_date: string;
+          is_closed?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          start_date?: string;
+          end_date?: string;
+          is_closed?: boolean;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

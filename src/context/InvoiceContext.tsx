@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Invoice, InvoiceItem, TaxRate, InvoiceFilters } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { createTransactionFromInvoice } from '../lib/supabase';
+import { useAuth } from './AuthContext';
 
 interface InvoiceContextType {
   invoices: Invoice[];
@@ -81,6 +83,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [filters, setFilters] = useState<InvoiceFilters>(DEFAULT_FILTERS);
+  const { user } = useAuth();
 
   // Load invoices from localStorage
   useEffect(() => {
@@ -205,6 +208,19 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } else {
       // Add new invoice
       setInvoices([...invoices, updatedInvoice]);
+      
+      // Create accounting transaction if invoice is sent or paid
+      if (user && (invoice.status === 'sent' || invoice.status === 'paid')) {
+        createTransactionFromInvoice({
+          ...invoice,
+          user_id: user.id,
+          items: invoice.items,
+          client_name: invoice.client.name,
+          issue_date: invoice.issueDate
+        }).catch(error => {
+          console.warn('Failed to create accounting transaction:', error);
+        });
+      }
     }
     
     setCurrentInvoice(null);
