@@ -227,3 +227,405 @@ export const subscribeToInvoices = (userId: string, callback: (payload: any) => 
     )
     .subscribe()
 }
+
+// Financial Reports Functions
+export const getAccounts = async (userId: string) => {
+  return await supabase
+    .from('accounts')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .order('code')
+}
+
+export const getTransactions = async (userId: string, startDate?: string, endDate?: string) => {
+  let query = supabase
+    .from('transactions')
+    .select(`
+      *,
+      debit_account:debit_account_id(code, name, type),
+      credit_account:credit_account_id(code, name, type)
+    `)
+    .eq('user_id', userId)
+    .order('transaction_date', { ascending: false })
+
+  if (startDate) {
+    query = query.gte('transaction_date', startDate)
+  }
+  if (endDate) {
+    query = query.lte('transaction_date', endDate)
+  }
+
+  return await query
+}
+
+export const getProfitLossData = async (userId: string, startDate: string, endDate: string) => {
+  try {
+    // Get all accounts
+    const { data: accounts, error: accountsError } = await getAccounts(userId)
+    if (accountsError) throw accountsError
+
+    // Get transactions for the period
+    const { data: transactions, error: transactionsError } = await getTransactions(userId, startDate, endDate)
+    if (transactionsError) throw transactionsError
+
+    // Calculate balances for each account
+    const accountBalances = new Map()
+    
+    accounts?.forEach(account => {
+      accountBalances.set(account.id, {
+        ...account,
+        balance: 0,
+        transactions: []
+      })
+    })
+
+    // Process transactions
+    transactions?.forEach(transaction => {
+      const debitAccount = accountBalances.get(transaction.debit_account_id)
+      const creditAccount = accountBalances.get(transaction.credit_account_id)
+
+      if (debitAccount) {
+        if (debitAccount.type === 'asset' || debitAccount.type === 'expense') {
+          debitAccount.balance += transaction.amount
+        } else {
+          debitAccount.balance -= transaction.amount
+        }
+        debitAccount.transactions.push({ ...transaction, type: 'debit' })
+      }
+
+      if (creditAccount) {
+        if (creditAccount.type === 'asset' || creditAccount.type === 'expense') {
+          creditAccount.balance -= transaction.amount
+        } else {
+          creditAccount.balance += transaction.amount
+        }
+        creditAccount.transactions.push({ ...transaction, type: 'credit' })
+      }
+    })
+
+    // Separate into revenue and expense accounts
+    const revenueAccounts = Array.from(accountBalances.values()).filter(acc => acc.type === 'revenue')
+    const expenseAccounts = Array.from(accountBalances.values()).filter(acc => acc.type === 'expense')
+
+    const totalRevenue = revenueAccounts.reduce((sum, acc) => sum + Math.abs(acc.balance), 0)
+    const totalExpenses = expenseAccounts.reduce((sum, acc) => sum + Math.abs(acc.balance), 0)
+    const netProfit = totalRevenue - totalExpenses
+
+    return {
+      data: {
+        totalRevenue,
+        totalExpenses,
+        netProfit,
+        revenueAccounts,
+        expenseAccounts,
+        accounts: Array.from(accountBalances.values())
+      },
+      error: null
+    }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getBalanceSheetData = async (userId: string, asOfDate: string) => {
+  try {
+    const { data: accounts, error: accountsError } = await getAccounts(userId)
+    if (accountsError) throw accountsError
+
+    const { data: transactions, error: transactionsError } = await getTransactions(userId, undefined, asOfDate)
+    if (transactionsError) throw transactionsError
+
+    // Calculate balances
+    const accountBalances = new Map()
+    
+    accounts?.forEach(account => {
+      accountBalances.set(account.id, { ...account, balance: 0 })
+    })
+
+    transactions?.forEach(transaction => {
+      const debitAccount = accountBalances.get(transaction.debit_account_id)
+      const creditAccount = accountBalances.get(transaction.credit_account_id)
+
+      if (debitAccount) {
+        if (debitAccount.type === 'asset' || debitAccount.type === 'expense') {
+          debitAccount.balance += transaction.amount
+        } else {
+          debitAccount.balance -= transaction.amount
+        }
+      }
+
+      if (creditAccount) {
+        if (creditAccount.type === 'asset' || creditAccount.type === 'expense') {
+          creditAccount.balance -= transaction.amount
+        } else {
+          creditAccount.balance += transaction.amount
+        }
+      }
+    })
+
+    const assets = Array.from(accountBalances.values()).filter(acc => acc.type === 'asset')
+    const liabilities = Array.from(accountBalances.values()).filter(acc => acc.type === 'liability')
+    const equity = Array.from(accountBalances.values()).filter(acc => acc.type === 'equity')
+
+    const totalAssets = assets.reduce((sum, acc) => sum + Math.abs(acc.balance), 0)
+    const totalLiabilities = liabilities.reduce((sum, acc) => sum + Math.abs(acc.balance), 0)
+    const totalEquity = equity.reduce((sum, acc) => sum + Math.abs(acc.balance), 0)
+
+    return {
+      data: {
+        assets,
+        liabilities,
+        equity,
+        totalAssets,
+        totalLiabilities,
+        totalEquity
+      },
+      error: null
+    }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getCashFlowData = async (userId: string, startDate: string, endDate: string) => {
+  try {
+    const { data: transactions, error } = await getTransactions(userId, startDate, endDate)
+    if (error) throw error
+
+    // Get cash account
+    const { data: cashAccount } = await supabase
+      .from('accounts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('code', '1000')
+      .single()
+
+    if (!cashAccount) {
+      throw new Error('Cash account not found')
+    }
+
+    // Calculate opening balance
+    const { data: openingTransactions } = await getTransactions(userId, undefined, startDate)
+    let openingBalance = 0
+    
+    openingTransactions?.forEach(transaction => {
+      if (transaction.debit_account_id === cashAccount.id) {
+        openingBalance += transaction.amount
+      }
+      if (transaction.credit_account_id === cashAccount.id) {
+        openingBalance -= transaction.amount
+      }
+    })
+
+    // Categorize cash flows
+    const operating: any[] = []
+    const investing: any[] = []
+    const financing: any[] = []
+
+    let netCashFlow = 0
+
+    transactions?.forEach(transaction => {
+      if (transaction.debit_account_id === cashAccount.id || transaction.credit_account_id === cashAccount.id) {
+        const amount = transaction.debit_account_id === cashAccount.id ? transaction.amount : -transaction.amount
+        netCashFlow += amount
+
+        // Categorize based on account codes (simplified logic)
+        const otherAccountId = transaction.debit_account_id === cashAccount.id 
+          ? transaction.credit_account_id 
+          : transaction.debit_account_id
+        
+        const otherAccount = transaction.debit_account_id === cashAccount.id 
+          ? transaction.credit_account 
+          : transaction.debit_account
+
+        if (otherAccount?.code?.startsWith('4') || otherAccount?.code?.startsWith('5') || otherAccount?.code?.startsWith('6')) {
+          operating.push({
+            description: transaction.description,
+            amount,
+            type: amount > 0 ? 'inflow' : 'outflow'
+          })
+        } else if (otherAccount?.code?.startsWith('15')) {
+          investing.push({
+            description: transaction.description,
+            amount,
+            type: amount > 0 ? 'inflow' : 'outflow'
+          })
+        } else {
+          financing.push({
+            description: transaction.description,
+            amount,
+            type: amount > 0 ? 'inflow' : 'outflow'
+          })
+        }
+      }
+    })
+
+    return {
+      data: {
+        openingCash: openingBalance,
+        operating,
+        investing,
+        financing,
+        netCashFlow,
+        closingCash: openingBalance + netCashFlow
+      },
+      error: null
+    }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getTrialBalanceData = async (userId: string, asOfDate: string) => {
+  try {
+    const { data: accounts, error: accountsError } = await getAccounts(userId)
+    if (accountsError) throw accountsError
+
+    const { data: transactions, error: transactionsError } = await getTransactions(userId, undefined, asOfDate)
+    if (transactionsError) throw transactionsError
+
+    const trialBalance = accounts?.map(account => {
+      let debitTotal = 0
+      let creditTotal = 0
+
+      transactions?.forEach(transaction => {
+        if (transaction.debit_account_id === account.id) {
+          debitTotal += transaction.amount
+        }
+        if (transaction.credit_account_id === account.id) {
+          creditTotal += transaction.amount
+        }
+      })
+
+      return {
+        account: account.name,
+        code: account.code,
+        type: account.type,
+        debit: account.type === 'asset' || account.type === 'expense' ? Math.max(0, debitTotal - creditTotal) : 0,
+        credit: account.type === 'liability' || account.type === 'equity' || account.type === 'revenue' ? Math.max(0, creditTotal - debitTotal) : 0
+      }
+    }) || []
+
+    const totalDebits = trialBalance.reduce((sum, item) => sum + item.debit, 0)
+    const totalCredits = trialBalance.reduce((sum, item) => sum + item.credit, 0)
+
+    return {
+      data: {
+        accounts: trialBalance,
+        totalDebits,
+        totalCredits,
+        isBalanced: Math.abs(totalDebits - totalCredits) < 0.01
+      },
+      error: null
+    }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getAgedReceivables = async (userId: string, asOfDate: string) => {
+  try {
+    const { data, error } = await supabase.rpc('get_aged_receivables', {
+      user_uuid: userId,
+      as_of_date: asOfDate
+    })
+
+    if (error) throw error
+
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    // Fallback to manual calculation if function doesn't exist
+    const { data: invoices, error: invoicesError } = await supabase
+      .from('invoices')
+      .select(`
+        *,
+        invoice_items(*)
+      `)
+      .eq('user_id', userId)
+      .in('status', ['sent', 'overdue'])
+
+    if (invoicesError) return { data: null, error: invoicesError.message }
+
+    const receivables = new Map()
+
+    invoices?.forEach(invoice => {
+      const total = invoice.invoice_items?.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0) || 0
+      const dueDate = new Date(invoice.due_date)
+      const asOf = new Date(asOfDate)
+      const daysDiff = Math.floor((asOf.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24))
+
+      if (!receivables.has(invoice.client_name)) {
+        receivables.set(invoice.client_name, {
+          customer_name: invoice.client_name,
+          current_amount: 0,
+          days_30: 0,
+          days_60: 0,
+          days_90: 0,
+          total_amount: 0
+        })
+      }
+
+      const customer = receivables.get(invoice.client_name)
+      customer.total_amount += total
+
+      if (daysDiff < 0) {
+        customer.current_amount += total
+      } else if (daysDiff <= 30) {
+        customer.days_30 += total
+      } else if (daysDiff <= 60) {
+        customer.days_60 += total
+      } else {
+        customer.days_90 += total
+      }
+    })
+
+    return { data: Array.from(receivables.values()), error: null }
+  }
+}
+
+// Create default accounts for new users
+export const createDefaultAccounts = async (userId: string) => {
+  try {
+    const { error } = await supabase.rpc('create_default_accounts', {
+      user_uuid: userId
+    })
+    return { error }
+  } catch (error: any) {
+    return { error: error.message }
+  }
+}
+
+// Auto-create transactions from invoices
+export const createTransactionFromInvoice = async (invoice: any) => {
+  try {
+    const { data: accounts } = await getAccounts(invoice.user_id)
+    if (!accounts) return { error: 'No accounts found' }
+
+    const receivableAccount = accounts.find(acc => acc.code === '1100') // Accounts Receivable
+    const revenueAccount = accounts.find(acc => acc.code === '4000') // Sales Revenue
+
+    if (!receivableAccount || !revenueAccount) {
+      return { error: 'Required accounts not found' }
+    }
+
+    const total = invoice.items?.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0) || 0
+
+    const { error } = await supabase
+      .from('transactions')
+      .insert({
+        user_id: invoice.user_id,
+        reference: invoice.number,
+        description: `Sale to ${invoice.client_name}`,
+        transaction_date: invoice.issue_date,
+        amount: total,
+        debit_account_id: receivableAccount.id,
+        credit_account_id: revenueAccount.id,
+        invoice_id: invoice.id
+      })
+
+    return { error }
+  } catch (error: any) {
+    return { error: error.message }
+  }
+}

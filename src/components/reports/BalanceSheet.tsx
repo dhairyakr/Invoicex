@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building, ChevronDown, ChevronRight, DollarSign, TrendingUp, Layers, Shield, Briefcase } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getBalanceSheetData } from '../../lib/supabase';
 
 interface BalanceSheetProps {
   dateRange: { start: string; end: string };
@@ -7,73 +9,33 @@ interface BalanceSheetProps {
   department: string;
 }
 
-interface BalanceSheetItem {
-  name: string;
-  amount: number;
-  children?: BalanceSheetItem[];
-}
-
 const BalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeriod, department }) => {
+  const { user } = useAuth();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<string[]>(['assets', 'current-assets', 'liabilities', 'current-liabilities', 'equity']);
 
-  // Mock data - replace with actual data from Supabase
-  const mockData = {
-    assets: {
-      name: 'Total Assets',
-      amount: 450000,
-      children: [
-        {
-          name: 'Current Assets',
-          amount: 280000,
-          children: [
-            { name: 'Cash and Cash Equivalents', amount: 125000 },
-            { name: 'Accounts Receivable', amount: 85000 },
-            { name: 'Inventory', amount: 45000 },
-            { name: 'Prepaid Expenses', amount: 25000 }
-          ]
-        },
-        {
-          name: 'Fixed Assets',
-          amount: 170000,
-          children: [
-            { name: 'Property, Plant & Equipment', amount: 150000 },
-            { name: 'Intangible Assets', amount: 20000 }
-          ]
-        }
-      ]
-    },
-    liabilities: {
-      name: 'Total Liabilities',
-      amount: 180000,
-      children: [
-        {
-          name: 'Current Liabilities',
-          amount: 120000,
-          children: [
-            { name: 'Accounts Payable', amount: 65000 },
-            { name: 'Short-term Loans', amount: 35000 },
-            { name: 'Accrued Expenses', amount: 20000 }
-          ]
-        },
-        {
-          name: 'Long-term Liabilities',
-          amount: 60000,
-          children: [
-            { name: 'Long-term Debt', amount: 50000 },
-            { name: 'Deferred Tax Liability', amount: 10000 }
-          ]
-        }
-      ]
-    },
-    equity: {
-      name: 'Total Equity',
-      amount: 270000,
-      children: [
-        { name: 'Share Capital', amount: 200000 },
-        { name: 'Retained Earnings', amount: 70000 }
-      ]
-    }
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const result = await getBalanceSheetData(user.id, dateRange.end);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setData(result.data);
+      }
+      
+      setLoading(false);
+    };
+
+    loadData();
+  }, [user, dateRange.end, viewPeriod, department]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -149,9 +111,82 @@ const BalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeriod, depa
     );
   };
 
-  const totalAssets = mockData.assets.amount;
-  const totalLiabilitiesAndEquity = mockData.liabilities.amount + mockData.equity.amount;
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-white/40 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 animate-pulse">
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="bg-red-50/60 backdrop-blur-md border border-red-200/50 rounded-2xl p-8 text-center">
+        <div className="text-red-600 mb-4">
+          <Building size={48} className="mx-auto mb-4" />
+          <h3 className="text-xl font-bold">Error Loading Balance Sheet</h3>
+          <p className="text-sm mt-2">{error || 'No data available'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const totalAssets = data.totalAssets;
+  const totalLiabilitiesAndEquity = data.totalLiabilities + data.totalEquity;
   const isBalanced = totalAssets === totalLiabilitiesAndEquity;
+
+  // Group accounts by subtype for hierarchical display
+  const currentAssets = data.assets.filter((acc: any) => acc.subtype === 'current');
+  const fixedAssets = data.assets.filter((acc: any) => acc.subtype === 'fixed');
+  const currentLiabilities = data.liabilities.filter((acc: any) => acc.subtype === 'current');
+  const longTermLiabilities = data.liabilities.filter((acc: any) => acc.subtype === 'long-term');
+
+  const balanceSheetData = {
+    assets: {
+      name: 'Total Assets',
+      amount: totalAssets,
+      children: [
+        {
+          name: 'Current Assets',
+          amount: currentAssets.reduce((sum: number, acc: any) => sum + Math.abs(acc.balance), 0),
+          children: currentAssets.map((acc: any) => ({ name: acc.name, amount: Math.abs(acc.balance) }))
+        },
+        {
+          name: 'Fixed Assets',
+          amount: fixedAssets.reduce((sum: number, acc: any) => sum + Math.abs(acc.balance), 0),
+          children: fixedAssets.map((acc: any) => ({ name: acc.name, amount: Math.abs(acc.balance) }))
+        }
+      ]
+    },
+    liabilities: {
+      name: 'Total Liabilities',
+      amount: data.totalLiabilities,
+      children: [
+        {
+          name: 'Current Liabilities',
+          amount: currentLiabilities.reduce((sum: number, acc: any) => sum + Math.abs(acc.balance), 0),
+          children: currentLiabilities.map((acc: any) => ({ name: acc.name, amount: Math.abs(acc.balance) }))
+        },
+        {
+          name: 'Long-term Liabilities',
+          amount: longTermLiabilities.reduce((sum: number, acc: any) => sum + Math.abs(acc.balance), 0),
+          children: longTermLiabilities.map((acc: any) => ({ name: acc.name, amount: Math.abs(acc.balance) }))
+        }
+      ]
+    },
+    equity: {
+      name: 'Total Equity',
+      amount: data.totalEquity,
+      children: data.equity.map((acc: any) => ({ name: acc.name, amount: Math.abs(acc.balance) }))
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -182,7 +217,7 @@ const BalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeriod, depa
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Liabilities</p>
-                <p className="text-4xl font-bold text-gray-900">{formatCurrency(mockData.liabilities.amount)}</p>
+                <p className="text-4xl font-bold text-gray-900">{formatCurrency(data.totalLiabilities)}</p>
               </div>
               <div className="w-16 h-16 bg-gradient-to-br from-red-500/80 to-pink-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                 <Shield className="w-8 h-8 text-white" />
@@ -199,7 +234,7 @@ const BalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeriod, depa
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Total Equity</p>
-                <p className="text-4xl font-bold text-gray-900">{formatCurrency(mockData.equity.amount)}</p>
+                <p className="text-4xl font-bold text-gray-900">{formatCurrency(data.totalEquity)}</p>
               </div>
               <div className="w-16 h-16 bg-gradient-to-br from-green-500/80 to-emerald-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
                 <Briefcase className="w-8 h-8 text-white" />
@@ -272,17 +307,17 @@ const BalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeriod, depa
         <div className="relative z-10">
           {/* Assets Section */}
           <div className="border-b border-white/30">
-            {renderBalanceSheetSection(mockData.assets, 'assets', 0, 'from-blue-500 to-indigo-500')}
+            {renderBalanceSheetSection(balanceSheetData.assets, 'assets', 0, 'from-blue-500 to-indigo-500')}
           </div>
 
           {/* Liabilities Section */}
           <div className="border-b border-white/30">
-            {renderBalanceSheetSection(mockData.liabilities, 'liabilities', 0, 'from-red-500 to-pink-500')}
+            {renderBalanceSheetSection(balanceSheetData.liabilities, 'liabilities', 0, 'from-red-500 to-pink-500')}
           </div>
 
           {/* Equity Section */}
           <div>
-            {renderBalanceSheetSection(mockData.equity, 'equity', 0, 'from-green-500 to-emerald-500')}
+            {renderBalanceSheetSection(balanceSheetData.equity, 'equity', 0, 'from-green-500 to-emerald-500')}
           </div>
         </div>
       </div>

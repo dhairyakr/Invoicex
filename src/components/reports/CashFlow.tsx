@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Activity, DollarSign } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getCashFlowData } from '../../lib/supabase';
 
 interface CashFlowProps {
   dateRange: { start: string; end: string };
@@ -8,31 +10,64 @@ interface CashFlowProps {
 }
 
 const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }) => {
-  // Mock data - replace with actual data from Supabase
-  const mockData = {
-    openingCash: 85000,
-    operating: [
-      { description: 'Cash from Sales', amount: 125000, type: 'inflow' },
-      { description: 'Cash paid to Suppliers', amount: -45000, type: 'outflow' },
-      { description: 'Salaries and Benefits', amount: -25000, type: 'outflow' },
-      { description: 'Operating Expenses', amount: -15000, type: 'outflow' }
-    ],
-    investing: [
-      { description: 'Equipment Purchase', amount: -20000, type: 'outflow' },
-      { description: 'Investment Income', amount: 5000, type: 'inflow' }
-    ],
-    financing: [
-      { description: 'Loan Proceeds', amount: 30000, type: 'inflow' },
-      { description: 'Loan Repayment', amount: -10000, type: 'outflow' },
-      { description: 'Dividends Paid', amount: -8000, type: 'outflow' }
-    ]
-  };
+  const { user } = useAuth();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const operatingTotal = mockData.operating.reduce((sum, item) => sum + item.amount, 0);
-  const investingTotal = mockData.investing.reduce((sum, item) => sum + item.amount, 0);
-  const financingTotal = mockData.financing.reduce((sum, item) => sum + item.amount, 0);
-  const netCashFlow = operatingTotal + investingTotal + financingTotal;
-  const closingCash = mockData.openingCash + netCashFlow;
+  useEffect(() => {
+    const loadData = async () => {
+      if (!user) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      const result = await getCashFlowData(user.id, dateRange.start, dateRange.end);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setData(result.data);
+      }
+      
+      setLoading(false);
+    };
+
+    loadData();
+  }, [user, dateRange.start, dateRange.end, viewPeriod, department]);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-white/50 animate-pulse">
+              <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
+              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="bg-red-50/60 backdrop-blur-md border border-red-200/50 rounded-2xl p-8 text-center">
+        <div className="text-red-600 mb-4">
+          <Wallet size={48} className="mx-auto mb-4" />
+          <h3 className="text-xl font-bold">Error Loading Cash Flow</h3>
+          <p className="text-sm mt-2">{error || 'No data available'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const operatingTotal = data.operating.reduce((sum: number, item: any) => sum + item.amount, 0);
+  const investingTotal = data.investing.reduce((sum: number, item: any) => sum + item.amount, 0);
+  const financingTotal = data.financing.reduce((sum: number, item: any) => sum + item.amount, 0);
+  const netCashFlow = data.netCashFlow;
+  const closingCash = data.closingCash;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -45,7 +80,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
 
   const renderCashFlowSection = (
     title: string, 
-    items: typeof mockData.operating, 
+    items: any[], 
     total: number,
     icon: React.ReactNode,
     colorScheme: string
@@ -100,7 +135,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
           <div className="relative z-10 text-center">
             <p className="text-gray-600 text-sm font-semibold uppercase tracking-wider mb-2">Opening Cash</p>
-            <p className="text-2xl font-bold text-gray-900">{formatCurrency(mockData.openingCash)}</p>
+            <p className="text-2xl font-bold text-gray-900">{formatCurrency(data.openingCash)}</p>
           </div>
         </div>
 
@@ -144,7 +179,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {renderCashFlowSection(
           'Operating Activities',
-          mockData.operating,
+          data.operating,
           operatingTotal,
           <Activity className="w-5 h-5 text-white" />,
           'from-blue-500 to-indigo-500'
@@ -152,7 +187,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
         
         {renderCashFlowSection(
           'Investing Activities',
-          mockData.investing,
+          data.investing,
           investingTotal,
           <TrendingUp className="w-5 h-5 text-white" />,
           'from-purple-500 to-violet-500'
@@ -160,7 +195,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
         
         {renderCashFlowSection(
           'Financing Activities',
-          mockData.financing,
+          data.financing,
           financingTotal,
           <DollarSign className="w-5 h-5 text-white" />,
           'from-green-500 to-emerald-500'
@@ -176,7 +211,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
             <div className="space-y-4">
               <div className="flex justify-between items-center p-4 bg-white/30 rounded-xl">
                 <span className="font-semibold text-gray-700">Opening Cash Balance</span>
-                <span className="font-bold text-gray-900">{formatCurrency(mockData.openingCash)}</span>
+                <span className="font-bold text-gray-900">{formatCurrency(data.openingCash)}</span>
               </div>
               <div className="flex justify-between items-center p-4 bg-blue-50/60 rounded-xl">
                 <span className="font-semibold text-blue-700">Net Operating Cash Flow</span>
