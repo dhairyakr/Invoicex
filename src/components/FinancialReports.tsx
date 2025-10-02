@@ -191,6 +191,7 @@ const FinancialReports: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4">
               {/* Date Range Presets */}
               <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                 <select
                   onChange={(e) => handleDatePreset(e.target.value)}
                   className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -202,29 +203,28 @@ const FinancialReports: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
               </div>
 
               {/* Custom Date Range */}
               <div className="flex items-center gap-2">
                 <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                   <input
                     type="date"
                     value={dateRange.start}
                     onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
                     className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                 </div>
                 <span className="text-gray-600 font-medium">to</span>
                 <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                   <input
                     type="date"
                     value={dateRange.end}
                     onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
                     className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                 </div>
               </div>
 
