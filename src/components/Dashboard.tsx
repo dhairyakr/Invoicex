@@ -134,8 +134,8 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  const handleDuplicate = (id: string) => {
-    duplicateInvoice(id);
+  const handleDuplicate = async (id: string) => {
+    await duplicateInvoice(id);
     navigate('/create');
   };
 
@@ -184,8 +184,8 @@ const Dashboard: React.FC = () => {
     }));
   };
 
-  const handleStatusChange = (invoiceId: string, newStatus: string) => {
-    updateInvoiceStatus(invoiceId, newStatus);
+  const handleStatusChange = async (invoiceId: string, newStatus: string) => {
+    await updateInvoiceStatus(invoiceId, newStatus);
     setStatusDropdowns(prev => ({
       ...prev,
       [invoiceId]: false

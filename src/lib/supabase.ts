@@ -602,29 +602,83 @@ export const createTransactionFromInvoice = async (invoice: any) => {
     const { data: accounts } = await getAccounts(invoice.user_id)
     if (!accounts) return { error: 'No accounts found' }
 
+    const cashAccount = accounts.find(acc => acc.code === '1000') // Cash
     const receivableAccount = accounts.find(acc => acc.code === '1100') // Accounts Receivable
     const revenueAccount = accounts.find(acc => acc.code === '4000') // Sales Revenue
 
-    if (!receivableAccount || !revenueAccount) {
+    if (!cashAccount || !receivableAccount || !revenueAccount) {
       return { error: 'Required accounts not found' }
     }
 
     const total = invoice.items?.reduce((sum: number, item: any) => sum + (item.quantity * item.rate), 0) || 0
 
-    const { error } = await supabase
+    // Check if transaction already exists for this invoice
+    const { data: existingTransaction } = await supabase
       .from('transactions')
-      .insert({
-        user_id: invoice.user_id,
-        reference: invoice.number,
-        description: `Sale to ${invoice.client_name}`,
-        transaction_date: invoice.issue_date,
-        amount: total,
-        debit_account_id: receivableAccount.id,
-        credit_account_id: revenueAccount.id,
-        invoice_id: invoice.id
-      })
+      .select('id')
+      .eq('invoice_id', invoice.id)
+      .maybeSingle()
 
-    return { error }
+    if (existingTransaction) {
+      console.log('Transaction already exists for this invoice')
+      return { error: null }
+    }
+
+    // Create transaction based on invoice status
+    if (invoice.status === 'sent') {
+      // When invoice is sent: Debit Accounts Receivable, Credit Revenue
+      const { error } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: invoice.user_id,
+          reference: invoice.number,
+          description: `Sale to ${invoice.client_name}`,
+          transaction_date: invoice.issue_date,
+          amount: total,
+          debit_account_id: receivableAccount.id,
+          credit_account_id: revenueAccount.id,
+          invoice_id: invoice.id
+        })
+
+      return { error }
+    } else if (invoice.status === 'paid') {
+      // When invoice is paid: Create two transactions
+      // 1. Record the sale (if not already recorded)
+      const { error: saleError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: invoice.user_id,
+          reference: invoice.number,
+          description: `Sale to ${invoice.client_name}`,
+          transaction_date: invoice.issue_date,
+          amount: total,
+          debit_account_id: receivableAccount.id,
+          credit_account_id: revenueAccount.id,
+          invoice_id: invoice.id
+        })
+
+      if (saleError && !saleError.message.includes('duplicate')) {
+        return { error: saleError }
+      }
+
+      // 2. Record the payment: Debit Cash, Credit Accounts Receivable
+      const { error: paymentError } = await supabase
+        .from('transactions')
+        .insert({
+          user_id: invoice.user_id,
+          reference: `${invoice.number}-PAYMENT`,
+          description: `Payment received from ${invoice.client_name}`,
+          transaction_date: new Date().toISOString().split('T')[0],
+          amount: total,
+          debit_account_id: cashAccount.id,
+          credit_account_id: receivableAccount.id,
+          invoice_id: invoice.id
+        })
+
+      return { error: paymentError }
+    }
+
+    return { error: null }
   } catch (error: any) {
     return { error: error.message }
   }

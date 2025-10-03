@@ -139,9 +139,9 @@ const InvoiceForm: React.FC = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!currentInvoice) return;
-    saveInvoice(currentInvoice);
+    await saveInvoice(currentInvoice);
     navigate('/');
   };
 

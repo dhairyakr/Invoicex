@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Invoice, InvoiceItem, TaxRate, InvoiceFilters } from '../types';
 import { v4 as uuidv4 } from 'uuid';
-import { createTransactionFromInvoice } from '../lib/supabase';
+import { createTransactionFromInvoice, supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
+import { useSupabaseInvoices } from '../hooks/useSupabaseInvoices';
 
 interface InvoiceContextType {
   invoices: Invoice[];
@@ -80,41 +81,55 @@ const DEFAULT_FILTERS: InvoiceFilters = {
 const InvoiceContext = createContext<InvoiceContextType | undefined>(undefined);
 
 export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [currentInvoice, setCurrentInvoice] = useState<Invoice | null>(null);
   const [filters, setFilters] = useState<InvoiceFilters>(DEFAULT_FILTERS);
   const { user } = useAuth();
+  const {
+    invoices,
+    loading,
+    error,
+    createInvoice: createSupabaseInvoice,
+    updateInvoice: updateSupabaseInvoice,
+    deleteInvoice: deleteSupabaseInvoice,
+    refreshInvoices
+  } = useSupabaseInvoices();
 
-  // Load invoices from localStorage
+  // Migrate localStorage invoices to Supabase on first load
   useEffect(() => {
-    const savedInvoices = localStorage.getItem('invoices');
-    if (savedInvoices) {
-      try {
-        const parsed = JSON.parse(savedInvoices);
-        // Migrate old invoices to new format
-        const migratedInvoices = parsed.map((invoice: any) => ({
-          ...invoice,
-          discountType: invoice.discountType || 'percentage',
-          discountValue: invoice.discountValue || 0,
-          taxRates: invoice.taxRates || [],
-          currency: invoice.currency || 'USD',
-          status: invoice.status || 'draft',
-          tags: invoice.tags || [],
-          createdAt: invoice.createdAt || new Date().toISOString(),
-          updatedAt: invoice.updatedAt || new Date().toISOString(),
-        }));
-        setInvoices(migratedInvoices);
-      } catch (error) {
-        console.error('Error loading invoices:', error);
-        setInvoices([]);
+    const migrateLocalStorageInvoices = async () => {
+      if (!user) return;
+
+      const localInvoices = localStorage.getItem('invoices');
+      if (localInvoices) {
+        try {
+          const parsed = JSON.parse(localInvoices);
+          console.log(`Found ${parsed.length} invoices in localStorage, migrating to Supabase...`);
+
+          for (const invoice of parsed) {
+            // Check if invoice already exists in Supabase
+            const { data: existing } = await supabase
+              .from('invoices')
+              .select('id')
+              .eq('id', invoice.id)
+              .maybeSingle();
+
+            if (!existing) {
+              await createSupabaseInvoice(invoice);
+            }
+          }
+
+          // Clear localStorage after successful migration
+          localStorage.removeItem('invoices');
+          console.log('✅ Migration complete');
+          refreshInvoices();
+        } catch (error) {
+          console.error('Error migrating invoices:', error);
+        }
       }
-    }
-  }, []);
+    };
 
-  // Save invoices to localStorage when they change
-  useEffect(() => {
-    localStorage.setItem('invoices', JSON.stringify(invoices));
-  }, [invoices]);
+    migrateLocalStorageInvoices();
+  }, [user]);
 
   // Filter invoices based on current filters
   const filteredInvoices = invoices.filter(invoice => {
@@ -164,7 +179,7 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCurrentInvoice(newInvoice);
   };
 
-  const duplicateInvoice = (id: string) => {
+  const duplicateInvoice = async (id: string) => {
     const originalInvoice = invoices.find(inv => inv.id === id);
     if (!originalInvoice) return;
 
@@ -185,61 +200,96 @@ export const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         id: uuidv4(),
       })),
     };
-    
-    // Add to invoices list immediately
-    setInvoices(prev => [...prev, duplicatedInvoice]);
+
+    await createSupabaseInvoice(duplicatedInvoice);
     setCurrentInvoice(duplicatedInvoice);
   };
 
-  const saveInvoice = (invoice: Invoice) => {
+  const saveInvoice = async (invoice: Invoice) => {
+    if (!user) return;
+
     const now = new Date().toISOString();
     const updatedInvoice = {
       ...invoice,
       updatedAt: now,
     };
 
-    const existingIndex = invoices.findIndex(inv => inv.id === invoice.id);
-    
-    if (existingIndex >= 0) {
+    const existingInvoice = invoices.find(inv => inv.id === invoice.id);
+    const previousStatus = existingInvoice?.status;
+
+    if (existingInvoice) {
       // Update existing invoice
-      const updatedInvoices = [...invoices];
-      updatedInvoices[existingIndex] = updatedInvoice;
-      setInvoices(updatedInvoices);
-    } else {
-      // Add new invoice
-      setInvoices([...invoices, updatedInvoice]);
-      
-      // Create accounting transaction if invoice is sent or paid
-      if (user && (invoice.status === 'sent' || invoice.status === 'paid')) {
-        createTransactionFromInvoice({
-          ...invoice,
+      await updateSupabaseInvoice(invoice.id, updatedInvoice);
+
+      // Create transaction if status changed to sent or paid
+      if (previousStatus !== invoice.status && (invoice.status === 'sent' || invoice.status === 'paid')) {
+        await createTransactionFromInvoice({
+          id: invoice.id,
           user_id: user.id,
+          number: invoice.number,
           items: invoice.items,
           client_name: invoice.client.name,
-          issue_date: invoice.issueDate
+          issue_date: invoice.issueDate,
+          status: invoice.status
+        }).catch(error => {
+          console.warn('Failed to create accounting transaction:', error);
+        });
+      }
+    } else {
+      // Add new invoice
+      await createSupabaseInvoice(updatedInvoice);
+
+      // Create accounting transaction if invoice is sent or paid
+      if (invoice.status === 'sent' || invoice.status === 'paid') {
+        await createTransactionFromInvoice({
+          id: invoice.id,
+          user_id: user.id,
+          number: invoice.number,
+          items: invoice.items,
+          client_name: invoice.client.name,
+          issue_date: invoice.issueDate,
+          status: invoice.status
         }).catch(error => {
           console.warn('Failed to create accounting transaction:', error);
         });
       }
     }
-    
+
     setCurrentInvoice(null);
   };
 
-  const deleteInvoice = (id: string) => {
-    setInvoices(invoices.filter(invoice => invoice.id !== id));
+  const deleteInvoice = async (id: string) => {
+    await deleteSupabaseInvoice(id);
     if (currentInvoice?.id === id) {
       setCurrentInvoice(null);
     }
   };
 
-  const updateInvoiceStatus = (id: string, status: string) => {
+  const updateInvoiceStatus = async (id: string, status: string) => {
+    if (!user) return;
+
+    const invoice = invoices.find(inv => inv.id === id);
+    if (!invoice) return;
+
+    const previousStatus = invoice.status;
     const now = new Date().toISOString();
-    setInvoices(prev => prev.map(invoice => 
-      invoice.id === id 
-        ? { ...invoice, status, updatedAt: now }
-        : invoice
-    ));
+
+    await updateSupabaseInvoice(id, { status, updatedAt: now });
+
+    // Create transaction if status changed to sent or paid
+    if (previousStatus !== status && (status === 'sent' || status === 'paid')) {
+      await createTransactionFromInvoice({
+        id: invoice.id,
+        user_id: user.id,
+        number: invoice.number,
+        items: invoice.items,
+        client_name: invoice.client.name,
+        issue_date: invoice.issueDate,
+        status: status
+      }).catch(error => {
+        console.warn('Failed to create accounting transaction:', error);
+      });
+    }
   };
 
   const updateInvoiceField = (field: string, value: any) => {
