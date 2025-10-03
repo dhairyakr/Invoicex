@@ -6,36 +6,7 @@ import { formatDate } from '../utils/helpers';
 import { sendEmailInvoice } from '../utils/communication';
 import { exportToPDF } from '../utils/pdfExport';
 import InvoicePreview from './InvoicePreview';
-import { 
-  FileText, 
-  Plus, 
-  Trash2, 
-  Search, 
-  Filter, 
-  Copy, 
-  Mail, 
-  Eye,
-  Edit,
-  Calendar,
-  Tag,
-  X,
-  TrendingUp,
-  DollarSign,
-  Clock,
-  Users,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  CheckCircle,
-  AlertCircle,
-  XCircle,
-  Zap,
-  ChevronDown,
-  Download,
-  Sparkles,
-  Star,
-  Activity
-} from 'lucide-react';
+import { FileText, Plus, Trash2, Search, Filter, Copy, Mail, Eye, CreditCard as Edit, Calendar, Tag, X, TrendingUp, DollarSign, Clock, Users, BarChart3, ArrowUpRight, ArrowDownRight, CheckCircle, AlertCircle, XCircle, Zap, ChevronDown, Download, Sparkles, Star, Activity } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
