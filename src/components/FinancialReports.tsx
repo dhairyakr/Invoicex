@@ -259,12 +259,12 @@ const FinancialReports: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-200px)]">
+      <div className="flex h-[calc(100vh-200px)] overflow-hidden">
         {/* Sidebar Navigation - Aero Glass */}
-        <div className="w-80 bg-white/25 backdrop-blur-xl border-r border-white/40 shadow-xl">
+        <div className="w-80 bg-white/25 backdrop-blur-xl border-r border-white/40 shadow-xl overflow-y-auto">
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
-          
-          <div className="relative z-10 p-6">
+
+          <div className="relative z-10 p-6 min-h-full">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Financial Reports</h2>
               <p className="text-gray-600">Select a report to view detailed insights</p>
@@ -353,9 +353,9 @@ const FinancialReports: React.FC = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Report Header */}
-          <div className="relative bg-white/20 backdrop-blur-md border-b border-white/30 p-6">
+          <div className="relative bg-white/20 backdrop-blur-md border-b border-white/30 p-6 flex-shrink-0">
             <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div className="flex items-center">
@@ -396,7 +396,7 @@ const FinancialReports: React.FC = () => {
           </div>
 
           {/* Report Content */}
-          <div className="h-full overflow-y-auto bg-gradient-to-br from-white/40 to-blue-50/40 p-6">
+          <div className="flex-1 overflow-y-auto bg-gradient-to-br from-white/40 to-blue-50/40 p-6">
             <div className="relative">
               {renderActiveReport()}
             </div>
