@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  DollarSign, 
-  FileText, 
-  Users, 
+import {
+  BarChart3,
+  TrendingUp,
+  DollarSign,
+  FileText,
+  Users,
   Calendar,
   Filter,
   Download,
@@ -24,13 +24,15 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Plus
 } from 'lucide-react';
 import ProfitLoss from './reports/ProfitLoss';
 import BalanceSheet from './reports/BalanceSheet';
 import CashFlow from './reports/CashFlow';
 import TrialBalanceLedger from './reports/TrialBalanceLedger';
 import AgedReceivablesPayables from './reports/AgedReceivablesPayables';
+import JournalEntryModal from './reports/JournalEntryModal';
 
 type ReportType = 'profit-loss' | 'balance-sheet' | 'cash-flow' | 'trial-balance' | 'aged-reports';
 type ViewPeriod = 'monthly' | 'quarterly' | 'yearly';
@@ -43,6 +45,8 @@ const FinancialReports: React.FC = () => {
   });
   const [viewPeriod, setViewPeriod] = useState<ViewPeriod>('monthly');
   const [department, setDepartment] = useState('');
+  const [showJournalEntry, setShowJournalEntry] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const reportTabs = [
     {
@@ -247,6 +251,17 @@ const FinancialReports: React.FC = () => {
                 ))}
               </div>
 
+              {/* Add Entry Button */}
+              <button
+                onClick={() => setShowJournalEntry(true)}
+                className="relative group overflow-hidden bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/90 to-pink-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                <Plus size={18} className="mr-2 relative z-10" />
+                <span className="relative z-10">Add Entry</span>
+              </button>
+
               {/* Export Button */}
               <button className="relative group overflow-hidden bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
@@ -403,6 +418,15 @@ const FinancialReports: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Journal Entry Modal */}
+      <JournalEntryModal
+        isOpen={showJournalEntry}
+        onClose={() => setShowJournalEntry(false)}
+        onSuccess={() => {
+          setRefreshKey(prev => prev + 1);
+        }}
+      />
     </div>
   );
 };
