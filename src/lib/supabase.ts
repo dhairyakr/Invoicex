@@ -823,3 +823,307 @@ export const createTransactionFromInvoice = async (invoice: any) => {
     return { error: error.message }
   }
 }
+
+export const getCustomerVendors = async (userId: string, type?: 'customer' | 'vendor') => {
+  try {
+    let query = supabase
+      .from('customer_vendors')
+      .select('*')
+      .eq('user_id', userId)
+
+    if (type) {
+      query = query.eq('type', type)
+    }
+
+    const { data, error } = await query.order('name')
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const createCustomerVendor = async (customerVendor: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('customer_vendors')
+      .insert(customerVendor)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateCustomerVendor = async (id: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('customer_vendors')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getCollectionActivities = async (userId: string, customerId?: string, invoiceId?: string) => {
+  try {
+    let query = supabase
+      .from('collection_activities')
+      .select('*')
+      .eq('user_id', userId)
+
+    if (customerId) {
+      query = query.eq('customer_vendor_id', customerId)
+    }
+
+    if (invoiceId) {
+      query = query.eq('invoice_id', invoiceId)
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const createCollectionActivity = async (activity: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('collection_activities')
+      .insert(activity)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getPaymentPromises = async (userId: string, status?: string) => {
+  try {
+    let query = supabase
+      .from('payment_promises')
+      .select(`
+        *,
+        invoice:invoices(*),
+        customer_vendor:customer_vendors(*)
+      `)
+      .eq('user_id', userId)
+
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    const { data, error } = await query.order('promised_date')
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const createPaymentPromise = async (promise: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('payment_promises')
+      .insert(promise)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updatePaymentPromise = async (id: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('payment_promises')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getCollectionWorkflows = async (userId: string, stage?: string) => {
+  try {
+    let query = supabase
+      .from('collection_workflows')
+      .select(`
+        *,
+        invoice:invoices(*),
+        customer_vendor:customer_vendors(*)
+      `)
+      .eq('user_id', userId)
+
+    if (stage) {
+      query = query.eq('current_stage', stage)
+    }
+
+    const { data, error } = await query.order('priority', { ascending: false })
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const createCollectionWorkflow = async (workflow: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('collection_workflows')
+      .insert(workflow)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateCollectionWorkflow = async (id: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('collection_workflows')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getReminderTemplates = async (userId: string, type?: string) => {
+  try {
+    let query = supabase
+      .from('reminder_templates')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+
+    if (type) {
+      query = query.eq('type', type)
+    }
+
+    const { data, error } = await query.order('stage')
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const createReminderTemplate = async (template: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('reminder_templates')
+      .insert(template)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateReminderTemplate = async (id: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('reminder_templates')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const recordPayment = async (payment: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('payments')
+      .insert(payment)
+      .select()
+      .single()
+
+    if (error) throw error
+
+    if (payment.invoice_id) {
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('id', payment.invoice_id)
+        .single()
+
+      if (invoice) {
+        const { data: payments } = await supabase
+          .from('payments')
+          .select('amount')
+          .eq('invoice_id', payment.invoice_id)
+
+        const totalPaid = payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0
+
+        const { data: items } = await supabase
+          .from('invoice_items')
+          .select('quantity, rate')
+          .eq('invoice_id', payment.invoice_id)
+
+        const invoiceTotal = items?.reduce((sum, item) => sum + (item.quantity * item.rate), 0) || 0
+
+        let newStatus = 'sent'
+        if (totalPaid >= invoiceTotal) {
+          newStatus = 'paid'
+        } else if (totalPaid > 0) {
+          newStatus = 'partial'
+        }
+
+        await supabase
+          .from('invoices')
+          .update({ status: newStatus })
+          .eq('id', payment.invoice_id)
+      }
+    }
+
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}

@@ -30,7 +30,7 @@ import ProfitLoss from './reports/ProfitLoss';
 import EnhancedBalanceSheet from './reports/EnhancedBalanceSheet';
 import EnhancedCashFlow from './reports/EnhancedCashFlow';
 import EnhancedTrialBalanceLedger from './reports/EnhancedTrialBalanceLedger';
-import AgedReceivablesPayables from './reports/AgedReceivablesPayables';
+import EnhancedAgedReceivablesPayables from './reports/EnhancedAgedReceivablesPayables';
 import JournalEntryModal from './reports/JournalEntryModal';
 import QuickTransactionEntry from './reports/QuickTransactionEntry';
 import AccountManagement from './reports/AccountManagement';
@@ -183,7 +183,7 @@ const FinancialReports: React.FC = () => {
       case 'trial-balance':
         return <EnhancedTrialBalanceLedger {...reportProps} />;
       case 'aged-reports':
-        return <AgedReceivablesPayables {...reportProps} />;
+        return <EnhancedAgedReceivablesPayables {...reportProps} />;
       case 'accounts':
         return <AccountManagement key={refreshKey} />;
       default:
