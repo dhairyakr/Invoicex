@@ -1127,3 +1127,217 @@ export const recordPayment = async (payment: any) => {
     return { data: null, error: error.message }
   }
 }
+
+export const getUserProfile = async (userId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateUserProfile = async (userId: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .upsert({ id: userId, ...updates }, { onConflict: 'id' })
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getBusinessProfile = async (userId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('business_profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateBusinessProfile = async (userId: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('business_profiles')
+      .upsert({ user_id: userId, ...updates }, { onConflict: 'user_id' })
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getUserPreferences = async (userId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const updateUserPreferences = async (userId: string, updates: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .upsert({ user_id: userId, ...updates }, { onConflict: 'user_id' })
+      .select()
+      .single()
+
+    if (error) throw error
+    return { data, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const ensureUserProfilesExist = async (userId: string, userEmail: string) => {
+  try {
+    const promises = [
+      supabase.from('user_profiles').upsert({ id: userId }, { onConflict: 'id' }),
+      supabase.from('business_profiles').upsert({ user_id: userId, email: userEmail }, { onConflict: 'user_id' }),
+      supabase.from('user_preferences').upsert({ user_id: userId }, { onConflict: 'user_id' })
+    ]
+
+    await Promise.all(promises)
+    return { error: null }
+  } catch (error: any) {
+    return { error: error.message }
+  }
+}
+
+export const updatePassword = async (newPassword: string) => {
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+
+    if (error) throw error
+    return { error: null }
+  } catch (error: any) {
+    return { error: error.message }
+  }
+}
+
+export const uploadAvatar = async (userId: string, file: File) => {
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${userId}-${Date.now()}.${fileExt}`
+    const filePath = `avatars/${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('user-avatars')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) throw uploadError
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('user-avatars')
+      .getPublicUrl(filePath)
+
+    await updateUserProfile(userId, { avatar_url: publicUrl })
+
+    return { data: publicUrl, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const uploadBusinessLogo = async (userId: string, file: File) => {
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${userId}-${Date.now()}.${fileExt}`
+    const filePath = `logos/${fileName}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('business-logos')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) throw uploadError
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('business-logos')
+      .getPublicUrl(filePath)
+
+    await updateBusinessProfile(userId, { logo_url: publicUrl })
+
+    return { data: publicUrl, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const exportUserData = async (userId: string) => {
+  try {
+    const [
+      { data: userProfile },
+      { data: businessProfile },
+      { data: preferences },
+      { data: invoices },
+      { data: products }
+    ] = await Promise.all([
+      getUserProfile(userId),
+      getBusinessProfile(userId),
+      getUserPreferences(userId),
+      getInvoices(userId),
+      supabase.from('products').select('*').eq('user_id', userId)
+    ])
+
+    const exportData = {
+      userProfile,
+      businessProfile,
+      preferences,
+      invoices,
+      products: products || [],
+      exportedAt: new Date().toISOString()
+    }
+
+    return { data: exportData, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const deleteUserAccount = async (userId: string) => {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId)
+
+    if (error) throw error
+
+    await supabase.auth.signOut()
+
+    return { error: null }
+  } catch (error: any) {
+    return { error: error.message }
+  }
+}

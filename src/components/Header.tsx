@@ -289,7 +289,8 @@ const Header: React.FC = () => {
 
                       {/* Menu Items */}
                       <div className="p-2">
-                        <button
+                        <Link
+                          to="/settings"
                           onClick={() => setShowUserMenu(false)}
                           className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition-all duration-200 group/item"
                         >
@@ -297,7 +298,7 @@ const Header: React.FC = () => {
                             <Settings size={16} className="text-gray-500 group-hover/item:text-blue-500 transition-colors" />
                           </div>
                           <span className="font-medium">Account Settings</span>
-                        </button>
+                        </Link>
 
                         <button
                           onClick={handleSignOut}

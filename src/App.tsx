@@ -12,6 +12,7 @@ import InvoicePreview from './components/InvoicePreview';
 import TemplateSelector from './components/TemplateSelector';
 import ProductManager from './components/Products/ProductManager';
 import FinancialReports from './components/FinancialReports';
+import Settings from './pages/Settings';
 import './index.css';
 
 // Protected Route Component
@@ -127,19 +128,27 @@ const AppContent: React.FC = () => {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/reports" 
+            <Route
+              path="/reports"
               element={
                 <ProtectedRoute>
                   <FinancialReports />
                 </ProtectedRoute>
-              } 
+              }
             />
-            
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Catch all route */}
-            <Route 
-              path="*" 
-              element={<Navigate to={user ? "/" : "/auth"} replace />} 
+            <Route
+              path="*"
+              element={<Navigate to={user ? "/" : "/auth"} replace />}
             />
           </Routes>
         </div>
