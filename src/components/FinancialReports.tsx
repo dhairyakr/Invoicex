@@ -33,7 +33,7 @@ import EnhancedTrialBalanceLedger from './reports/EnhancedTrialBalanceLedger';
 import EnhancedAgedReceivablesPayables from './reports/EnhancedAgedReceivablesPayables';
 import JournalEntryModal from './reports/JournalEntryModal';
 import QuickTransactionEntry from './reports/QuickTransactionEntry';
-import AccountManagement from './reports/AccountManagement';
+import EnhancedAccountManagement from './reports/EnhancedAccountManagement';
 import { useAuth } from '../context/AuthContext';
 import { ensureAccountsExist } from '../lib/supabase';
 
@@ -185,7 +185,7 @@ const FinancialReports: React.FC = () => {
       case 'aged-reports':
         return <EnhancedAgedReceivablesPayables {...reportProps} />;
       case 'accounts':
-        return <AccountManagement key={refreshKey} />;
+        return <EnhancedAccountManagement key={refreshKey} />;
       default:
         return <ProfitLoss {...reportProps} />;
     }

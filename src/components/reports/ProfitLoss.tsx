@@ -8,6 +8,7 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RePieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart
 } from 'recharts';
+import LoadingAnimation from '../LoadingAnimation';
 import { useAuth } from '../../context/AuthContext';
 import { getProfitLossData } from '../../lib/supabase';
 
@@ -212,26 +213,7 @@ const ProfitLoss: React.FC<ProfitLossProps> = ({ dateRange, viewPeriod, departme
   };
 
   if (loading) {
-    return (
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-white/40 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 animate-pulse">
-              <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
-              <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-            </div>
-          ))}
-        </div>
-        <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50">
-          <div className="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="h-4 bg-gray-300 rounded"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingAnimation reportType="profit-loss" showTips={true} />;
   }
 
   if (error) {
