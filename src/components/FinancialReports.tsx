@@ -28,7 +28,7 @@ import {
   Plus
 } from 'lucide-react';
 import ProfitLoss from './reports/ProfitLoss';
-import BalanceSheet from './reports/BalanceSheet';
+import EnhancedBalanceSheet from './reports/EnhancedBalanceSheet';
 import CashFlow from './reports/CashFlow';
 import TrialBalanceLedger from './reports/TrialBalanceLedger';
 import AgedReceivablesPayables from './reports/AgedReceivablesPayables';
@@ -178,7 +178,7 @@ const FinancialReports: React.FC = () => {
       case 'profit-loss':
         return <ProfitLoss {...reportProps} />;
       case 'balance-sheet':
-        return <BalanceSheet {...reportProps} />;
+        return <EnhancedBalanceSheet {...reportProps} />;
       case 'cash-flow':
         return <CashFlow {...reportProps} />;
       case 'trial-balance':

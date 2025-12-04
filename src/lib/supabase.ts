@@ -336,9 +336,8 @@ export const getBalanceSheetData = async (userId: string, asOfDate: string) => {
     const { data: transactions, error: transactionsError } = await getTransactions(userId, undefined, asOfDate)
     if (transactionsError) throw transactionsError
 
-    // Calculate balances
     const accountBalances = new Map()
-    
+
     accounts?.forEach(account => {
       accountBalances.set(account.id, { ...account, balance: 0 })
     })
@@ -383,6 +382,79 @@ export const getBalanceSheetData = async (userId: string, asOfDate: string) => {
       },
       error: null
     }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getHistoricalBalanceSheetData = async (userId: string, months: number = 6) => {
+  try {
+    const historicalData = []
+    const today = new Date()
+
+    for (let i = 0; i < months; i++) {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1)
+      const dateStr = date.toISOString().split('T')[0]
+
+      const result = await getBalanceSheetData(userId, dateStr)
+      if (result.data) {
+        historicalData.push({
+          date: dateStr,
+          month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          ...result.data
+        })
+      }
+    }
+
+    return { data: historicalData.reverse(), error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getComparativeBalanceSheetData = async (userId: string, currentDate: string, previousDate: string) => {
+  try {
+    const currentResult = await getBalanceSheetData(userId, currentDate)
+    const previousResult = await getBalanceSheetData(userId, previousDate)
+
+    if (currentResult.error || previousResult.error) {
+      throw new Error(currentResult.error || previousResult.error)
+    }
+
+    return {
+      data: {
+        current: currentResult.data,
+        previous: previousResult.data
+      },
+      error: null
+    }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
+export const getAccountTransactions = async (userId: string, accountId: string, startDate?: string, endDate?: string) => {
+  try {
+    const { data: transactions, error } = await supabase
+      .from('journal_entries')
+      .select(`
+        *,
+        debit_account:accounts!journal_entries_debit_account_id_fkey(id, name, code, type),
+        credit_account:accounts!journal_entries_credit_account_id_fkey(id, name, code, type)
+      `)
+      .eq('user_id', userId)
+      .or(`debit_account_id.eq.${accountId},credit_account_id.eq.${accountId}`)
+      .order('date', { ascending: false })
+
+    if (error) throw error
+
+    const enrichedTransactions = transactions?.map(t => ({
+      ...t,
+      isDebit: t.debit_account_id === accountId,
+      relevantAccount: t.debit_account_id === accountId ? t.credit_account : t.debit_account
+    }))
+
+    return { data: enrichedTransactions || [], error: null }
   } catch (error: any) {
     return { data: null, error: error.message }
   }
