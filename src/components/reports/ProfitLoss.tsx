@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   TrendingUp, TrendingDown, DollarSign, Percent, ArrowUpRight, ArrowDownRight,
   BarChart3, PieChart, AlertCircle, Download, Eye, X, ChevronDown, ChevronUp,
-  Activity, Target, Zap, Calendar, FileText, Filter, Maximize2
+  Activity, Target, Zap, Calendar, FileText, Filter, Maximize2, Loader
 } from 'lucide-react';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart as RePieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart
 } from 'recharts';
-import LoadingAnimation from '../LoadingAnimation';
 import { useAuth } from '../../context/AuthContext';
 import { getProfitLossData } from '../../lib/supabase';
 
@@ -213,7 +212,14 @@ const ProfitLoss: React.FC<ProfitLossProps> = ({ dateRange, viewPeriod, departme
   };
 
   if (loading) {
-    return <LoadingAnimation reportType="profit-loss" showTips={true} />;
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading profit & loss data...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {

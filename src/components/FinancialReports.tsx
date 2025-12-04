@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import {
   BarChart3,
   TrendingUp,
@@ -24,17 +24,19 @@ import {
   ArrowDownRight,
   Clock,
   AlertTriangle,
-  Plus
+  Plus,
+  Loader
 } from 'lucide-react';
-import ProfitLoss from './reports/ProfitLoss';
-import EnhancedBalanceSheet from './reports/EnhancedBalanceSheet';
-import EnhancedCashFlow from './reports/EnhancedCashFlow';
-import EnhancedTrialBalanceLedger from './reports/EnhancedTrialBalanceLedger';
-import EnhancedAgedReceivablesPayables from './reports/EnhancedAgedReceivablesPayables';
 import JournalEntryModal from './reports/JournalEntryModal';
 import QuickTransactionEntry from './reports/QuickTransactionEntry';
-import EnhancedAccountManagement from './reports/EnhancedAccountManagement';
 import { useAuth } from '../context/AuthContext';
+
+const ProfitLoss = lazy(() => import('./reports/ProfitLoss'));
+const EnhancedBalanceSheet = lazy(() => import('./reports/EnhancedBalanceSheet'));
+const EnhancedCashFlow = lazy(() => import('./reports/EnhancedCashFlow'));
+const EnhancedTrialBalanceLedger = lazy(() => import('./reports/EnhancedTrialBalanceLedger'));
+const EnhancedAgedReceivablesPayables = lazy(() => import('./reports/EnhancedAgedReceivablesPayables'));
+const EnhancedAccountManagement = lazy(() => import('./reports/EnhancedAccountManagement'));
 import { ensureAccountsExist } from '../lib/supabase';
 
 type ReportType = 'profit-loss' | 'balance-sheet' | 'cash-flow' | 'trial-balance' | 'aged-reports' | 'accounts';
@@ -444,7 +446,16 @@ const FinancialReports: React.FC = () => {
           {/* Report Content */}
           <div className="flex-1 overflow-y-auto bg-gradient-to-br from-white/40 to-blue-50/40 p-6">
             <div className="relative">
-              {renderActiveReport()}
+              <Suspense fallback={
+                <div className="flex items-center justify-center py-20">
+                  <div className="text-center">
+                    <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                    <p className="text-gray-600 font-semibold">Loading report...</p>
+                  </div>
+                </div>
+              }>
+                {renderActiveReport()}
+              </Suspense>
             </div>
           </div>
         </div>

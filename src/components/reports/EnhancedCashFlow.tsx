@@ -3,7 +3,7 @@ import {
   Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Activity, DollarSign,
   AlertCircle, RefreshCw, Plus, ChevronDown, ChevronRight, Eye, Search, ArrowUpDown,
   BarChart3, PieChart, Layers, Download, FileSpreadsheet, Percent, Target, Zap,
-  Shield, TrendingDown as TrendingDownIcon, X, Info, Calendar
+  Shield, TrendingDown as TrendingDownIcon, X, Info, Calendar, Loader
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart as RechartsPie, Pie, Cell, ComposedChart,
@@ -260,13 +260,11 @@ const EnhancedCashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, depa
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-pulse">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-white/40 backdrop-blur-md rounded-3xl p-8 h-40 border border-white/50"></div>
-          ))}
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading cash flow data...</p>
         </div>
-        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 h-96 border border-white/50"></div>
       </div>
     );
   }

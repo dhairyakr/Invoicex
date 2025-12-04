@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Building, ChevronDown, ChevronRight, TrendingUp, TrendingDown, Layers, Shield, Briefcase,
   DollarSign, Activity, BarChart3, PieChart, Download, FileSpreadsheet, FileText, Search,
-  Filter, ArrowUpDown, Eye, Percent, Calendar, AlertCircle, CheckCircle, Info
+  Filter, ArrowUpDown, Eye, Percent, Calendar, AlertCircle, CheckCircle, Info, Loader
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -165,13 +165,11 @@ const EnhancedBalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeri
 
   if (loading) {
     return (
-      <div className="space-y-8 animate-pulse">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="bg-white/40 backdrop-blur-md rounded-2xl p-6 h-32 border border-white/50"></div>
-          ))}
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading balance sheet data...</p>
         </div>
-        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 h-96 border border-white/50"></div>
       </div>
     );
   }

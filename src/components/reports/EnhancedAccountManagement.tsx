@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Building2, Plus, RefreshCw, AlertCircle, CheckCircle, Eye, EyeOff, Search,
-  Filter, BarChart3, Download, Archive, Tag, Edit, Trash2, ChevronDown, ChevronUp, Grid, List
+  Filter, BarChart3, Download, Archive, Tag, Edit, Trash2, ChevronDown, ChevronUp, Grid, List, Loader
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, getAccounts, ensureAccountsExist } from '../../lib/supabase';
 import AccountDetailsModal from './AccountDetailsModal';
-import LoadingAnimation from '../LoadingAnimation';
 import { SkeletonLoader } from '../SkeletonLoader';
 
 interface Account {
@@ -184,7 +183,14 @@ const EnhancedAccountManagement: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingAnimation reportType="accounts" showTips={true} />;
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading chart of accounts...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

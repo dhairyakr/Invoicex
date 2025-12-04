@@ -15,7 +15,8 @@ import {
   ChevronUp,
   BarChart3,
   FileDown,
-  Eye
+  Eye,
+  Loader
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getTrialBalanceData, getTransactions, getAccounts } from '../../lib/supabase';
@@ -325,14 +326,10 @@ const EnhancedTrialBalanceLedger: React.FC<EnhancedTrialBalanceLedgerProps> = ({
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/50 animate-pulse">
-          <div className="h-6 bg-gray-300 rounded w-1/3 mb-6"></div>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="h-4 bg-gray-300 rounded"></div>
-            ))}
-          </div>
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading trial balance data...</p>
         </div>
       </div>
     );
