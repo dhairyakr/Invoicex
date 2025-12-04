@@ -29,7 +29,7 @@ import {
 import ProfitLoss from './reports/ProfitLoss';
 import EnhancedBalanceSheet from './reports/EnhancedBalanceSheet';
 import EnhancedCashFlow from './reports/EnhancedCashFlow';
-import TrialBalanceLedger from './reports/TrialBalanceLedger';
+import EnhancedTrialBalanceLedger from './reports/EnhancedTrialBalanceLedger';
 import AgedReceivablesPayables from './reports/AgedReceivablesPayables';
 import JournalEntryModal from './reports/JournalEntryModal';
 import QuickTransactionEntry from './reports/QuickTransactionEntry';
@@ -181,7 +181,7 @@ const FinancialReports: React.FC = () => {
       case 'cash-flow':
         return <EnhancedCashFlow {...reportProps} />;
       case 'trial-balance':
-        return <TrialBalanceLedger {...reportProps} />;
+        return <EnhancedTrialBalanceLedger {...reportProps} />;
       case 'aged-reports':
         return <AgedReceivablesPayables {...reportProps} />;
       case 'accounts':
