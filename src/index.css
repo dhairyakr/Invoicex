@@ -1,3 +1,115 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Print Styles for PDF Export */
+@media print {
+  /* Hide all interactive elements and navigation */
+  button,
+  input,
+  select,
+  nav,
+  .no-print,
+  [class*="backdrop-blur"],
+  [class*="hover:"],
+  [class*="transition"] {
+    display: none !important;
+  }
+
+  /* Reset backgrounds and colors for print */
+  body,
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Remove backdrop effects */
+  [class*="backdrop-blur"],
+  [class*="bg-gradient"],
+  .absolute {
+    background: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Ensure proper page layout */
+  html,
+  body {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* Show only main content */
+  main,
+  .print-content,
+  table,
+  .chart-container {
+    display: block !important;
+    page-break-inside: avoid;
+  }
+
+  /* Table styling for print */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  }
+
+  table th,
+  table td {
+    border: 1px solid #000 !important;
+    padding: 8px !important;
+    text-align: left;
+  }
+
+  table th {
+    background: #f0f0f0 !important;
+    font-weight: bold;
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: black !important;
+    page-break-after: avoid;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Remove rounded corners and shadows */
+  * {
+    border-radius: 0 !important;
+  }
+
+  /* Charts - adjust for print */
+  .recharts-wrapper,
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Prevent orphans and widows */
+  p,
+  li,
+  tr {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Hide header decorative elements */
+  .hero-header,
+  [class*="from-"] {
+    background: white !important;
+  }
+}

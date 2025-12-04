@@ -688,7 +688,7 @@ const TableView: React.FC<TableViewProps> = ({
           }`}
         >
           <Percent className="w-4 h-4 inline mr-2" />
-          % Analysis
+          Vertical Analysis
         </button>
       </div>
 

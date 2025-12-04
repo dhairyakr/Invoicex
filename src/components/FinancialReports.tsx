@@ -9,7 +9,6 @@ import {
   Filter,
   Download,
   Eye,
-  Settings,
   ChevronRight,
   Activity,
   PieChart,
@@ -438,12 +437,6 @@ const FinancialReports: React.FC = () => {
                   </select>
                   <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
                 </div>
-
-                {/* Settings Button */}
-                <button className="relative p-3 bg-white/40 backdrop-blur-md border border-white/50 rounded-xl text-gray-600 hover:text-gray-800 hover:bg-white/50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                  <Settings size={20} className="relative z-10" />
-                </button>
               </div>
             </div>
           </div>
