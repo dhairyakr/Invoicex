@@ -17,21 +17,15 @@ const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 overflow-hidden bg-gradient-to-r from-slate-950/98 via-slate-900/98 to-slate-950/98 backdrop-blur-2xl border-b border-slate-700/30 shadow-2xl">
-      {/* Sophisticated Background Effects */}
+      {/* Subtle Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Animated Gradient Orbs */}
-        <div className="absolute -top-24 right-0 w-96 h-96 bg-gradient-radial from-teal-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute -bottom-24 left-0 w-80 h-80 bg-gradient-radial from-cyan-500/15 via-teal-500/8 to-transparent rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-
-        {/* Flowing Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20"></div>
+        {/* Animated Gradient Orbs - Reduced for cleaner look */}
+        <div className="absolute -top-24 right-0 w-96 h-96 bg-gradient-radial from-teal-500/15 via-emerald-500/8 to-transparent rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute -bottom-24 left-0 w-80 h-80 bg-gradient-radial from-cyan-500/10 via-teal-500/5 to-transparent rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      {/* Premium Glass Overlay with Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.07] via-transparent to-black/10"></div>
-
-      {/* Animated Shimmer Sweep */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/10 to-transparent -skew-x-12 transform translate-x-[-100%] animate-shimmer-slow"></div>
+      {/* Subtle Glass Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-black/5"></div>
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-8">
@@ -56,10 +50,10 @@ const Header: React.FC = () => {
             </div>
 
             <div className="group-hover:translate-x-1 transition-all duration-500">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-white via-teal-50 to-white bg-clip-text text-transparent group-hover:from-teal-200 group-hover:via-emerald-200 group-hover:to-cyan-200 transition-all duration-500">
+              <h1 className="text-xl font-bold text-white group-hover:text-teal-200 transition-all duration-500 drop-shadow-sm">
                 Invoice Beautifier
               </h1>
-              <p className="text-xs text-slate-400 font-medium tracking-wide group-hover:text-teal-300/80 transition-colors duration-500">Professional Invoice Solutions</p>
+              <p className="text-xs text-slate-300 font-medium tracking-wide group-hover:text-teal-300 transition-colors duration-500">Professional Invoice Solutions</p>
             </div>
           </Link>
           
