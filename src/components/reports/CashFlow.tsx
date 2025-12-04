@@ -243,7 +243,7 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department, 
                 <ArrowDownRight className="w-5 h-5 text-red-600 mr-1" />
               )}
               <p className={`text-2xl font-bold ${netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {((netCashFlow / mockData.openingCash) * 100).toFixed(1)}%
+                {data.openingCash !== 0 ? ((netCashFlow / data.openingCash) * 100).toFixed(1) : '0.0'}%
               </p>
             </div>
           </div>
