@@ -33,11 +33,16 @@ import CashFlow from './reports/CashFlow';
 import TrialBalanceLedger from './reports/TrialBalanceLedger';
 import AgedReceivablesPayables from './reports/AgedReceivablesPayables';
 import JournalEntryModal from './reports/JournalEntryModal';
+import QuickTransactionEntry from './reports/QuickTransactionEntry';
+import AccountManagement from './reports/AccountManagement';
+import { useAuth } from '../context/AuthContext';
+import { ensureAccountsExist } from '../lib/supabase';
 
-type ReportType = 'profit-loss' | 'balance-sheet' | 'cash-flow' | 'trial-balance' | 'aged-reports';
+type ReportType = 'profit-loss' | 'balance-sheet' | 'cash-flow' | 'trial-balance' | 'aged-reports' | 'accounts';
 type ViewPeriod = 'monthly' | 'quarterly' | 'yearly';
 
 const FinancialReports: React.FC = () => {
+  const { user } = useAuth();
   const [activeReport, setActiveReport] = useState<ReportType>('profit-loss');
   const [dateRange, setDateRange] = useState({
     start: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
@@ -46,7 +51,14 @@ const FinancialReports: React.FC = () => {
   const [viewPeriod, setViewPeriod] = useState<ViewPeriod>('monthly');
   const [department, setDepartment] = useState('');
   const [showJournalEntry, setShowJournalEntry] = useState(false);
+  const [showQuickTransaction, setShowQuickTransaction] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  React.useEffect(() => {
+    if (user) {
+      ensureAccountsExist(user.id);
+    }
+  }, [user]);
 
   const reportTabs = [
     {
@@ -89,6 +101,14 @@ const FinancialReports: React.FC = () => {
       description: 'Outstanding invoices and bills by age',
       color: 'from-pink-500 to-rose-500',
       bgColor: 'from-pink-50 to-rose-50'
+    },
+    {
+      id: 'accounts' as ReportType,
+      name: 'Chart of Accounts',
+      icon: <FileText className="w-5 h-5" />,
+      description: 'Manage your account structure',
+      color: 'from-gray-500 to-slate-500',
+      bgColor: 'from-gray-50 to-slate-50'
     }
   ];
 
@@ -142,11 +162,16 @@ const FinancialReports: React.FC = () => {
     });
   };
 
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
   const renderActiveReport = () => {
     const reportProps = {
       dateRange,
       viewPeriod,
-      department
+      department,
+      onRefresh: handleRefresh
     };
 
     switch (activeReport) {
@@ -160,6 +185,8 @@ const FinancialReports: React.FC = () => {
         return <TrialBalanceLedger {...reportProps} />;
       case 'aged-reports':
         return <AgedReceivablesPayables {...reportProps} />;
+      case 'accounts':
+        return <AccountManagement key={refreshKey} />;
       default:
         return <ProfitLoss {...reportProps} />;
     }
@@ -253,13 +280,24 @@ const FinancialReports: React.FC = () => {
 
               {/* Add Entry Button */}
               <button
-                onClick={() => setShowJournalEntry(true)}
+                onClick={() => setShowQuickTransaction(true)}
                 className="relative group overflow-hidden bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/90 to-pink-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
                 <Plus size={18} className="mr-2 relative z-10" />
-                <span className="relative z-10">Add Entry</span>
+                <span className="relative z-10">Quick Entry</span>
+              </button>
+
+              {/* Journal Entry Button */}
+              <button
+                onClick={() => setShowJournalEntry(true)}
+                className="relative group overflow-hidden bg-gradient-to-r from-blue-600/80 to-cyan-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/90 to-cyan-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                <FileText size={18} className="mr-2 relative z-10" />
+                <span className="relative z-10">Journal Entry</span>
               </button>
 
               {/* Export Button */}
@@ -424,7 +462,16 @@ const FinancialReports: React.FC = () => {
         isOpen={showJournalEntry}
         onClose={() => setShowJournalEntry(false)}
         onSuccess={() => {
-          setRefreshKey(prev => prev + 1);
+          handleRefresh();
+        }}
+      />
+
+      {/* Quick Transaction Entry Modal */}
+      <QuickTransactionEntry
+        isOpen={showQuickTransaction}
+        onClose={() => setShowQuickTransaction(false)}
+        onSuccess={() => {
+          handleRefresh();
         }}
       />
     </div>

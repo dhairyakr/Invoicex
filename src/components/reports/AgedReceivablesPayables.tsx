@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Users, CreditCard, Mail, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { Clock, Users, CreditCard, Mail, AlertTriangle, CheckCircle, TrendingUp, AlertCircle as AlertIcon, RefreshCw, FileText } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getAgedReceivables } from '../../lib/supabase';
 
@@ -7,9 +7,10 @@ interface AgedReceivablesPayablesProps {
   dateRange: { start: string; end: string };
   viewPeriod: 'monthly' | 'quarterly' | 'yearly';
   department: string;
+  onRefresh?: () => void;
 }
 
-const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateRange, viewPeriod, department }) => {
+const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateRange, viewPeriod, department, onRefresh }) => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'receivables' | 'payables'>('receivables');
   const [receivablesData, setReceivablesData] = useState<any[]>([]);
@@ -17,34 +18,35 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadReceivables = async () => {
-      if (!user) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      const result = await getAgedReceivables(user.id, dateRange.end);
-      
-      if (result.error) {
-        setError(result.error);
-      } else {
-        const transformedData = result.data?.map((item: any) => ({
-          customer: item.customer_name,
-          current: item.current_amount,
-          days30: item.days_30,
-          days60: item.days_60,
-          days90: item.days_90,
-          total: item.total_amount,
-          overdue: (item.days_30 + item.days_60 + item.days_90) > 0
-        })) || [];
-        setReceivablesData(transformedData);
-      }
-      
-      setLoading(false);
-    };
-
     loadReceivables();
   }, [user, dateRange.end, viewPeriod, department]);
+
+  const loadReceivables = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    setError(null);
+
+    const result = await getAgedReceivables(user.id, dateRange.end);
+
+    if (result.error) {
+      setError(result.error);
+      setReceivablesData([]);
+    } else {
+      const transformedData = result.data?.map((item: any) => ({
+        customer: item.customer_name,
+        current: item.current_amount,
+        days30: item.days_30,
+        days60: item.days_60,
+        days90: item.days_90,
+        total: item.total_amount,
+        overdue: (item.days_30 + item.days_60 + item.days_90) > 0
+      })) || [];
+      setReceivablesData(transformedData);
+    }
+
+    setLoading(false);
+  };
 
   // Mock payables data (implement similar to receivables when needed)
   const mockPayables = [
@@ -140,12 +142,29 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
             </tr>
           </thead>
           <tbody className="divide-y divide-white/30">
-            {tableData.map((item, index) => (
-              <tr key={index} className={`hover:bg-gradient-to-r transition-all duration-300 group ${
-                item.overdue 
-                  ? 'hover:from-red-50/30 hover:to-pink-50/30 bg-red-50/20' 
-                  : 'hover:from-blue-50/30 hover:to-purple-50/30'
-              }`}>
+            {tableData.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="px-8 py-12 text-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <FileText className="w-12 h-12 text-gray-400" />
+                    <div className="text-gray-600">
+                      <p className="font-semibold mb-2">No {type === 'receivables' ? 'Receivables' : 'Payables'} Found</p>
+                      <p className="text-sm">
+                        {type === 'receivables'
+                          ? 'Create invoices and mark them as sent to track receivables.'
+                          : 'No outstanding payables for this period.'}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              tableData.map((item, index) => (
+                <tr key={index} className={`hover:bg-gradient-to-r transition-all duration-300 group ${
+                  item.overdue
+                    ? 'hover:from-red-50/30 hover:to-pink-50/30 bg-red-50/20'
+                    : 'hover:from-blue-50/30 hover:to-purple-50/30'
+                }`}>
                 <td className="px-8 py-6">
                   <div className="flex items-center">
                     {item.overdue && (
@@ -186,7 +205,8 @@ const AgedReceivablesPayables: React.FC<AgedReceivablesPayablesProps> = ({ dateR
                   )}
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
           <tfoot className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm border-t border-white/30">
             <tr>

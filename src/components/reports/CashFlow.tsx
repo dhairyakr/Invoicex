@@ -1,40 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Activity, DollarSign } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Activity, DollarSign, AlertCircle, RefreshCw, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { getCashFlowData } from '../../lib/supabase';
+import { getCashFlowData, ensureAccountsExist } from '../../lib/supabase';
 
 interface CashFlowProps {
   dateRange: { start: string; end: string };
   viewPeriod: 'monthly' | 'quarterly' | 'yearly';
   department: string;
+  onRefresh?: () => void;
 }
 
-const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }) => {
+const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department, onRefresh }) => {
   const { user } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initializingAccounts, setInitializingAccounts] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!user) return;
-      
-      setLoading(true);
-      setError(null);
-      
-      const result = await getCashFlowData(user.id, dateRange.start, dateRange.end);
-      
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setData(result.data);
-      }
-      
-      setLoading(false);
-    };
-
     loadData();
   }, [user, dateRange.start, dateRange.end, viewPeriod, department]);
+
+  const loadData = async () => {
+    if (!user) return;
+
+    setLoading(true);
+    setError(null);
+
+    const result = await getCashFlowData(user.id, dateRange.start, dateRange.end);
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setData(result.data);
+    }
+
+    setLoading(false);
+  };
+
+  const handleInitializeAccounts = async () => {
+    if (!user) return;
+
+    try {
+      setInitializingAccounts(true);
+      setError(null);
+
+      const { initialized, error: initError } = await ensureAccountsExist(user.id);
+
+      if (initError) throw new Error(initError);
+
+      await loadData();
+      if (onRefresh) onRefresh();
+    } catch (err: any) {
+      setError('Failed to initialize accounts: ' + err.message);
+    } finally {
+      setInitializingAccounts(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -52,12 +74,65 @@ const CashFlow: React.FC<CashFlowProps> = ({ dateRange, viewPeriod, department }
   }
 
   if (error || !data) {
+    const isCashAccountMissing = error?.includes('Cash account not found');
+    const hasNoTransactions = !error && !data;
+
     return (
-      <div className="bg-red-50/60 backdrop-blur-md border border-red-200/50 rounded-2xl p-8 text-center">
-        <div className="text-red-600 mb-4">
-          <Wallet size={48} className="mx-auto mb-4" />
-          <h3 className="text-xl font-bold">Error Loading Cash Flow</h3>
-          <p className="text-sm mt-2">{error || 'No data available'}</p>
+      <div className="space-y-6">
+        <div className="bg-yellow-50/60 backdrop-blur-md border border-yellow-200/50 rounded-2xl p-8">
+          <div className="flex items-start gap-4">
+            <AlertCircle className="w-12 h-12 text-yellow-600 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-yellow-900 mb-2">
+                {isCashAccountMissing ? 'Accounts Not Initialized' : 'No Cash Flow Data'}
+              </h3>
+              <p className="text-yellow-800 mb-4">
+                {isCashAccountMissing
+                  ? 'Your chart of accounts needs to be set up before you can view cash flow reports.'
+                  : error || 'No transactions found for the selected period. Start by creating journal entries or transactions.'}
+              </p>
+              {isCashAccountMissing && (
+                <button
+                  onClick={handleInitializeAccounts}
+                  disabled={initializingAccounts}
+                  className="flex items-center gap-2 px-6 py-3 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700 transition-colors font-medium disabled:opacity-50"
+                >
+                  {initializingAccounts ? (
+                    <>
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                      Initializing Accounts...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-5 h-5" />
+                      Initialize Chart of Accounts
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/50">
+          <h4 className="font-bold text-gray-900 mb-4">What is Cash Flow?</h4>
+          <p className="text-gray-700 mb-4">
+            The Cash Flow Statement shows how money moves in and out of your business. It tracks:
+          </p>
+          <ul className="space-y-2 text-gray-700">
+            <li className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-blue-600" />
+              <strong>Operating Activities:</strong> Cash from daily business operations
+            </li>
+            <li className="flex items-center gap-2">
+              <ArrowUpRight className="w-4 h-4 text-green-600" />
+              <strong>Investing Activities:</strong> Cash from buying/selling assets
+            </li>
+            <li className="flex items-center gap-2">
+              <ArrowDownRight className="w-4 h-4 text-purple-600" />
+              <strong>Financing Activities:</strong> Cash from loans and equity
+            </li>
+          </ul>
         </div>
       </div>
     );

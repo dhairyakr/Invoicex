@@ -596,6 +596,42 @@ export const createDefaultAccounts = async (userId: string) => {
   }
 }
 
+// Check if user has accounts initialized
+export const checkAccountsExist = async (userId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('accounts')
+      .select('id')
+      .eq('user_id', userId)
+      .limit(1)
+
+    if (error) throw error
+    return { hasAccounts: data && data.length > 0, error: null }
+  } catch (error: any) {
+    return { hasAccounts: false, error: error.message }
+  }
+}
+
+// Initialize accounts for user if they don't exist
+export const ensureAccountsExist = async (userId: string) => {
+  try {
+    const { hasAccounts, error: checkError } = await checkAccountsExist(userId)
+
+    if (checkError) throw new Error(checkError)
+
+    if (!hasAccounts) {
+      console.log('Creating default accounts for user:', userId)
+      const { error: createError } = await createDefaultAccounts(userId)
+      if (createError) throw new Error(createError)
+      return { initialized: true, error: null }
+    }
+
+    return { initialized: false, error: null }
+  } catch (error: any) {
+    return { initialized: false, error: error.message }
+  }
+}
+
 // Auto-create transactions from invoices
 export const createTransactionFromInvoice = async (invoice: any) => {
   try {
