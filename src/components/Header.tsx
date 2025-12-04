@@ -50,10 +50,10 @@ const Header: React.FC = () => {
             </div>
 
             <div className="group-hover:translate-x-1 transition-all duration-500">
-              <h1 className="text-xl font-bold text-white group-hover:text-teal-200 transition-all duration-500 drop-shadow-sm">
+              <h1 className="text-xl font-bold text-white group-hover:text-teal-200 transition-all duration-500 drop-shadow-[0_2px_10px_rgba(255,255,255,0.8)] group-hover:drop-shadow-[0_2px_12px_rgba(94,234,212,0.9)]">
                 Invoice Beautifier
               </h1>
-              <p className="text-xs text-slate-300 font-medium tracking-wide group-hover:text-teal-300 transition-colors duration-500">Professional Invoice Solutions</p>
+              <p className="text-xs text-white font-bold tracking-wide group-hover:text-teal-300 transition-colors duration-500 drop-shadow-[0_1px_6px_rgba(255,255,255,0.7)] group-hover:drop-shadow-[0_1px_8px_rgba(94,234,212,0.8)]">Professional Invoice Solutions</p>
             </div>
           </Link>
           
