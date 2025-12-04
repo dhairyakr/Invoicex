@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3 } from 'lucide-react';
+import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3, Home, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
@@ -14,203 +14,207 @@ const Header: React.FC = () => {
     navigate('/auth');
     setShowUserMenu(false);
   };
-  
+
   return (
-    <header className="relative overflow-hidden bg-gradient-to-r from-slate-900/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl border-b border-white/10">
-      {/* Subtle Professional Background Elements */}
+    <header className="sticky top-0 z-50 overflow-hidden bg-gradient-to-r from-slate-950/98 via-slate-900/98 to-slate-950/98 backdrop-blur-2xl border-b border-slate-700/30 shadow-2xl">
+      {/* Sophisticated Background Effects */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Refined Background Orbs */}
-        <div className="absolute top-0 right-0 w-96 h-32 bg-gradient-to-l from-blue-500/15 to-indigo-500/15 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-32 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-full blur-2xl"></div>
+        {/* Animated Gradient Orbs */}
+        <div className="absolute -top-24 right-0 w-96 h-96 bg-gradient-radial from-teal-500/20 via-emerald-500/10 to-transparent rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute -bottom-24 left-0 w-80 h-80 bg-gradient-radial from-cyan-500/15 via-teal-500/8 to-transparent rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+
+        {/* Flowing Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20"></div>
       </div>
 
-      {/* Professional Glass Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-white/3"></div>
-      
-      {/* Subtle Shimmer Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -skew-x-12 transform translate-x-[-100%] animate-shimmer opacity-50"></div>
-      
-      <div className="relative z-10 container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Professional Logo Section */}
-          <Link to="/" className="flex items-center space-x-4 group">
+      {/* Premium Glass Overlay with Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.07] via-transparent to-black/10"></div>
+
+      {/* Animated Shimmer Sweep */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-400/10 to-transparent -skew-x-12 transform translate-x-[-100%] animate-shimmer-slow"></div>
+
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-8">
+          {/* Sleek Minimalist Logo Section */}
+          <Link to="/" className="flex items-center gap-3 group relative">
             <div className="relative">
-              {/* Subtle Glow */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/30 to-indigo-400/30 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              {/* Professional Glass Container */}
-              <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-2xl"></div>
-                
-                <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg">
-                  <FileText size={24} className="text-white" />
+              {/* Animated Glow Ring */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-teal-400/40 via-emerald-400/40 to-cyan-400/40 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow"></div>
+
+              {/* Sleek Icon Container */}
+              <div className="relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-slate-600/40 rounded-2xl p-2.5 shadow-2xl group-hover:shadow-teal-500/25 transition-all duration-500 group-hover:scale-110 group-hover:border-teal-400/50">
+                {/* Inner Glass Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent rounded-2xl"></div>
+
+                {/* Gradient Icon Background */}
+                <div className="relative bg-gradient-to-br from-teal-500 via-emerald-500 to-cyan-500 p-2 rounded-xl shadow-lg group-hover:shadow-teal-400/50 transition-all duration-500">
+                  <FileText size={22} className="text-white relative z-10" />
+                  {/* Icon Shine Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </div>
             </div>
-            
-            <div className="group-hover:scale-105 transition-transform duration-300">
-              <h1 className="text-2xl font-bold text-white">
+
+            <div className="group-hover:translate-x-1 transition-all duration-500">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-white via-teal-50 to-white bg-clip-text text-transparent group-hover:from-teal-200 group-hover:via-emerald-200 group-hover:to-cyan-200 transition-all duration-500">
                 Invoice Beautifier
               </h1>
-              <p className="text-xs text-blue-200 font-medium">Professional Invoice Solutions</p>
+              <p className="text-xs text-slate-400 font-medium tracking-wide group-hover:text-teal-300/80 transition-colors duration-500">Professional Invoice Solutions</p>
             </div>
           </Link>
           
-          {/* Professional Navigation */}
-          <div className="flex items-center space-x-6">
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-2 mr-6">
-              <Link 
-                to="/" 
-                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                  location.pathname === '/' 
-                    ? 'bg-white/15 backdrop-blur-sm text-white shadow-lg border border-white/20' 
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
+          {/* Sleek Modern Navigation */}
+          <div className="flex items-center gap-4">
+            {/* Modern Pill Navigation */}
+            <nav className="hidden lg:flex items-center gap-1 bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-1.5 shadow-xl">
+              <Link
+                to="/"
+                className={`relative px-5 py-2 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
+                  location.pathname === '/'
+                    ? 'text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-xl"></div>
-                <span className="relative z-10">Dashboard</span>
+                {location.pathname === '/' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl shadow-lg shadow-teal-500/30"></div>
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Home size={16} className={location.pathname === '/' ? 'text-white' : 'text-slate-400 group-hover:text-teal-400'} />
+                  Dashboard
+                </span>
               </Link>
-              
-              <Link 
-                to="/templates" 
-                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                  location.pathname === '/templates' 
-                    ? 'bg-white/15 backdrop-blur-sm text-white shadow-lg border border-white/20' 
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
+
+              <Link
+                to="/templates"
+                className={`relative px-5 py-2 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
+                  location.pathname === '/templates'
+                    ? 'text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-xl"></div>
-                <span className="relative z-10 flex items-center">
-                  <Sparkles size={16} className="mr-2" />
+                {location.pathname === '/templates' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl shadow-lg shadow-teal-500/30"></div>
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Sparkles size={16} className={location.pathname === '/templates' ? 'text-white' : 'text-slate-400 group-hover:text-teal-400'} />
                   Templates
                 </span>
               </Link>
 
-              <Link 
-                to="/products" 
-                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                  location.pathname === '/products' 
-                    ? 'bg-white/15 backdrop-blur-sm text-white shadow-lg border border-white/20' 
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
+              <Link
+                to="/products"
+                className={`relative px-5 py-2 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
+                  location.pathname === '/products'
+                    ? 'text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-xl"></div>
-                <span className="relative z-10 flex items-center">
-                  <Package size={16} className="mr-2" />
+                {location.pathname === '/products' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl shadow-lg shadow-teal-500/30"></div>
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <Package size={16} className={location.pathname === '/products' ? 'text-white' : 'text-slate-400 group-hover:text-teal-400'} />
                   Products
                 </span>
               </Link>
 
-              <Link 
-                to="/reports" 
-                className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
-                  location.pathname === '/reports' 
-                    ? 'bg-white/15 backdrop-blur-sm text-white shadow-lg border border-white/20' 
-                    : 'text-blue-100 hover:text-white hover:bg-white/10'
+              <Link
+                to="/reports"
+                className={`relative px-5 py-2 rounded-xl font-medium text-sm transition-all duration-300 overflow-hidden group ${
+                  location.pathname === '/reports'
+                    ? 'text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/5 rounded-xl"></div>
-                <span className="relative z-10 flex items-center">
-                  <BarChart3 size={16} className="mr-2" />
+                {location.pathname === '/reports' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl shadow-lg shadow-teal-500/30"></div>
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <BarChart3 size={16} className={location.pathname === '/reports' ? 'text-white' : 'text-slate-400 group-hover:text-teal-400'} />
                   Reports
                 </span>
               </Link>
-            </div>
+            </nav>
 
-            {/* Professional User Section */}
+            {/* Sleek User Action Section */}
             {user && (
-              <div className="flex items-center space-x-3">
-                {/* Liquid Glass Logout Button */}
-                <button
-                  onClick={handleSignOut}
-                  className="relative group overflow-hidden"
-                >
-                  {/* Multi-layer Glass Effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-red-400/40 to-purple-400/40 rounded-xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="relative bg-gradient-to-r from-red-500 to-purple-600 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg group-hover:shadow-xl transform group-hover:scale-105 border border-white/20">
-                    {/* Inner Glass Reflection */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                    
-                    {/* Hover Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                    
-                    {/* Liquid Shimmer */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700 rounded-xl"></div>
-                    
-                    <span className="relative z-10 text-white flex items-center">
-                      <LogOut size={16} className="mr-2" />
-                      Sign Out
-                    </span>
-                  </div>
-                </button>
-
-                {/* User Menu */}
-                <div className="relative">
+              <div className="flex items-center gap-2">
+                {/* Premium User Profile Dropdown */}
+                <div className="relative hidden sm:block">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-3 bg-white/10 hover:bg-white/15 backdrop-blur-md px-4 py-2 rounded-xl transition-all duration-300 border border-white/20 shadow-lg hover:shadow-xl"
+                    className="flex items-center gap-2.5 bg-slate-800/60 hover:bg-slate-800/80 backdrop-blur-xl px-3 py-2 rounded-xl transition-all duration-300 border border-slate-700/50 hover:border-teal-500/50 shadow-lg group"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-xl"></div>
-                    
-                    <div className="relative w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="relative w-8 h-8 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-slate-700/50 group-hover:ring-teal-400/50 transition-all duration-300">
                       <User size={16} className="text-white" />
                     </div>
-                    
-                    <span className="text-sm font-medium text-white hidden sm:block relative z-10">
+
+                    <span className="text-sm font-medium text-slate-200 max-w-[100px] truncate">
                       {user.email?.split('@')[0]}
                     </span>
-                    
-                    <ChevronDown size={16} className={`text-white/80 relative z-10 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+
+                    <ChevronDown size={14} className={`text-slate-400 transition-all duration-300 ${showUserMenu ? 'rotate-180 text-teal-400' : ''}`} />
                   </button>
 
-                  {/* Professional Dropdown Menu */}
+                  {/* Sleek Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white/10 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 py-2 z-50 overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-white/5 rounded-xl"></div>
-                      
+                    <div className="absolute right-0 mt-2 w-64 bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden z-50 animate-fade-in">
                       {/* User Info Header */}
-                      <div className="relative px-4 py-3 border-b border-white/20 bg-gradient-to-r from-blue-500/20 to-indigo-500/20">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                            <User size={18} className="text-white" />
+                      <div className="relative px-4 py-4 border-b border-slate-700/50 bg-gradient-to-r from-teal-500/10 to-emerald-500/10">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-full flex items-center justify-center shadow-xl ring-4 ring-teal-500/20">
+                            <User size={20} className="text-white" />
                           </div>
-                          <div>
-                            <p className="text-sm font-semibold text-white">{user.email}</p>
-                            <p className="text-xs text-blue-200">Signed in</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white truncate">{user.email}</p>
+                            <p className="text-xs text-teal-300/80">Active Account</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Menu Items */}
-                      <div className="relative py-1">
+                      <div className="p-1.5">
                         <button
                           onClick={() => setShowUserMenu(false)}
-                          className="w-full text-left px-4 py-3 text-sm text-white/90 hover:text-white hover:bg-white/10 flex items-center transition-colors duration-200"
+                          className="w-full text-left px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-slate-800/60 rounded-xl flex items-center gap-3 transition-all duration-200 group"
                         >
-                          <Settings size={16} className="mr-3 text-white/70" />
-                          Account Settings
+                          <Settings size={16} className="text-slate-400 group-hover:text-teal-400 transition-colors" />
+                          <span>Account Settings</span>
+                        </button>
+
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full text-left px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-red-500/10 rounded-xl flex items-center gap-3 transition-all duration-200 group mt-1"
+                        >
+                          <LogOut size={16} className="text-slate-400 group-hover:text-red-400 transition-colors" />
+                          <span>Sign Out</span>
                         </button>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Professional New Invoice Button */}
+                {/* Stunning New Invoice CTA Button */}
                 <Link
                   to="/create"
-                  className="relative group overflow-hidden"
+                  className="relative group"
                 >
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/40 to-indigo-400/40 rounded-xl blur-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 backdrop-blur-sm px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg group-hover:shadow-xl transform group-hover:scale-105 border border-white/20">
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                    
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700 rounded-xl"></div>
-                    
-                    <span className="relative z-10 text-white">New Invoice</span>
+                  {/* Animated Outer Glow */}
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 rounded-xl blur-lg opacity-60 group-hover:opacity-100 transition-all duration-500 animate-pulse-glow"></div>
+
+                  {/* Button Container */}
+                  <div className="relative bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:shadow-teal-500/50 overflow-hidden">
+                    {/* Glass Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 rounded-xl"></div>
+
+                    {/* Shimmer Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-xl"></div>
+
+                    {/* Button Content */}
+                    <span className="relative z-10 text-white flex items-center gap-2 text-sm">
+                      <Zap size={16} className="group-hover:rotate-12 transition-transform duration-300" />
+                      New Invoice
+                    </span>
                   </div>
                 </Link>
               </div>
@@ -218,51 +222,52 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Professional Mobile Navigation */}
-        <div className="md:hidden mt-4 pt-4 border-t border-white/20">
-          <div className="flex justify-center space-x-4">
-            <Link 
-              to="/" 
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === '/' 
-                  ? 'bg-white/15 text-white border border-white/20' 
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+        {/* Sleek Mobile Navigation */}
+        <div className="lg:hidden mt-3 pt-3 border-t border-slate-700/50">
+          <div className="flex justify-center gap-2">
+            <Link
+              to="/"
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                location.pathname === '/'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              Dashboard
+              <Home size={14} />
+              <span>Dashboard</span>
             </Link>
-            <Link 
-              to="/templates" 
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
-                location.pathname === '/templates' 
-                  ? 'bg-white/15 text-white border border-white/20' 
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+            <Link
+              to="/templates"
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                location.pathname === '/templates'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <Sparkles size={14} className="mr-1" />
-              Templates
+              <Sparkles size={14} />
+              <span>Templates</span>
             </Link>
-            <Link 
-              to="/products" 
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
-                location.pathname === '/products' 
-                  ? 'bg-white/15 text-white border border-white/20' 
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+            <Link
+              to="/products"
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                location.pathname === '/products'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <Package size={14} className="mr-1" />
-              Products
+              <Package size={14} />
+              <span>Products</span>
             </Link>
-            <Link 
-              to="/reports" 
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
-                location.pathname === '/reports' 
-                  ? 'bg-white/15 text-white border border-white/20' 
-                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+            <Link
+              to="/reports"
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                location.pathname === '/reports'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <BarChart3 size={14} className="mr-1" />
-              Reports
+              <BarChart3 size={14} />
+              <span>Reports</span>
             </Link>
           </div>
         </div>
@@ -270,21 +275,71 @@ const Header: React.FC = () => {
 
       {/* Click outside to close user menu */}
       {showUserMenu && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => setShowUserMenu(false)}
         />
       )}
 
-      {/* Professional Animations */}
-      <style jsx>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%) skewX(-12deg); }
-          100% { transform: translateX(200%) skewX(-12deg); }
+      <style>{`
+        @keyframes shimmer-slow {
+          0% {
+            transform: translateX(-100%) skewX(-12deg);
+          }
+          100% {
+            transform: translateX(200%) skewX(-12deg);
+          }
         }
-        
-        .animate-shimmer {
-          animation: shimmer 4s infinite;
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.15;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.25;
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes pulse-glow {
+          0%, 100% {
+            opacity: 0.6;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-shimmer-slow {
+          animation: shimmer-slow 8s infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .animate-fade-in {
+          animation: fade-in 0.2s ease-out;
+        }
+
+        .bg-gradient-radial {
+          background: radial-gradient(circle, var(--tw-gradient-stops));
         }
       `}</style>
     </header>
