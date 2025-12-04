@@ -549,6 +549,38 @@ export const getCashFlowData = async (userId: string, startDate: string, endDate
   }
 }
 
+export const getHistoricalCashFlowData = async (userId: string, months: number = 6) => {
+  try {
+    const historicalData = []
+    const endDate = new Date()
+
+    for (let i = months - 1; i >= 0; i--) {
+      const periodEnd = new Date(endDate.getFullYear(), endDate.getMonth() - i, 0)
+      const periodStart = new Date(periodEnd.getFullYear(), periodEnd.getMonth(), 1)
+
+      const startDateStr = periodStart.toISOString().split('T')[0]
+      const endDateStr = periodEnd.toISOString().split('T')[0]
+
+      const result = await getCashFlowData(userId, startDateStr, endDateStr)
+
+      if (result.data) {
+        historicalData.push({
+          month: periodEnd.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          operating: result.data.operating.reduce((sum: number, item: any) => sum + item.amount, 0),
+          investing: result.data.investing.reduce((sum: number, item: any) => sum + item.amount, 0),
+          financing: result.data.financing.reduce((sum: number, item: any) => sum + item.amount, 0),
+          netCashFlow: result.data.netCashFlow,
+          closingCash: result.data.closingCash
+        })
+      }
+    }
+
+    return { data: historicalData, error: null }
+  } catch (error: any) {
+    return { data: null, error: error.message }
+  }
+}
+
 export const getTrialBalanceData = async (userId: string, asOfDate: string) => {
   try {
     const { data: accounts, error: accountsError } = await getAccounts(userId)

@@ -135,10 +135,6 @@ const EnhancedBalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeri
     );
   };
 
-  const exportToPDF = () => {
-    window.print();
-  };
-
   const exportToCSV = () => {
     if (!data) return;
 
@@ -330,15 +326,8 @@ const EnhancedBalanceSheet: React.FC<BalanceSheetProps> = ({ dateRange, viewPeri
             Ratios
           </button>
           <button
-            onClick={exportToPDF}
-            className="px-4 py-2 rounded-xl font-medium bg-white/60 text-gray-600 hover:bg-white/80 transition-all"
-          >
-            <FileText className="w-4 h-4 inline mr-2" />
-            PDF
-          </button>
-          <button
             onClick={exportToCSV}
-            className="px-4 py-2 rounded-xl font-medium bg-white/60 text-gray-600 hover:bg-white/80 transition-all"
+            className="px-4 py-2 rounded-xl font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-xl transition-all"
           >
             <FileSpreadsheet className="w-4 h-4 inline mr-2" />
             CSV

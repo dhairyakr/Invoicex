@@ -10,8 +10,6 @@ import {
 } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { getProfitLossData } from '../../lib/supabase';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 interface ProfitLossProps {
   dateRange: { start: string; end: string };
@@ -198,44 +196,6 @@ const ProfitLoss: React.FC<ProfitLossProps> = ({ dateRange, viewPeriod, departme
     setIsDrillDownOpen(true);
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    doc.setFontSize(20);
-    doc.text('Profit & Loss Statement', 14, 22);
-    doc.setFontSize(10);
-    doc.text(`Period: ${new Date(dateRange.start).toLocaleDateString()} - ${new Date(dateRange.end).toLocaleDateString()}`, 14, 30);
-
-    const summaryData = [
-      ['Total Revenue', formatCurrency(data.totalRevenue)],
-      ['Total Expenses', formatCurrency(data.totalExpenses)],
-      ['Net Profit', formatCurrency(data.netProfit)],
-      ['Profit Margin', `${profitMargin.toFixed(2)}%`]
-    ];
-
-    autoTable(doc, {
-      startY: 35,
-      head: [['Metric', 'Amount']],
-      body: summaryData,
-      theme: 'grid'
-    });
-
-    const accountData = accounts.map(acc => [
-      acc.name,
-      acc.category,
-      formatCurrency(acc.amount),
-      `${acc.percentage.toFixed(1)}%`
-    ]);
-
-    autoTable(doc, {
-      head: [['Account', 'Category', 'Amount', '% of Revenue']],
-      body: accountData,
-      theme: 'striped'
-    });
-
-    doc.save(`profit-loss-${dateRange.start}-to-${dateRange.end}.pdf`);
-  };
-
   const exportToCSV = () => {
     const headers = ['Account Name,Category,Amount,% of Revenue,Variance %\n'];
     const rows = accounts.map(acc =>
@@ -383,17 +343,10 @@ const ProfitLoss: React.FC<ProfitLossProps> = ({ dateRange, viewPeriod, departme
         <div className="flex items-center gap-3">
           <button
             onClick={exportToCSV}
-            className="px-4 py-2 bg-white/40 backdrop-blur-md border border-white/50 rounded-xl text-gray-700 hover:bg-white/60 transition-all font-semibold"
-          >
-            <Download size={16} className="inline mr-2" />
-            CSV
-          </button>
-          <button
-            onClick={exportToPDF}
             className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-xl transition-all font-semibold"
           >
             <Download size={16} className="inline mr-2" />
-            Export PDF
+            CSV
           </button>
         </div>
       </div>
