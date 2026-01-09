@@ -292,7 +292,7 @@ const SignUpPage: React.FC = () => {
                 isTransitioning ? 'transform scale-98 opacity-80' : 'transform scale-100 opacity-100'
               }`}>
                 {/* Advanced Inner Layers */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl pointer-events-none"></div>
                 
                 <div className="relative z-10">
                   {/* Premium Header */}
