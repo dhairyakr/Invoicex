@@ -233,33 +233,6 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Call to Action Section */}
-          <div className="mt-12 text-center">
-            <p className="text-base text-gray-600 mb-6">Don't have an account yet?</p>
-            <Link
-              to="/auth"
-              className="relative group overflow-hidden inline-block"
-            >
-              {/* Multi-layer Glass Effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400/50 to-teal-400/50 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-              <div className="relative bg-gradient-to-r from-emerald-500 to-teal-600 backdrop-blur-md px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center shadow-2xl group-hover:shadow-3xl transform group-hover:scale-105 border border-white/30">
-                {/* Inner Glass Reflection */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-white/15 rounded-2xl pointer-events-none"></div>
-
-                {/* Hover Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none"></div>
-
-                {/* Liquid Shimmer */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700 rounded-2xl pointer-events-none"></div>
-
-                <span className="relative z-10 text-white flex items-center">
-                  CREATE ACCOUNT
-                  <ArrowRight size={20} className="ml-3 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </div>
-            </Link>
-          </div>
         </div>
 
         {/* Right Side - Premium Login Form */}
