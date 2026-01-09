@@ -1,29 +1,13 @@
 import React, { useState, lazy, Suspense } from 'react';
 import {
-  BarChart3,
   TrendingUp,
-  DollarSign,
   FileText,
-  Users,
-  Calendar,
-  Filter,
   Download,
-  Eye,
-  ChevronRight,
   Activity,
-  PieChart,
-  LineChart,
   Calculator,
-  CreditCard,
   Building,
   Wallet,
-  Target,
-  Zap,
-  Sparkles,
-  ArrowUpRight,
-  ArrowDownRight,
   Clock,
-  AlertTriangle,
   Plus,
   Loader
 } from 'lucide-react';
@@ -197,91 +181,79 @@ const FinancialReports: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      {/* Clean Header Section */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md mr-4">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Financial Reports</h1>
-                <p className="text-sm text-gray-500">Real-time business intelligence</p>
-              </div>
+      {/* Minimal Header Toolbar */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <select
+              onChange={(e) => handleDatePreset(e.target.value)}
+              className="h-8 bg-white border border-gray-200 rounded-md px-2 text-xs text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">Quick Range</option>
+              {datePresets.map(preset => (
+                <option key={preset.value} value={preset.value}>{preset.label}</option>
+              ))}
+            </select>
+
+            <div className="flex items-center gap-1.5">
+              <input
+                type="date"
+                value={dateRange.start}
+                onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                className="h-8 bg-white border border-gray-200 rounded-md px-2 text-xs text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              <span className="text-gray-400 text-xs">to</span>
+              <input
+                type="date"
+                value={dateRange.end}
+                onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                className="h-8 bg-white border border-gray-200 rounded-md px-2 text-xs text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <select
-                onChange={(e) => handleDatePreset(e.target.value)}
-                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Quick Range</option>
-                {datePresets.map(preset => (
-                  <option key={preset.value} value={preset.value}>{preset.label}</option>
-                ))}
-              </select>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="date"
-                  value={dateRange.start}
-                  onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <span className="text-gray-400 text-sm">to</span>
-                <input
-                  type="date"
-                  value={dateRange.end}
-                  onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div className="flex bg-gray-100 rounded-lg p-0.5">
-                {(['monthly', 'quarterly', 'yearly'] as ViewPeriod[]).map((period) => (
-                  <button
-                    key={period}
-                    onClick={() => setViewPeriod(period)}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                      viewPeriod === period
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    {period.charAt(0).toUpperCase() + period.slice(1)}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-2 ml-2">
+            <div className="flex bg-gray-100 rounded-md p-0.5">
+              {(['monthly', 'quarterly', 'yearly'] as ViewPeriod[]).map((period) => (
                 <button
-                  onClick={() => setShowQuickTransaction(true)}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  key={period}
+                  onClick={() => setViewPeriod(period)}
+                  className={`px-2 py-1 rounded text-xs font-medium transition-all ${
+                    viewPeriod === period
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
                 >
-                  <Plus size={16} />
-                  <span>Quick Entry</span>
+                  {period.charAt(0).toUpperCase() + period.slice(1)}
                 </button>
-
-                <button
-                  onClick={() => setShowJournalEntry(true)}
-                  className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200"
-                >
-                  <FileText size={16} />
-                  <span>Journal</span>
-                </button>
-
-                <button className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">
-                  <Download size={16} />
-                  <span>Export</span>
-                </button>
-              </div>
+              ))}
             </div>
+
+            <div className="h-4 w-px bg-gray-200 mx-1" />
+
+            <button
+              onClick={() => setShowQuickTransaction(true)}
+              className="h-8 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 rounded-md text-xs font-medium transition-colors"
+            >
+              <Plus size={14} />
+              <span>Quick Entry</span>
+            </button>
+
+            <button
+              onClick={() => setShowJournalEntry(true)}
+              className="h-8 flex items-center gap-1.5 bg-white hover:bg-gray-50 text-gray-600 px-3 rounded-md text-xs font-medium transition-colors border border-gray-200"
+            >
+              <FileText size={14} />
+              <span>Journal</span>
+            </button>
+
+            <button className="h-8 flex items-center gap-1.5 bg-white hover:bg-gray-50 text-gray-600 px-3 rounded-md text-xs font-medium transition-colors border border-gray-200">
+              <Download size={14} />
+              <span>Export</span>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-88px)]">
+      <div className="flex h-[calc(100vh-48px)]">
         {/* Clean Sidebar Navigation */}
         <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
           <div className="p-4">
