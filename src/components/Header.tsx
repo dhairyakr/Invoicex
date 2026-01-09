@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, LogOut, User, Package, BarChart3, Home } from 'lucide-react';
+import { FileText, Sparkles, LogOut, Package, BarChart3, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -40,7 +39,6 @@ const Header: React.FC = () => {
     if (error) {
       console.error('Sign out error:', error);
     }
-    setShowUserMenu(false);
     navigate('/auth');
   };
 
@@ -244,36 +242,18 @@ const Header: React.FC = () => {
           <div className="flex items-center flex-shrink-0 relative w-auto">
             {user && (
               <div className="hidden sm:flex items-center">
-                {/* Username Button - Fixed Width Wrapper */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group whitespace-nowrap"
-                    aria-expanded={showUserMenu}
-                  >
-                    <div className="relative">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
-                      <div className="relative w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-200/50 group-hover:ring-blue-400/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-                        <User size={17} className="text-white transition-transform duration-300 group-hover:scale-110" />
-                      </div>
-                    </div>
+                {/* Logout Button - Styled to Match Nav Bar */}
+                <button
+                  onClick={handleSignOut}
+                  className="relative px-5 py-2.5 rounded-2xl font-semibold text-sm transition-all duration-300 overflow-hidden group bg-white/40 backdrop-blur-xl border border-white/50 hover:bg-white/80 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 flex items-center gap-2.5 whitespace-nowrap"
+                  aria-label="Sign out"
+                >
+                  {/* Animated Border Glow on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-orange-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                    <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate tracking-wide">
-                      {user.email?.split('@')[0]}
-                    </span>
-                  </button>
-
-                  {/* Logout Button - Absolute Position */}
-                  {showUserMenu && (
-                    <button
-                      onClick={handleSignOut}
-                      className="absolute top-full mt-2 right-0 flex items-center gap-2 bg-red-500/90 hover:bg-red-600 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 shadow-lg hover:shadow-red-500/20 group animate-fade-in z-50 whitespace-nowrap"
-                    >
-                      <LogOut size={16} className="text-white transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-sm font-semibold text-white tracking-wide">Sign Out</span>
-                    </button>
-                  )}
-                </div>
+                  <LogOut size={16} className="text-gray-700 group-hover:text-red-600 transition-all duration-300 group-hover:scale-110 relative z-10" />
+                  <span className="text-gray-700 group-hover:text-red-600 transition-all duration-300 tracking-wide relative z-10">Sign Out</span>
+                </button>
               </div>
             )}
           </div>
@@ -341,14 +321,6 @@ const Header: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Click outside to close user menu */}
-      {showUserMenu && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowUserMenu(false)}
-        />
-      )}
 
       <style>{`
         @keyframes shimmer-slow {
