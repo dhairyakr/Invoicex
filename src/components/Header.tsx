@@ -10,7 +10,9 @@ const Header: React.FC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScrolled, setIsScrolled] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const navRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +35,16 @@ const Header: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  useEffect(() => {
+    if (showUserMenu && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 12,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [showUserMenu]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -243,6 +255,7 @@ const Header: React.FC = () => {
                 {/* Premium User Profile Dropdown */}
                 <div className="relative hidden sm:block">
                   <button
+                    ref={buttonRef}
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group"
                     aria-expanded={showUserMenu}
@@ -265,7 +278,7 @@ const Header: React.FC = () => {
 
                   {/* Enhanced Dropdown Menu */}
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-3 w-72 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden z-50 animate-spring-in">
+                    <div className="fixed w-72 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden z-50 animate-spring-in" style={{ top: `${dropdownPos.top}px`, right: `${dropdownPos.right}px` }}>
                       {/* Dropdown Glow Effect */}
                       <div className="absolute -inset-[1px] bg-gradient-to-b from-blue-500/20 to-transparent rounded-2xl pointer-events-none"></div>
 
