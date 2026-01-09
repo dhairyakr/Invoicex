@@ -278,7 +278,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
         </div>
 
         {/* Right Side - Refined Auth Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
           <div className="w-full max-w-md">
             {/* Refined Form Container */}
             <div className="relative group">
@@ -286,7 +286,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
               <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/15 via-purple-400/10 to-indigo-400/15 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               
               {/* Main Form */}
-              <div className={`relative bg-white/60 backdrop-blur-md rounded-3xl p-10 border border-white/40 shadow-xl transition-all duration-500 ${
+              <div className={`relative bg-white/60 backdrop-blur-md rounded-3xl p-6 sm:p-8 lg:p-10 border border-white/40 shadow-xl transition-all duration-500 ${
                 isTransitioning ? 'transform scale-98 opacity-80' : 'transform scale-100 opacity-100'
               }`}>
                 {/* Subtle Inner Layers */}
@@ -294,7 +294,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                 
                 <div className="relative z-10">
                   {/* Header */}
-                  <div className="text-center mb-10">
+                  <div className="text-center mb-8">
                     <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg transition-all duration-500 ${
                       isLogin 
                         ? 'bg-gradient-to-r from-blue-500 to-cyan-500' 
@@ -346,7 +346,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                   )}
 
                   {/* Form */}
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Email Field */}
                     <div className="relative group">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -442,7 +442,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSuccess }) => {
                           : 'bg-gradient-to-r from-emerald-600 to-teal-600'
                       }`}></div>
                       
-                      <div className="relative px-8 py-4 flex items-center justify-center text-white font-semibold text-lg z-10">
+                      <div className="relative px-6 py-3 flex items-center justify-center text-white font-semibold text-base sm:text-lg z-10">
                         {loading ? (
                           <div className="flex items-center">
                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>

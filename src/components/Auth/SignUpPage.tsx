@@ -280,7 +280,7 @@ const SignUpPage: React.FC = () => {
         </div>
 
         {/* Right Side - Premium Sign-Up Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-10">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden">
           <div className="w-full max-w-lg">
             {/* Premium Form Container */}
             <div className="relative group">
@@ -288,7 +288,7 @@ const SignUpPage: React.FC = () => {
               <div className="absolute -inset-4 bg-gradient-to-r from-emerald-400/20 via-teal-400/15 to-cyan-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
               
               {/* Main Form */}
-              <div className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-12 border border-white/50 shadow-3xl transition-all duration-500 ${
+              <div className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 lg:p-10 border border-white/50 shadow-3xl transition-all duration-500 ${
                 isTransitioning ? 'transform scale-98 opacity-80' : 'transform scale-100 opacity-100'
               }`}>
                 {/* Advanced Inner Layers */}
@@ -296,16 +296,16 @@ const SignUpPage: React.FC = () => {
                 
                 <div className="relative z-10">
                   {/* Premium Header */}
-                  <div className="text-center mb-12">
+                  <div className="text-center mb-8">
                     <div className={`inline-flex items-center justify-center w-24 h-24 rounded-3xl mb-8 shadow-2xl transition-all duration-500 bg-gradient-to-r from-emerald-500 to-teal-500`}>
                       <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-white/15 rounded-3xl"></div>
                       
                       <Rocket className="w-10 h-10 text-white relative z-10" />
                     </div>
-                    <h3 className="text-4xl font-bold text-gray-900 mb-4">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
                       Create Your Account
                     </h3>
-                    <p className="text-gray-600 text-xl">
+                    <p className="text-gray-600 text-base sm:text-lg">
                       Join thousands of professionals who trust us
                     </p>
                   </div>
@@ -337,7 +337,7 @@ const SignUpPage: React.FC = () => {
                   )}
 
                   {/* Premium Form */}
-                  <form onSubmit={handleSubmit} className="space-y-8">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Name Field */}
                     <div className="relative group">
                       <label className="block text-sm font-bold text-gray-700 mb-3">
@@ -351,7 +351,7 @@ const SignUpPage: React.FC = () => {
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="relative z-10 w-full pl-16 pr-5 py-5 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-xl font-medium"
+                          className="relative z-10 w-full pl-16 pr-5 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base sm:text-lg font-medium"
                           placeholder="Enter your full name"
                           required
                           disabled={loading}
@@ -372,7 +372,7 @@ const SignUpPage: React.FC = () => {
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="relative z-10 w-full pl-16 pr-5 py-5 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-xl font-medium"
+                          className="relative z-10 w-full pl-16 pr-5 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base sm:text-lg font-medium"
                           placeholder="Enter your email"
                           required
                           disabled={loading}
@@ -393,7 +393,7 @@ const SignUpPage: React.FC = () => {
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="relative z-10 w-full pl-16 pr-16 py-5 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-xl font-medium"
+                          className="relative z-10 w-full pl-16 pr-16 py-4 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base sm:text-lg font-medium"
                           placeholder="Create a strong password"
                           required
                           minLength={6}
@@ -420,7 +420,7 @@ const SignUpPage: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
                       <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-emerald-600 to-teal-600"></div>
                       
-                      <div className="relative px-8 py-5 flex items-center justify-center text-white font-bold text-xl z-10">
+                      <div className="relative px-6 py-3 flex items-center justify-center text-white font-bold text-base sm:text-lg z-10">
                         {loading ? (
                           <div className="flex items-center">
                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-4"></div>
