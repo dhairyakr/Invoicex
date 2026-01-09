@@ -159,13 +159,13 @@ const LoginPage: React.FC = () => {
             <div className="flex items-center mb-10">
               <div className="relative group">
                 {/* Advanced Glow */}
-                <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/40 to-indigo-400/30 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
-                
+                <div className="absolute -inset-2 bg-gradient-to-r from-emerald-400/40 to-teal-400/30 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+
                 {/* Premium Glass Container */}
                 <div className="relative bg-white/50 backdrop-blur-xl border border-white/40 rounded-3xl p-6 shadow-2xl group-hover:scale-110 transition-all duration-500 group-hover:shadow-3xl">
                   <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/10 rounded-3xl"></div>
 
-                  <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-xl">
+                  <div className="relative bg-gradient-to-br from-emerald-500 to-teal-600 p-3 rounded-2xl shadow-xl">
                     <Layers className="w-10 h-10 text-white" />
                   </div>
                 </div>
@@ -175,14 +175,14 @@ const LoginPage: React.FC = () => {
                 <h1 className="text-4xl font-bold text-gray-900 mb-2">
                   Invoice Beautifier
                 </h1>
-                <p className="text-blue-600 text-base font-semibold">Professional Invoice Solutions</p>
+                <p className="text-emerald-600 text-base font-semibold">Professional Invoice Solutions</p>
               </div>
             </div>
-            
+
             <div className={`transition-all duration-500 ${isTransitioning ? 'transform translate-x-4 opacity-50' : ''}`}>
               <h2 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Welcome
-                <span className="text-blue-600"> Back</span>
+                <span className="text-emerald-600"> Back</span>
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed max-w-2xl">
                 Sign in to access your beautiful invoices and continue creating professional billing experiences that impress your clients.
@@ -229,7 +229,7 @@ const LoginPage: React.FC = () => {
           </div>
           <div className="absolute top-1/2 right-24 animate-float opacity-30" style={{ animationDelay: '4s' }}>
             <div className="bg-white/30 backdrop-blur-md rounded-full p-2 border border-white/20 shadow-lg">
-              <Shield className="w-5 h-5 text-blue-500" />
+              <Shield className="w-5 h-5 text-emerald-500" />
             </div>
           </div>
 
@@ -268,7 +268,7 @@ const LoginPage: React.FC = () => {
             {/* Premium Form Container */}
             <div className="relative group">
               {/* Advanced Glow */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/20 via-indigo-400/15 to-purple-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-emerald-400/20 via-teal-400/15 to-cyan-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
 
               {/* Main Form */}
               <div className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-7 lg:p-8 border border-white/50 shadow-3xl transition-all duration-500 ${
@@ -280,7 +280,7 @@ const LoginPage: React.FC = () => {
                 <div className="relative z-10">
                   {/* Premium Header */}
                   <div className="text-center mb-6">
-                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-2xl transition-all duration-500 bg-gradient-to-r from-blue-500 to-indigo-500`}>
+                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-6 shadow-2xl transition-all duration-500 bg-gradient-to-r from-emerald-500 to-teal-500`}>
                       <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-white/15 rounded-3xl"></div>
 
                       <User className="w-9 h-9 text-white relative z-10" />
@@ -314,9 +314,9 @@ const LoginPage: React.FC = () => {
                         Email Address
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-md rounded-2xl border border-white/40 group-focus-within:border-blue-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
-                        
-                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 z-10" size={20} />
+                        <div className="absolute inset-0 bg-white/50 backdrop-blur-md rounded-2xl border border-white/40 group-focus-within:border-emerald-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
+
+                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
                         <input
                           type="email"
                           value={email}
@@ -335,9 +335,9 @@ const LoginPage: React.FC = () => {
                         Password
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-md rounded-2xl border border-white/40 group-focus-within:border-blue-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
+                        <div className="absolute inset-0 bg-white/50 backdrop-blur-md rounded-2xl border border-white/40 group-focus-within:border-emerald-400/60 group-focus-within:bg-white/60 transition-all duration-300"></div>
 
-                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 z-10" size={20} />
+                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" size={20} />
                         <input
                           type={showPassword ? 'text' : 'password'}
                           value={password}
@@ -365,9 +365,9 @@ const LoginPage: React.FC = () => {
                       disabled={loading}
                       className="relative w-full group overflow-hidden mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <div className="absolute inset-0 rounded-2xl transition-all duration-500 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                      <div className="absolute inset-0 rounded-2xl transition-all duration-500 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
                       <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-emerald-600 to-teal-600"></div>
 
                       <div className="relative px-6 py-2.5 flex items-center justify-center text-white font-bold text-base sm:text-lg z-10">
                         {loading ? (
@@ -390,7 +390,7 @@ const LoginPage: React.FC = () => {
                         Don't have an account?{' '}
                         <Link
                           to="/auth"
-                          className="text-blue-500 hover:text-blue-600 transition-colors duration-300"
+                          className="text-emerald-500 hover:text-emerald-600 transition-colors duration-300"
                         >
                           Sign up
                         </Link>
@@ -403,15 +403,15 @@ const LoginPage: React.FC = () => {
                     isTransitioning ? 'opacity-0 transform translate-y-2' : 'opacity-100 transform translate-y-0'
                   }`}>
                     <div className="flex items-center text-xs text-gray-600">
-                      <Shield className="w-4 h-4 mr-3 text-blue-500 flex-shrink-0" />
+                      <Shield className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" />
                       <span className="font-medium">Your data is protected with enterprise-grade security</span>
                     </div>
                     <div className="flex items-center text-xs text-gray-600">
-                      <CheckCircle className="w-4 h-4 mr-3 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" />
                       <span className="font-medium">Secure login with encrypted authentication</span>
                     </div>
                     <div className="flex items-center text-xs text-gray-600">
-                      <Zap className="w-4 h-4 mr-3 text-purple-500 flex-shrink-0" />
+                      <Zap className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" />
                       <span className="font-medium">Instant access to all your professional tools</span>
                     </div>
                   </div>
@@ -424,11 +424,11 @@ const LoginPage: React.FC = () => {
               <div className="space-y-3">
                 <p className="text-gray-500 text-xs">
                   By signing in, you agree to our{' '}
-                  <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
+                  <a href="#" className="text-emerald-500 hover:text-emerald-600 transition-colors font-semibold">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-500 hover:text-blue-600 transition-colors font-semibold">
+                  <a href="#" className="text-emerald-500 hover:text-emerald-600 transition-colors font-semibold">
                     Privacy Policy
                   </a>
                 </p>
