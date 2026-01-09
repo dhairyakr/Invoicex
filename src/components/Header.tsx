@@ -36,9 +36,12 @@ const Header: React.FC = () => {
 
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
+    const { error } = await signOut();
+    if (error) {
+      console.error('Sign out error:', error);
+    }
     setShowUserMenu(false);
+    navigate('/auth');
   };
 
   return (
@@ -238,37 +241,39 @@ const Header: React.FC = () => {
           </div>
 
           {/* Enhanced User Action Section - Far Right */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center flex-shrink-0 relative w-auto">
             {user && (
-              <div className="hidden sm:flex items-center gap-3">
-                {/* Username Button */}
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group"
-                  aria-expanded={showUserMenu}
-                >
-                  <div className="relative">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
-                    <div className="relative w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-200/50 group-hover:ring-blue-400/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-                      <User size={17} className="text-white transition-transform duration-300 group-hover:scale-110" />
-                    </div>
-                  </div>
-
-                  <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate tracking-wide">
-                    {user.email?.split('@')[0]}
-                  </span>
-                </button>
-
-                {/* Logout Button - Shows when showUserMenu is true */}
-                {showUserMenu && (
+              <div className="hidden sm:flex items-center">
+                {/* Username Button - Fixed Width Wrapper */}
+                <div className="relative">
                   <button
-                    onClick={handleSignOut}
-                    className="flex items-center gap-2 bg-red-500/90 hover:bg-red-600 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 shadow-lg hover:shadow-red-500/20 group animate-fade-in"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group whitespace-nowrap"
+                    aria-expanded={showUserMenu}
                   >
-                    <LogOut size={16} className="text-white transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-sm font-semibold text-white tracking-wide">Sign Out</span>
+                    <div className="relative">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
+                      <div className="relative w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-200/50 group-hover:ring-blue-400/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                        <User size={17} className="text-white transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                    </div>
+
+                    <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate tracking-wide">
+                      {user.email?.split('@')[0]}
+                    </span>
                   </button>
-                )}
+
+                  {/* Logout Button - Absolute Position */}
+                  {showUserMenu && (
+                    <button
+                      onClick={handleSignOut}
+                      className="absolute top-full mt-2 right-0 flex items-center gap-2 bg-red-500/90 hover:bg-red-600 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 shadow-lg hover:shadow-red-500/20 group animate-fade-in z-50 whitespace-nowrap"
+                    >
+                      <LogOut size={16} className="text-white transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-sm font-semibold text-white tracking-wide">Sign Out</span>
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
