@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Mail, 
   Lock, 
@@ -108,12 +108,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleSignUpClick = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      navigate('/auth');
-    }, 300);
-  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -242,9 +236,9 @@ const LoginPage: React.FC = () => {
           {/* Call to Action Section */}
           <div className="mt-16 text-center">
             <p className="text-xl text-gray-600 mb-8">Don't have an account yet?</p>
-            <button
-              onClick={handleSignUpClick}
-              className="relative group overflow-hidden"
+            <Link
+              to="/auth"
+              className="relative group overflow-hidden inline-block"
             >
               {/* Multi-layer Glass Effect */}
               <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400/50 to-teal-400/50 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -264,7 +258,7 @@ const LoginPage: React.FC = () => {
                   <ArrowRight size={24} className="ml-3 group-hover:translate-x-1 transition-transform duration-300" />
                 </span>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -392,17 +386,15 @@ const LoginPage: React.FC = () => {
 
                     {/* Toggle Mode */}
                     <div className="text-center pt-8">
-                      <button
-                        type="button"
-                        onClick={handleSignUpClick}
-                        className="text-gray-600 hover:text-gray-900 transition-colors font-semibold group text-xl"
-                        disabled={loading}
-                      >
+                      <p className="text-gray-600 font-semibold group text-xl">
                         Don't have an account?{' '}
-                        <span className="text-blue-500 group-hover:text-blue-600 transition-colors duration-300">
+                        <Link
+                          to="/auth"
+                          className="text-blue-500 hover:text-blue-600 transition-colors duration-300"
+                        >
                           Sign up
-                        </span>
-                      </button>
+                        </Link>
+                      </p>
                     </div>
                   </form>
 

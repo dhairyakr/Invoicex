@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Mail, 
   Lock, 
@@ -124,13 +124,6 @@ const SignUpPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSignInClick = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      navigate('/login');
-    }, 300);
   };
 
   return (
@@ -260,9 +253,9 @@ const SignUpPage: React.FC = () => {
           {/* Call to Action Section */}
           <div className="mt-16 text-center">
             <p className="text-xl text-gray-600 mb-8">Already have an account?</p>
-            <button
-              onClick={handleSignInClick}
-              className="relative group overflow-hidden"
+            <Link
+              to="/login"
+              className="relative group overflow-hidden inline-block"
             >
               {/* Multi-layer Glass Effect */}
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/50 to-purple-400/50 rounded-2xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -282,7 +275,7 @@ const SignUpPage: React.FC = () => {
                   <ArrowRight size={24} className="ml-3 group-hover:translate-x-1 transition-transform duration-300" />
                 </span>
               </div>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -444,17 +437,15 @@ const SignUpPage: React.FC = () => {
 
                     {/* Toggle Mode */}
                     <div className="text-center pt-8">
-                      <button
-                        type="button"
-                        onClick={handleSignInClick}
-                        className="text-gray-600 hover:text-gray-900 transition-colors font-semibold group text-xl"
-                        disabled={loading}
-                      >
+                      <p className="text-gray-600 font-semibold group text-xl">
                         Already have an account?{' '}
-                        <span className="text-emerald-500 group-hover:text-emerald-600 transition-colors duration-300">
+                        <Link
+                          to="/login"
+                          className="text-emerald-500 hover:text-emerald-600 transition-colors duration-300"
+                        >
                           Sign in
-                        </span>
-                      </button>
+                        </Link>
+                      </p>
                     </div>
                   </form>
 
