@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3, Home } from 'lucide-react';
+import { FileText, Sparkles, LogOut, User, Package, BarChart3, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
@@ -10,9 +10,7 @@ const Header: React.FC = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScrolled, setIsScrolled] = useState(false);
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const navRef = useRef<HTMLElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,15 +34,6 @@ const Header: React.FC = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  useEffect(() => {
-    if (showUserMenu && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPos({
-        top: rect.bottom + 12,
-        right: window.innerWidth - rect.right,
-      });
-    }
-  }, [showUserMenu]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -251,84 +240,36 @@ const Header: React.FC = () => {
           {/* Enhanced User Action Section - Far Right */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {user && (
-              <>
-                {/* Premium User Profile Dropdown */}
-                <div className="relative hidden sm:block">
+              <div className="hidden sm:flex items-center gap-3">
+                {/* Username Button */}
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group"
+                  aria-expanded={showUserMenu}
+                >
+                  <div className="relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
+                    <div className="relative w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-200/50 group-hover:ring-blue-400/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                      <User size={17} className="text-white transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                  </div>
+
+                  <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate tracking-wide">
+                    {user.email?.split('@')[0]}
+                  </span>
+                </button>
+
+                {/* Logout Button - Shows when showUserMenu is true */}
+                {showUserMenu && (
                   <button
-                    ref={buttonRef}
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-3 bg-white/60 hover:bg-white/80 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 border border-white/50 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 group"
-                    aria-expanded={showUserMenu}
-                    aria-haspopup="true"
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 bg-red-500/90 hover:bg-red-600 backdrop-blur-xl px-4 py-2.5 rounded-xl transition-all duration-300 shadow-lg hover:shadow-red-500/20 group animate-fade-in"
                   >
-                    <div className="relative">
-                      {/* Avatar Glow */}
-                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300"></div>
-                      <div className="relative w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-200/50 group-hover:ring-blue-400/50 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-                        <User size={17} className="text-white transition-transform duration-300 group-hover:scale-110" />
-                      </div>
-                    </div>
-
-                    <span className="text-sm font-semibold text-gray-700 max-w-[100px] truncate tracking-wide">
-                      {user.email?.split('@')[0]}
-                    </span>
-
-                    <ChevronDown size={15} className={`text-gray-500 transition-all duration-300 ${showUserMenu ? 'rotate-180 text-blue-500' : 'group-hover:text-blue-500'}`} />
+                    <LogOut size={16} className="text-white transition-transform duration-300 group-hover:scale-110" />
+                    <span className="text-sm font-semibold text-white tracking-wide">Sign Out</span>
                   </button>
-
-                  {/* Enhanced Dropdown Menu */}
-                  {showUserMenu && (
-                    <div className="fixed w-72 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 overflow-hidden z-50 animate-spring-in" style={{ top: `${dropdownPos.top}px`, right: `${dropdownPos.right}px` }}>
-                      {/* Dropdown Glow Effect */}
-                      <div className="absolute -inset-[1px] bg-gradient-to-b from-blue-500/20 to-transparent rounded-2xl pointer-events-none"></div>
-
-                      {/* User Info Header */}
-                      <div className="relative px-5 py-5 border-b border-blue-100/50 bg-gradient-to-r from-blue-500/10 to-indigo-500/10">
-                        <div className="flex items-center gap-4">
-                          <div className="relative">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur-md opacity-50"></div>
-                            <div className="relative w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center shadow-xl ring-4 ring-blue-500/20">
-                              <User size={24} className="text-white" />
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 truncate tracking-wide">{user.email}</p>
-                            <p className="text-xs text-blue-600 font-semibold mt-0.5 flex items-center gap-1.5">
-                              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                              Active Account
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Menu Items */}
-                      <div className="p-2">
-                        <Link
-                          to="/settings"
-                          onClick={() => setShowUserMenu(false)}
-                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition-all duration-200 group/item"
-                        >
-                          <div className="w-8 h-8 rounded-lg bg-blue-50/50 flex items-center justify-center group-hover/item:bg-blue-100 transition-colors">
-                            <Settings size={16} className="text-gray-500 group-hover/item:text-blue-500 transition-colors" />
-                          </div>
-                          <span className="font-medium">Account Settings</span>
-                        </Link>
-
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:text-gray-900 hover:bg-red-50 rounded-xl flex items-center gap-3 transition-all duration-200 group/item mt-1"
-                        >
-                          <div className="w-8 h-8 rounded-lg bg-red-50/50 flex items-center justify-center group-hover/item:bg-red-100 transition-colors">
-                            <LogOut size={16} className="text-gray-500 group-hover/item:text-red-500 transition-colors" />
-                          </div>
-                          <span className="font-medium">Sign Out</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-              </>
+                )}
+              </div>
             )}
           </div>
         </div>
