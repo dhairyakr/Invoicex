@@ -38,56 +38,56 @@ const DrillDownModal: React.FC<DrillDownModalProps> = ({ isOpen, onClose, accoun
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
-        <div className="sticky top-0 bg-gradient-to-r from-blue-500 to-indigo-600 p-6 flex items-center justify-between z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full mx-4 max-h-[85vh] overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h3 className="text-2xl font-bold text-white">{account.name}</h3>
-            <p className="text-blue-100 text-sm mt-1">{account.category} - Transaction Details</p>
+            <h3 className="text-lg font-semibold text-gray-900">{account.name}</h3>
+            <p className="text-sm text-gray-500">{account.category} - Transaction Details</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
-            <X className="w-6 h-6 text-white" />
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-100px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-80px)]">
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4">
-              <p className="text-sm text-gray-600 mb-1">Total Amount</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(account.amount)}</p>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Total Amount</p>
+              <p className="text-xl font-bold text-gray-900">{formatCurrency(account.amount)}</p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4">
-              <p className="text-sm text-gray-600 mb-1">Transactions</p>
-              <p className="text-2xl font-bold text-gray-900">{transactions.length}</p>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Transactions</p>
+              <p className="text-xl font-bold text-gray-900">{transactions.length}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4">
-              <p className="text-sm text-gray-600 mb-1">% of Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">{account.percentage.toFixed(1)}%</p>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">% of Revenue</p>
+              <p className="text-xl font-bold text-gray-900">{account.percentage.toFixed(1)}%</p>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {transactions.length > 0 ? (
               transactions.map((txn, idx) => (
-                <div key={idx} className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200 hover:border-blue-300 transition-all">
+                <div key={idx} className="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">{txn.description || 'Transaction'}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-gray-900 text-sm">{txn.description || 'Transaction'}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
                         {new Date(txn.transaction_date).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-blue-600">{formatCurrency(txn.amount)}</p>
+                      <p className="font-semibold text-gray-900">{formatCurrency(txn.amount)}</p>
                       <p className="text-xs text-gray-500">{txn.type === 'debit' ? 'Debit' : 'Credit'}</p>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <FileText size={48} className="mx-auto mb-4 opacity-30" />
-                <p>No transactions found for this account</p>
+              <div className="text-center py-12 text-gray-400">
+                <FileText size={40} className="mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No transactions found for this account</p>
               </div>
             )}
           </div>
@@ -311,361 +311,316 @@ const ProfitLoss: React.FC<ProfitLossProps> = ({ dateRange, viewPeriod, departme
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowComparison(!showComparison)}
-            className={`px-4 py-2 rounded-xl font-semibold transition-all ${
-              showComparison
-                ? 'bg-blue-500 text-white shadow-lg'
-                : 'bg-white/40 backdrop-blur-md text-gray-700 border border-white/50'
-            }`}
-          >
-            <Eye size={16} className="inline mr-2" />
-            Period Comparison
-          </button>
-        </div>
+        <button
+          onClick={() => setShowComparison(!showComparison)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+            showComparison
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          <Eye size={16} />
+          Period Comparison
+        </button>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={exportToCSV}
-            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:shadow-xl transition-all font-semibold"
-          >
-            <Download size={16} className="inline mr-2" />
-            CSV
-          </button>
-        </div>
+        <button
+          onClick={exportToCSV}
+          className="flex items-center gap-2 px-3 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+        >
+          <Download size={16} />
+          CSV
+        </button>
       </div>
 
-      {/* Enhanced KPI Cards */}
+      {/* Clean KPI Cards */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-900 flex items-center">
-            <Target size={20} className="mr-2 text-blue-600" />
+          <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+            <Target size={16} className="text-blue-600" />
             Key Performance Indicators
           </h3>
           <button
             onClick={() => toggleSection('kpis')}
-            className="p-2 hover:bg-white/40 rounded-xl transition-colors"
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            {expandedSections.has('kpis') ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            {expandedSections.has('kpis') ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
           </button>
         </div>
 
         {expandedSections.has('kpis') && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Revenue */}
-            <div className="group relative bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-green-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500/80 to-green-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </div>
-                  {showComparison && previousData && (
-                    <div className={`flex items-center gap-1 text-sm font-bold ${getVarianceColor(revenueVariance)}`}>
-                      {getVarianceIcon(revenueVariance)}
-                      <span>{Math.abs(revenueVariance).toFixed(1)}%</span>
-                    </div>
-                  )}
+            <div className="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-emerald-600" />
                 </div>
-                <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-2">Total Revenue</p>
-                <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(data.totalRevenue)}</p>
                 {showComparison && previousData && (
-                  <p className="text-sm text-gray-600">
-                    vs {formatCurrency(previousData.totalRevenue)} <span className="text-xs text-gray-500">prev period</span>
-                  </p>
+                  <div className={`flex items-center gap-1 text-sm font-medium ${getVarianceColor(revenueVariance)}`}>
+                    {getVarianceIcon(revenueVariance)}
+                    <span>{Math.abs(revenueVariance).toFixed(1)}%</span>
+                  </div>
                 )}
               </div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Total Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(data.totalRevenue)}</p>
+              {showComparison && previousData && (
+                <p className="text-xs text-gray-500 mt-2">
+                  vs {formatCurrency(previousData.totalRevenue)} prev period
+                </p>
+              )}
             </div>
 
             {/* Gross Profit */}
-            <div className="group relative bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50 hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500/80 to-indigo-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                    <Zap className="w-6 h-6 text-white" />
-                  </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-2">Gross Profit</p>
-                <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(grossProfit)}</p>
-                <p className="text-sm text-gray-600">
-                  <Percent size={14} className="inline mr-1" />
-                  {grossMargin.toFixed(1)}% margin
-                </p>
               </div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Gross Profit</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(grossProfit)}</p>
+              <p className="text-xs text-gray-500 mt-2">{grossMargin.toFixed(1)}% margin</p>
             </div>
 
             {/* Total Expenses */}
-            <div className="group relative bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50 hover:shadow-2xl hover:shadow-red-500/25 transition-all duration-500 transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-500/80 to-pink-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                    <TrendingDown className="w-6 h-6 text-white" />
-                  </div>
-                  {showComparison && previousData && (
-                    <div className={`flex items-center gap-1 text-sm font-bold ${getVarianceColor(-expenseVariance)}`}>
-                      {getVarianceIcon(expenseVariance)}
-                      <span>{Math.abs(expenseVariance).toFixed(1)}%</span>
-                    </div>
-                  )}
+            <div className="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <TrendingDown className="w-5 h-5 text-red-600" />
                 </div>
-                <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-2">Total Expenses</p>
-                <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(data.totalExpenses)}</p>
                 {showComparison && previousData && (
-                  <p className="text-sm text-gray-600">
-                    vs {formatCurrency(previousData.totalExpenses)} <span className="text-xs text-gray-500">prev period</span>
-                  </p>
+                  <div className={`flex items-center gap-1 text-sm font-medium ${getVarianceColor(-expenseVariance)}`}>
+                    {getVarianceIcon(expenseVariance)}
+                    <span>{Math.abs(expenseVariance).toFixed(1)}%</span>
+                  </div>
                 )}
               </div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Total Expenses</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(data.totalExpenses)}</p>
+              {showComparison && previousData && (
+                <p className="text-xs text-gray-500 mt-2">
+                  vs {formatCurrency(previousData.totalExpenses)} prev period
+                </p>
+              )}
             </div>
 
             {/* Net Profit */}
-            <div className="group relative bg-white/40 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50 hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500/80 to-pink-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300 border border-white/30">
-                    <DollarSign className="w-6 h-6 text-white" />
-                  </div>
-                  {showComparison && previousData && (
-                    <div className={`flex items-center gap-1 text-sm font-bold ${getVarianceColor(profitVariance)}`}>
-                      {getVarianceIcon(profitVariance)}
-                      <span>{Math.abs(profitVariance).toFixed(1)}%</span>
-                    </div>
-                  )}
+            <div className="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-2">Net Profit</p>
-                <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(data.netProfit)}</p>
-                <p className="text-sm text-gray-600">
-                  <Percent size={14} className="inline mr-1" />
-                  {profitMargin.toFixed(1)}% margin
-                </p>
+                {showComparison && previousData && (
+                  <div className={`flex items-center gap-1 text-sm font-medium ${getVarianceColor(profitVariance)}`}>
+                    {getVarianceIcon(profitVariance)}
+                    <span>{Math.abs(profitVariance).toFixed(1)}%</span>
+                  </div>
+                )}
               </div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Net Profit</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(data.netProfit)}</p>
+              <p className="text-xs text-gray-500 mt-2">{profitMargin.toFixed(1)}% margin</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Interactive Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Revenue vs Expenses Trend */}
-        <div className="relative bg-white/30 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-          <div className="relative z-10">
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mr-4">
-                <Activity className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Trend Analysis</h3>
+        <div className="bg-white rounded-xl p-5 border border-gray-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Activity className="w-4 h-4 text-blue-600" />
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="month" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(229, 231, 235, 0.5)'
-                  }}
-                  formatter={(value: any) => formatCurrency(value)}
-                />
-                <Legend />
-                <Area type="monotone" dataKey="revenue" fill="#10b98180" stroke="#10b981" name="Revenue" />
-                <Area type="monotone" dataKey="expenses" fill="#ef444480" stroke="#ef4444" name="Expenses" />
-                <Line type="monotone" dataKey="profit" stroke="#8b5cf6" strokeWidth={3} name="Profit" />
-              </ComposedChart>
-            </ResponsiveContainer>
+            <h3 className="text-sm font-semibold text-gray-900">Trend Analysis</h3>
           </div>
-        </div>
-
-        {/* Expense Breakdown */}
-        <div className="relative bg-white/30 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-          <div className="relative z-10">
-            <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4">
-                <PieChart className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Expense Breakdown</h3>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <RePieChart>
-                <Pie
-                  data={expenseBreakdown}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => `${entry.name}: ${((entry.value / data.totalExpenses) * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {expenseBreakdown.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: any) => formatCurrency(value)} />
-              </RePieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Top Accounts Bar Chart */}
-      <div className="relative bg-white/30 backdrop-blur-md rounded-3xl p-6 shadow-xl shadow-gray-500/20 border border-white/50">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-        <div className="relative z-10">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center mr-4">
-              <BarChart3 className="w-5 h-5 text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900">Top Accounts by Amount</h3>
-          </div>
-          <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={chartData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis type="number" stroke="#6b7280" />
-              <YAxis dataKey="name" type="category" stroke="#6b7280" width={150} />
+          <ResponsiveContainer width="100%" height={280}>
+            <ComposedChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+              <XAxis dataKey="month" stroke="#9ca3af" fontSize={12} />
+              <YAxis stroke="#9ca3af" fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  backdropFilter: 'blur(10px)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(229, 231, 235, 0.5)'
+                  backgroundColor: '#fff',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
                 }}
                 formatter={(value: any) => formatCurrency(value)}
               />
-              <Legend />
-              <Bar dataKey="amount" fill="#3b82f6" name="Amount" radius={[0, 8, 8, 0]} />
-            </BarChart>
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
+              <Area type="monotone" dataKey="revenue" fill="#dcfce7" stroke="#22c55e" name="Revenue" />
+              <Area type="monotone" dataKey="expenses" fill="#fee2e2" stroke="#ef4444" name="Expenses" />
+              <Line type="monotone" dataKey="profit" stroke="#3b82f6" strokeWidth={2} name="Profit" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Expense Breakdown */}
+        <div className="bg-white rounded-xl p-5 border border-gray-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <PieChart className="w-4 h-4 text-blue-600" />
+            </div>
+            <h3 className="text-sm font-semibold text-gray-900">Expense Breakdown</h3>
+          </div>
+          <ResponsiveContainer width="100%" height={280}>
+            <RePieChart>
+              <Pie
+                data={expenseBreakdown}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={(entry) => `${entry.name}: ${((entry.value / data.totalExpenses) * 100).toFixed(0)}%`}
+                outerRadius={90}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {expenseBreakdown.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value: any) => formatCurrency(value)} />
+            </RePieChart>
           </ResponsiveContainer>
         </div>
       </div>
 
+      {/* Top Accounts Bar Chart */}
+      <div className="bg-white rounded-xl p-5 border border-gray-200">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+            <BarChart3 className="w-4 h-4 text-emerald-600" />
+          </div>
+          <h3 className="text-sm font-semibold text-gray-900">Top Accounts by Amount</h3>
+        </div>
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={chartData} layout="vertical">
+            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+            <XAxis type="number" stroke="#9ca3af" fontSize={12} />
+            <YAxis dataKey="name" type="category" stroke="#9ca3af" width={140} fontSize={12} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb',
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+              }}
+              formatter={(value: any) => formatCurrency(value)}
+            />
+            <Bar dataKey="amount" fill="#3b82f6" name="Amount" radius={[0, 4, 4, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
       {/* Detailed P&L Table */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-gray-900">Detailed Profit & Loss Statement</h3>
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h3 className="text-sm font-semibold text-gray-900">Detailed Profit & Loss Statement</h3>
         </div>
 
-        <div className="relative bg-white/30 backdrop-blur-md rounded-3xl shadow-2xl shadow-gray-500/20 border border-white/50 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-3xl"></div>
-
-          <div className="relative z-10 overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-gradient-to-r from-gray-50/40 to-blue-50/40 backdrop-blur-sm sticky top-0 z-20">
-                <tr>
-                  <th className="px-8 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Account</th>
-                  <th className="px-8 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Current Period</th>
-                  {showComparison && previousData && (
-                    <th className="px-8 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Previous Period</th>
-                  )}
-                  <th className="px-8 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">% of Revenue</th>
-                  {showComparison && (
-                    <th className="px-8 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Variance</th>
-                  )}
-                  <th className="px-8 py-4 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/30">
-                {accounts.map((account, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gradient-to-r hover:from-blue-50/30 hover:to-purple-50/30 transition-all duration-300 group"
-                  >
-                    <td className="px-8 py-6">
-                      <div className="flex items-center">
-                        <div className={`w-3 h-3 rounded-full mr-4 ${
-                          account.category === 'Revenue' ? 'bg-green-500' :
-                          account.category === 'COGS' ? 'bg-orange-500' :
-                          'bg-red-500'
-                        }`}></div>
-                        <div>
-                          <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {account.name}
-                          </div>
-                          <div className="text-sm text-gray-500">{account.category}</div>
-                        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Account</th>
+                <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Current Period</th>
+                {showComparison && previousData && (
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Previous Period</th>
+                )}
+                <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">% of Revenue</th>
+                {showComparison && (
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Variance</th>
+                )}
+                <th className="px-5 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {accounts.map((account, index) => (
+                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center">
+                      <div className={`w-2 h-2 rounded-full mr-3 ${
+                        account.category === 'Revenue' ? 'bg-emerald-500' :
+                        account.category === 'COGS' ? 'bg-amber-500' :
+                        'bg-red-500'
+                      }`}></div>
+                      <div>
+                        <div className="font-medium text-gray-900 text-sm">{account.name}</div>
+                        <div className="text-xs text-gray-500">{account.category}</div>
                       </div>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className={`font-bold text-lg ${account.amount >= 0 ? 'text-green-600' : 'text-gray-900'}`}>
-                        {account.amount >= 0 ? '' : '-'}{formatCurrency(account.amount)}
-                      </div>
-                    </td>
-                    {showComparison && previousData && (
-                      <td className="px-8 py-6 text-right">
-                        <div className="font-semibold text-gray-600">
-                          {formatCurrency(Math.abs(account.amount) / (1 + account.variance / 100))}
-                        </div>
-                      </td>
-                    )}
-                    <td className="px-8 py-6 text-right">
-                      <div className="font-semibold text-gray-700">{account.percentage.toFixed(1)}%</div>
-                    </td>
-                    {showComparison && (
-                      <td className="px-8 py-6 text-right">
-                        <div className={`flex items-center justify-end font-semibold ${getVarianceColor(account.variance)}`}>
-                          {getVarianceIcon(account.variance)}
-                          <span className="ml-1">{Math.abs(account.variance).toFixed(1)}%</span>
-                        </div>
-                      </td>
-                    )}
-                    <td className="px-8 py-6 text-center">
-                      <button
-                        onClick={() => handleAccountClick(account)}
-                        className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 rounded-lg text-sm font-semibold transition-all"
-                      >
-                        <Maximize2 size={14} className="inline mr-1" />
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-gradient-to-r from-blue-50/60 to-indigo-50/60 backdrop-blur-sm sticky bottom-0">
-                <tr>
-                  <td className="px-8 py-6 font-bold text-gray-900 text-lg">NET PROFIT</td>
-                  <td className="px-8 py-6 text-right">
-                    <div className={`text-2xl font-bold ${data.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {formatCurrency(data.netProfit)}
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 text-right">
+                    <div className={`font-semibold text-sm ${account.amount >= 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                      {account.amount >= 0 ? '' : '-'}{formatCurrency(account.amount)}
                     </div>
                   </td>
                   {showComparison && previousData && (
-                    <td className="px-8 py-6 text-right">
-                      <div className="text-lg font-semibold text-gray-600">
-                        {formatCurrency(previousData.netProfit)}
+                    <td className="px-5 py-4 text-right">
+                      <div className="text-sm text-gray-600">
+                        {formatCurrency(Math.abs(account.amount) / (1 + account.variance / 100))}
                       </div>
                     </td>
                   )}
-                  <td className="px-8 py-6 text-right">
-                    <div className="text-lg font-bold text-blue-600">{profitMargin.toFixed(1)}%</div>
+                  <td className="px-5 py-4 text-right">
+                    <div className="text-sm text-gray-700">{account.percentage.toFixed(1)}%</div>
                   </td>
                   {showComparison && (
-                    <td className="px-8 py-6 text-right">
-                      <div className={`flex items-center justify-end font-bold text-lg ${getVarianceColor(profitVariance)}`}>
-                        {getVarianceIcon(profitVariance)}
-                        <span className="ml-1">{Math.abs(profitVariance).toFixed(1)}%</span>
+                    <td className="px-5 py-4 text-right">
+                      <div className={`flex items-center justify-end text-sm font-medium ${getVarianceColor(account.variance)}`}>
+                        {getVarianceIcon(account.variance)}
+                        <span className="ml-1">{Math.abs(account.variance).toFixed(1)}%</span>
                       </div>
                     </td>
                   )}
-                  <td></td>
+                  <td className="px-5 py-4 text-center">
+                    <button
+                      onClick={() => handleAccountClick(account)}
+                      className="px-2.5 py-1.5 text-blue-600 hover:bg-blue-50 rounded-md text-xs font-medium transition-colors"
+                    >
+                      <Maximize2 size={12} className="inline mr-1" />
+                      View
+                    </button>
+                  </td>
                 </tr>
-              </tfoot>
-            </table>
-          </div>
+              ))}
+            </tbody>
+            <tfoot className="bg-gray-50 border-t border-gray-200">
+              <tr>
+                <td className="px-5 py-4 font-semibold text-gray-900">NET PROFIT</td>
+                <td className="px-5 py-4 text-right">
+                  <div className={`text-lg font-bold ${data.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                    {formatCurrency(data.netProfit)}
+                  </div>
+                </td>
+                {showComparison && previousData && (
+                  <td className="px-5 py-4 text-right">
+                    <div className="font-medium text-gray-600">
+                      {formatCurrency(previousData.netProfit)}
+                    </div>
+                  </td>
+                )}
+                <td className="px-5 py-4 text-right">
+                  <div className="font-semibold text-blue-600">{profitMargin.toFixed(1)}%</div>
+                </td>
+                {showComparison && (
+                  <td className="px-5 py-4 text-right">
+                    <div className={`flex items-center justify-end font-semibold ${getVarianceColor(profitVariance)}`}>
+                      {getVarianceIcon(profitVariance)}
+                      <span className="ml-1">{Math.abs(profitVariance).toFixed(1)}%</span>
+                    </div>
+                  </td>
+                )}
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
 

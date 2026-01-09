@@ -242,17 +242,13 @@ const Header: React.FC = () => {
           <div className="flex items-center flex-shrink-0 relative w-auto">
             {user && (
               <div className="hidden sm:flex items-center">
-                {/* Logout Button - Styled to Match Nav Bar */}
                 <button
                   onClick={handleSignOut}
-                  className="relative px-5 py-2.5 rounded-2xl font-semibold text-sm transition-all duration-300 overflow-hidden group bg-white/40 backdrop-blur-xl border border-white/50 hover:bg-white/80 hover:border-blue-400/50 shadow-lg hover:shadow-blue-500/20 flex items-center gap-2.5 whitespace-nowrap"
+                  className="relative p-2.5 rounded-xl transition-all duration-300 overflow-hidden group bg-white/40 backdrop-blur-xl border border-white/50 hover:bg-red-50 hover:border-red-200 shadow-md hover:shadow-lg"
                   aria-label="Sign out"
+                  title="Sign Out"
                 >
-                  {/* Animated Border Glow on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/10 to-orange-500/0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                  <LogOut size={16} className="text-gray-700 group-hover:text-red-600 transition-all duration-300 group-hover:scale-110 relative z-10" />
-                  <span className="text-gray-700 group-hover:text-red-600 transition-all duration-300 tracking-wide relative z-10">Sign Out</span>
+                  <LogOut size={18} className="text-gray-600 group-hover:text-red-600 transition-all duration-300 relative z-10" />
                 </button>
               </div>
             )}

@@ -196,209 +196,148 @@ const FinancialReports: React.FC = () => {
   const activeReportInfo = reportTabs.find(tab => tab.id === activeReport);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Hero Header Section - Aero Glass */}
-      <div className="relative overflow-hidden bg-white/30 backdrop-blur-xl border-b border-white/40 shadow-xl">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-indigo-500/10"></div>
-        <div className="absolute top-0 right-0 w-96 h-32 bg-gradient-to-l from-blue-500/15 to-indigo-500/15 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-32 bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-full blur-2xl"></div>
-        
-        {/* Glossy overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
-        
-        <div className="relative z-10 container mx-auto px-6 py-8">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      {/* Clean Header Section */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-6 py-5">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex items-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500/80 to-indigo-600/80 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mr-6 border border-white/30">
-                <BarChart3 className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-md mr-4">
+                <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2 tracking-tight">Financial Reports</h1>
-                <p className="text-xl text-gray-700 font-medium">Real-time business intelligence and accounting insights</p>
+                <h1 className="text-2xl font-bold text-gray-900">Financial Reports</h1>
+                <p className="text-sm text-gray-500">Real-time business intelligence</p>
               </div>
             </div>
 
-            {/* Top Bar Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-              {/* Date Range Presets */}
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
-                <select
-                  onChange={(e) => handleDatePreset(e.target.value)}
-                  className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  <option value="">Quick Date Range</option>
-                  {datePresets.map(preset => (
-                    <option key={preset.value} value={preset.value}>
-                      {preset.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <select
+                onChange={(e) => handleDatePreset(e.target.value)}
+                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Quick Range</option>
+                {datePresets.map(preset => (
+                  <option key={preset.value} value={preset.value}>{preset.label}</option>
+                ))}
+              </select>
 
-              {/* Custom Date Range */}
               <div className="flex items-center gap-2">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
-                  <input
-                    type="date"
-                    value={dateRange.start}
-                    onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                    className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg"
-                  />
-                </div>
-                <span className="text-gray-600 font-medium">to</span>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
-                  <input
-                    type="date"
-                    value={dateRange.end}
-                    onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                    className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg"
-                  />
-                </div>
+                <input
+                  type="date"
+                  value={dateRange.start}
+                  onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <span className="text-gray-400 text-sm">to</span>
+                <input
+                  type="date"
+                  value={dateRange.end}
+                  onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                  className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
               </div>
 
-              {/* View Period Toggle */}
-              <div className="relative bg-white/30 backdrop-blur-md rounded-xl p-1 border border-white/50 shadow-lg">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
+              <div className="flex bg-gray-100 rounded-lg p-0.5">
                 {(['monthly', 'quarterly', 'yearly'] as ViewPeriod[]).map((period) => (
                   <button
                     key={period}
                     onClick={() => setViewPeriod(period)}
-                    className={`relative px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                       viewPeriod === period
-                        ? 'bg-blue-500/80 backdrop-blur-sm text-white shadow-lg'
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-white/30'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-lg"></div>
-                    <span className="relative z-10 capitalize">{period}</span>
+                    {period.charAt(0).toUpperCase() + period.slice(1)}
                   </button>
                 ))}
               </div>
 
-              {/* Add Entry Button */}
-              <button
-                onClick={() => setShowQuickTransaction(true)}
-                className="relative group overflow-hidden bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/90 to-pink-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                <Plus size={18} className="mr-2 relative z-10" />
-                <span className="relative z-10">Quick Entry</span>
-              </button>
+              <div className="flex items-center gap-2 ml-2">
+                <button
+                  onClick={() => setShowQuickTransaction(true)}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  <Plus size={16} />
+                  <span>Quick Entry</span>
+                </button>
 
-              {/* Journal Entry Button */}
-              <button
-                onClick={() => setShowJournalEntry(true)}
-                className="relative group overflow-hidden bg-gradient-to-r from-blue-600/80 to-cyan-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/90 to-cyan-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                <FileText size={18} className="mr-2 relative z-10" />
-                <span className="relative z-10">Journal Entry</span>
-              </button>
+                <button
+                  onClick={() => setShowJournalEntry(true)}
+                  className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200"
+                >
+                  <FileText size={16} />
+                  <span>Journal</span>
+                </button>
 
-              {/* Export Button */}
-              <button className="relative group overflow-hidden bg-gradient-to-r from-green-600/80 to-emerald-600/80 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-white/30">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500/90 to-emerald-500/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                <Download size={18} className="mr-2 relative z-10" />
-                <span className="relative z-10">Export</span>
-              </button>
+                <button className="flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-gray-200">
+                  <Download size={16} />
+                  <span>Export</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-200px)] overflow-hidden">
-        {/* Sidebar Navigation - Aero Glass */}
-        <div className="w-80 bg-white/25 backdrop-blur-xl border-r border-white/40 shadow-xl overflow-y-auto">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
+      <div className="flex h-[calc(100vh-88px)]">
+        {/* Clean Sidebar Navigation */}
+        <div className="w-72 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
+          <div className="p-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Reports</p>
 
-          <div className="relative z-10 p-6 min-h-full">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Financial Reports</h2>
-              <p className="text-gray-600">Select a report to view detailed insights</p>
-            </div>
-
-            <div className="space-y-3">
+            <nav className="space-y-1">
               {reportTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveReport(tab.id)}
-                  className={`group relative w-full text-left p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl border ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all ${
                     activeReport === tab.id
-                      ? `bg-gradient-to-r ${tab.bgColor} border-blue-300/50 shadow-lg ring-2 ring-blue-200/50`
-                      : 'bg-white/30 backdrop-blur-sm border-white/50 hover:bg-white/40 hover:border-white/60 shadow-lg'
+                      ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-600 -ml-px'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-                  
-                  <div className="relative z-10 flex items-center">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 shadow-lg transition-all duration-300 group-hover:scale-110 ${
-                      activeReport === tab.id
-                        ? `bg-gradient-to-r ${tab.color} text-white`
-                        : 'bg-white/50 backdrop-blur-sm text-gray-600 group-hover:text-gray-800'
-                    }`}>
-                      {tab.icon}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    activeReport === tab.id
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {tab.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm truncate">{tab.name}</span>
+                      {tab.popular && (
+                        <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
+                          Popular
+                        </span>
+                      )}
                     </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className={`font-bold text-lg transition-colors ${
-                          activeReport === tab.id ? 'text-gray-900' : 'text-gray-800 group-hover:text-gray-900'
-                        }`}>
-                          {tab.name}
-                        </h3>
-                        {tab.popular && (
-                          <span className="px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold rounded-full">
-                            Popular
-                          </span>
-                        )}
-                        <ChevronRight className={`w-5 h-5 transition-all duration-300 ${
-                          activeReport === tab.id 
-                            ? 'text-blue-600 transform rotate-90' 
-                            : 'text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1'
-                        }`} />
-                      </div>
-                      <p className={`text-sm transition-colors ${
-                        activeReport === tab.id ? 'text-gray-700' : 'text-gray-600'
-                      }`}>
-                        {tab.description}
-                      </p>
-                    </div>
+                    <p className="text-xs text-gray-400 truncate mt-0.5">{tab.description}</p>
                   </div>
                 </button>
               ))}
-            </div>
+            </nav>
 
-            {/* Quick Stats Card */}
-            <div className="mt-8 relative bg-white/30 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-2xl"></div>
-              <div className="relative z-10">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mr-3">
-                    <Activity className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">Quick Overview</h3>
+            <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="px-3 py-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Activity className="w-4 h-4 text-gray-400" />
+                  <span className="text-xs font-medium text-gray-600">Current View</span>
                 </div>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Current Period:</span>
-                    <span className="font-semibold text-gray-900 capitalize">{viewPeriod}</span>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Period:</span>
+                    <span className="font-medium text-gray-700 capitalize">{viewPeriod}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Date Range:</span>
-                    <span className="font-semibold text-gray-900 text-xs">
-                      {new Date(dateRange.start).toLocaleDateString()} - {new Date(dateRange.end).toLocaleDateString()}
-                    </span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">From:</span>
+                    <span className="font-medium text-gray-700">{new Date(dateRange.start).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Active Report:</span>
-                    <span className="font-semibold text-blue-600">{activeReportInfo?.name}</span>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">To:</span>
+                    <span className="font-medium text-gray-700">{new Date(dateRange.end).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>
@@ -407,56 +346,46 @@ const FinancialReports: React.FC = () => {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Report Header */}
-          <div className="relative bg-white/20 backdrop-blur-md border-b border-white/30 p-6 flex-shrink-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10"></div>
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 shadow-lg bg-gradient-to-r ${activeReportInfo?.color} text-white`}>
+        <div className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+          {/* Compact Report Header */}
+          <div className="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br ${activeReportInfo?.color} text-white shadow-sm`}>
                   {activeReportInfo?.icon}
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900">{activeReportInfo?.name}</h2>
-                  <p className="text-gray-600 text-lg">{activeReportInfo?.description}</p>
+                  <h2 className="text-lg font-semibold text-gray-900">{activeReportInfo?.name}</h2>
+                  <p className="text-sm text-gray-500">{activeReportInfo?.description}</p>
                 </div>
               </div>
 
-              {/* Additional Filters */}
-              <div className="flex items-center gap-4">
-                {/* Department Filter */}
-                <div className="relative">
-                  <select
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="relative bg-white/40 backdrop-blur-md border border-white/50 rounded-xl px-4 py-3 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-300 shadow-lg"
-                  >
-                    <option value="">All Departments</option>
-                    <option value="sales">Sales</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="operations">Operations</option>
-                    <option value="admin">Administration</option>
-                  </select>
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
-                </div>
-              </div>
+              <select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Departments</option>
+                <option value="sales">Sales</option>
+                <option value="marketing">Marketing</option>
+                <option value="operations">Operations</option>
+                <option value="admin">Administration</option>
+              </select>
             </div>
           </div>
 
           {/* Report Content */}
-          <div className="flex-1 overflow-y-auto bg-gradient-to-br from-white/40 to-blue-50/40 p-6">
-            <div className="relative">
-              <Suspense fallback={
-                <div className="flex items-center justify-center py-20">
-                  <div className="text-center">
-                    <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
-                    <p className="text-gray-600 font-semibold">Loading report...</p>
-                  </div>
+          <div className="flex-1 overflow-y-auto p-6">
+            <Suspense fallback={
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <Loader className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-3" />
+                  <p className="text-sm text-gray-500">Loading report...</p>
                 </div>
-              }>
-                {renderActiveReport()}
-              </Suspense>
-            </div>
+              </div>
+            }>
+              {renderActiveReport()}
+            </Suspense>
           </div>
         </div>
       </div>
