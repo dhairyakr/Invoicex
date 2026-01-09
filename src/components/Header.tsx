@@ -90,7 +90,7 @@ const Header: React.FC = () => {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center gap-8">
           {/* Enhanced Premium Logo Section - Far Left */}
-          <Link to="/" className="flex items-center gap-2 group relative flex-shrink-0" aria-label="Invoice Beautifier Home">
+          <Link to="/" className="relative group flex-shrink-0" aria-label="Invoice Beautifier Home">
             <div className="relative">
               {/* Multi-layer Animated Glow */}
               <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/30 via-indigo-400/30 to-blue-400/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow"></div>
@@ -112,11 +112,11 @@ const Header: React.FC = () => {
               </div>
             </div>
 
-            <div className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-500 overflow-hidden max-w-0 group-hover:max-w-xs">
-              <h1 className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-all duration-500 drop-shadow-[0_2px_10px_rgba(59,130,246,0.3)] group-hover:drop-shadow-[0_2px_12px_rgba(59,130,246,0.5)] whitespace-nowrap">
+            <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 pointer-events-none group-hover:pointer-events-auto transition-all duration-500 whitespace-nowrap">
+              <h1 className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-all duration-500 drop-shadow-[0_2px_10px_rgba(59,130,246,0.3)] group-hover:drop-shadow-[0_2px_12px_rgba(59,130,246,0.5)]">
                 Invoice Beautifier
               </h1>
-              <p className="text-xs text-gray-700 font-semibold tracking-wide group-hover:text-blue-600 transition-colors duration-500 drop-shadow-[0_1px_6px_rgba(59,130,246,0.2)] group-hover:drop-shadow-[0_1px_8px_rgba(59,130,246,0.4)] whitespace-nowrap">Professional Invoice Solutions</p>
+              <p className="text-xs text-gray-700 font-semibold tracking-wide group-hover:text-blue-600 transition-colors duration-500 drop-shadow-[0_1px_6px_rgba(59,130,246,0.2)] group-hover:drop-shadow-[0_1px_8px_rgba(59,130,246,0.4)]">Professional Invoice Solutions</p>
             </div>
           </Link>
 
