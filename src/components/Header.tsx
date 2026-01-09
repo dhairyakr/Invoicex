@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3, Home, Zap } from 'lucide-react';
+import { FileText, Sparkles, LogOut, User, Settings, Package, ChevronDown, BarChart3, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
@@ -11,7 +11,6 @@ const Header: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const ctaRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -316,42 +315,6 @@ const Header: React.FC = () => {
                   )}
                 </div>
 
-                {/* Premium CTA Button with Magnetic Effect */}
-                <Link
-                  ref={ctaRef}
-                  to="/create"
-                  className="relative group/cta"
-                  aria-label="Create New Invoice"
-                >
-                  {/* Multi-layer Animated Glow */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 rounded-xl blur-lg opacity-60 group-hover/cta:opacity-100 transition-all duration-500 animate-pulse-glow"></div>
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 rounded-xl blur-md opacity-0 group-hover/cta:opacity-80 transition-all duration-300"></div>
-
-                  {/* Button Container with 3D Effect */}
-                  <div className="relative bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-xl group-hover/cta:shadow-2xl group-hover/cta:shadow-blue-500/50 overflow-hidden group-hover/cta:-translate-y-0.5 group-hover/cta:scale-105">
-                    {/* Multiple Glass Layers */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-blue-700/20 rounded-xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent rounded-xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-bl from-transparent to-blue-700/30 rounded-xl"></div>
-
-                    {/* Enhanced Shimmer Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 transform -translate-x-full group-hover/cta:translate-x-full transition-transform duration-1000 rounded-xl"></div>
-
-                    {/* Ripple Effect on Hover */}
-                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300">
-                      <div className="absolute inset-0 rounded-xl bg-white/10 animate-ripple"></div>
-                    </div>
-
-                    {/* Button Content */}
-                    <span className="relative z-10 text-white flex items-center gap-2.5 text-sm tracking-wide">
-                      <Zap size={17} className="group-hover/cta:rotate-12 group-hover/cta:scale-110 transition-transform duration-300 drop-shadow-lg" />
-                      <span className="font-bold">New Invoice</span>
-                    </span>
-
-                    {/* Bottom Highlight */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
-                  </div>
-                </Link>
               </>
             )}
           </div>
