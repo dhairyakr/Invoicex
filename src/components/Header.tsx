@@ -88,9 +88,9 @@ const Header: React.FC = () => {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDU5LCAxMzAsIDI0NiwgMC4wNSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"></div>
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-between gap-8">
-          {/* Enhanced Premium Logo Section */}
-          <Link to="/" className="flex items-center gap-3 group relative" aria-label="Invoice Beautifier Home">
+        <div className="flex items-center gap-8">
+          {/* Enhanced Premium Logo Section - Far Left */}
+          <Link to="/" className="flex items-center gap-2 group relative flex-shrink-0" aria-label="Invoice Beautifier Home">
             <div className="relative">
               {/* Multi-layer Animated Glow */}
               <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/30 via-indigo-400/30 to-blue-400/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow"></div>
@@ -119,9 +119,9 @@ const Header: React.FC = () => {
               <p className="text-xs text-gray-700 font-semibold tracking-wide group-hover:text-blue-600 transition-colors duration-500 drop-shadow-[0_1px_6px_rgba(59,130,246,0.2)] group-hover:drop-shadow-[0_1px_8px_rgba(59,130,246,0.4)] whitespace-nowrap">Professional Invoice Solutions</p>
             </div>
           </Link>
-          
-          {/* Enhanced Modern Navigation */}
-          <div className="flex items-center gap-4">
+
+          {/* Enhanced Modern Navigation - Centered */}
+          <div className="flex items-center justify-center flex-1 gap-4">
             {/* Premium Pill Navigation with Magnetic Effects */}
             <nav className="hidden lg:flex items-center gap-1 bg-white/40 backdrop-blur-xl border border-white/50 rounded-2xl p-1.5 shadow-lg relative group/nav" role="navigation" aria-label="Main navigation">
               {/* Animated Border Glow */}
@@ -235,10 +235,12 @@ const Header: React.FC = () => {
                 )}
               </Link>
             </nav>
+          </div>
 
-            {/* Enhanced User Action Section */}
+          {/* Enhanced User Action Section - Far Right */}
+          <div className="flex items-center gap-3 flex-shrink-0">
             {user && (
-              <div className="flex items-center gap-3">
+              <>
                 {/* Premium User Profile Dropdown */}
                 <div className="relative hidden sm:block">
                   <button
@@ -350,7 +352,7 @@ const Header: React.FC = () => {
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
                   </div>
                 </Link>
-              </div>
+              </>
             )}
           </div>
         </div>
