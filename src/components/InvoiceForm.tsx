@@ -669,8 +669,8 @@ const InvoiceForm: React.FC = () => {
       {/* Middle Section - Preview */}
       <div className="w-[55%] bg-gray-50 border-r border-gray-200 overflow-y-auto">
         <div className="p-6">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div id="invoice-preview">
+          <div className="bg-white rounded-lg shadow-lg overflow-auto">
+            <div id="invoice-preview" className="min-w-fit">
               <InvoicePreview invoice={currentInvoice} />
             </div>
           </div>
