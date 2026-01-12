@@ -70,12 +70,14 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
   // ELEGANT TEMPLATE - Luxurious serif design with ornate elements
   if (invoice.template === 'elegant') {
     return (
-      <div className="bg-white relative overflow-hidden\" style={{ 
+      <div className="bg-white relative overflow-hidden" style={{
         fontFamily: 'Playfair Display, serif',
         minHeight: '297mm',
         width: '210mm',
+        maxWidth: '210mm',
         margin: '0 auto',
         background: 'linear-gradient(135deg, #fdfbfb 0%, #f7f4f1 100%)',
+        boxSizing: 'border-box',
       }}>
         {/* Ornate Background Pattern */}
         <div className="absolute inset-0 opacity-5">
@@ -84,80 +86,80 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           }}></div>
         </div>
 
-        <div className="relative z-10 p-12">
+        <div className="relative z-10 p-6">
           {/* Ornate Header with Gold Accents */}
-          <div className="text-center pb-12 mb-12 relative">
+          <div className="text-center pb-8 mb-8 relative">
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
             
             {invoice.company.logo && (
-              <div className="mb-8 flex justify-center">
-                <div className="p-6 border-4 border-amber-200 rounded-full bg-white shadow-2xl relative">
+              <div className="mb-6 flex justify-center">
+                <div className="p-4 border-4 border-amber-200 rounded-full bg-white shadow-2xl relative">
                   <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full"></div>
                   <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-amber-300 rounded-full"></div>
                   <img
                     src={invoice.company.logo}
                     alt="Company logo"
-                    className="h-20 object-contain"
+                    className="h-16 object-contain"
                   />
                 </div>
               </div>
             )}
             
-            <h1 className="text-6xl font-bold mb-6 text-gray-800 tracking-wide" style={{ 
+            <h1 className="text-4xl font-bold mb-4 text-gray-800 tracking-wide" style={{
               fontFamily: 'Playfair Display, serif',
               textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
             }}>
               {invoice.company.name || 'Your Company'}
             </h1>
-            
-            <div className="flex items-center justify-center mb-8">
-              <div className="h-px bg-gradient-to-r from-transparent via-amber-400 to-amber-600 flex-1 max-w-32"></div>
-              <div className="mx-8 relative">
-                <h2 className="text-4xl italic text-amber-700 font-light relative z-10">INVOICE</h2>
+
+            <div className="flex items-center justify-center mb-6">
+              <div className="h-px bg-gradient-to-r from-transparent via-amber-400 to-amber-600 flex-1 max-w-24"></div>
+              <div className="mx-6 relative">
+                <h2 className="text-3xl italic text-amber-700 font-light relative z-10">INVOICE</h2>
                 <div className="absolute inset-0 bg-amber-100 rounded-full transform scale-150 opacity-30"></div>
               </div>
-              <div className="h-px bg-gradient-to-r from-amber-600 via-amber-400 to-transparent flex-1 max-w-32"></div>
+              <div className="h-px bg-gradient-to-r from-amber-600 via-amber-400 to-transparent flex-1 max-w-24"></div>
             </div>
-            
-            <div className="inline-block px-10 py-4 border-3 border-amber-300 rounded-2xl bg-gradient-to-r from-amber-50 to-white shadow-xl relative">
+
+            <div className="inline-block px-6 py-3 border-3 border-amber-300 rounded-2xl bg-gradient-to-r from-amber-50 to-white shadow-xl relative">
               <div className="absolute -top-1 -left-1 w-4 h-4 bg-amber-400 rounded-full"></div>
               <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-amber-300 rounded-full"></div>
-              <span className="text-2xl font-bold text-gray-700 tracking-wider">#{invoice.number}</span>
+              <span className="text-xl font-bold text-gray-700 tracking-wider">#{invoice.number}</span>
             </div>
           </div>
 
           {/* Elegant Content Layout with Decorative Elements */}
-          <div className="grid grid-cols-2 gap-16 mb-16">
-            <div className="relative">
+          <div className="grid grid-cols-2 gap-6 mb-8" style={{ minWidth: 0 }}>
+            <div className="relative" style={{ minWidth: 0 }}>
               <div className="absolute -top-4 -left-4 w-8 h-8 border-l-4 border-t-4 border-amber-300"></div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-amber-100 relative overflow-hidden">
+              <div className="bg-white p-5 rounded-2xl shadow-xl border border-amber-100 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-20 h-20 bg-amber-50 rounded-full transform translate-x-10 -translate-y-10"></div>
-                <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-200 pb-3">
+                <h3 className="text-xl font-bold mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">
                   Billed To
                 </h3>
-                <div className="text-gray-800 space-y-3 relative z-10">
-                  {invoice.client.name && <p className="font-bold text-xl text-gray-900">{invoice.client.name}</p>}
-                  {invoice.client.email && <p className="text-gray-600 italic">{invoice.client.email}</p>}
-                  {invoice.client.address && <p className="whitespace-pre-line text-gray-600 leading-relaxed">{invoice.client.address}</p>}
+                <div className="text-gray-800 space-y-2 relative z-10">
+                  {invoice.client.name && <p className="font-bold text-lg text-gray-900 break-words">{invoice.client.name}</p>}
+                  {invoice.client.email && <p className="text-gray-600 italic text-sm break-words">{invoice.client.email}</p>}
+                  {invoice.client.address && <p className="whitespace-pre-line text-gray-600 leading-relaxed text-sm break-words">{invoice.client.address}</p>}
                 </div>
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative" style={{ minWidth: 0 }}>
               <div className="absolute -top-4 -right-4 w-8 h-8 border-r-4 border-t-4 border-amber-300"></div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-amber-100 relative overflow-hidden">
+              <div className="bg-white p-5 rounded-2xl shadow-xl border border-amber-100 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-20 h-20 bg-amber-50 rounded-full transform -translate-x-10 -translate-y-10"></div>
-                <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-200 pb-3">
+                <h3 className="text-xl font-bold mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">
                   Invoice Details
                 </h3>
-                <div className="space-y-4 relative z-10">
+                <div className="space-y-3 relative z-10">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 font-medium">Issue Date:</span>
-                    <span className="text-gray-800 font-bold text-lg">{formatDate(invoice.issueDate)}</span>
+                    <span className="text-gray-600 font-medium text-sm">Issue Date:</span>
+                    <span className="text-gray-800 font-bold">{formatDate(invoice.issueDate)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 font-medium">Due Date:</span>
-                    <span className="text-gray-800 font-bold text-lg">{formatDate(invoice.dueDate)}</span>
+                    <span className="text-gray-600 font-medium text-sm">Due Date:</span>
+                    <span className="text-gray-800 font-bold">{formatDate(invoice.dueDate)}</span>
                   </div>
                 </div>
               </div>
@@ -165,24 +167,24 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Luxurious Table Design */}
-          <div className="bg-white rounded-3xl shadow-2xl border-2 border-amber-100 overflow-hidden mb-12 relative">
+          <div className="bg-white rounded-3xl shadow-2xl border-2 border-amber-100 overflow-hidden mb-8 relative">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300"></div>
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold text-amber-800 text-lg">Description</th>
-                  <th className="text-center py-6 px-8 font-bold text-amber-800 text-lg">Qty</th>
-                  <th className="text-right py-6 px-8 font-bold text-amber-800 text-lg">Rate</th>
-                  <th className="text-right py-6 px-8 font-bold text-amber-800 text-lg">Amount</th>
+                  <th className="text-left py-4 px-4 font-bold text-amber-800" style={{ width: '45%' }}>Description</th>
+                  <th className="text-center py-4 px-2 font-bold text-amber-800" style={{ width: '15%' }}>Qty</th>
+                  <th className="text-right py-4 px-2 font-bold text-amber-800" style={{ width: '20%' }}>Rate</th>
+                  <th className="text-right py-4 px-4 font-bold text-amber-800" style={{ width: '20%' }}>Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, index) => (
                   <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-amber-25'} border-b border-amber-100`}>
-                    <td className="py-6 px-8 text-gray-800 font-medium">{item.description || 'Item description'}</td>
-                    <td className="py-6 px-8 text-center text-gray-700 font-semibold">{item.quantity}</td>
-                    <td className="py-6 px-8 text-right text-gray-700 font-semibold">{currencySymbol}{item.rate.toFixed(2)}</td>
-                    <td className="py-6 px-8 text-right font-bold text-gray-800 text-lg">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="py-4 px-4 text-gray-800 font-medium break-words">{item.description || 'Item description'}</td>
+                    <td className="py-4 px-2 text-center text-gray-700 font-semibold">{item.quantity}</td>
+                    <td className="py-4 px-2 text-right text-gray-700 font-semibold">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-gray-800">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -190,30 +192,30 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Ornate Totals Section */}
-          <div className="flex justify-end mb-12">
-            <div className="w-96 relative">
+          <div className="flex justify-end mb-8">
+            <div className="w-80 relative">
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full"></div>
               <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-amber-300 rounded-full"></div>
-              <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-2xl border-2 border-amber-200 p-8">
-                <div className="space-y-4">
-                  <div className="flex justify-between text-gray-700 text-lg">
+              <div className="bg-gradient-to-br from-white to-amber-50 rounded-2xl shadow-2xl border-2 border-amber-200 p-5">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-gray-700">
                     <span className="font-medium">Subtotal</span>
                     <span className="font-bold">{currencySymbol}{totals.subtotal.toFixed(2)}</span>
                   </div>
                   {totals.discountAmount > 0 && (
-                    <div className="flex justify-between text-red-600 text-lg">
+                    <div className="flex justify-between text-red-600">
                       <span className="font-medium">Discount</span>
                       <span className="font-bold">-{currencySymbol}{totals.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   {totals.taxAmount > 0 && (
-                    <div className="flex justify-between text-gray-700 text-lg">
+                    <div className="flex justify-between text-gray-700">
                       <span className="font-medium">Tax</span>
                       <span className="font-bold">{currencySymbol}{totals.taxAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="border-t-3 border-amber-300 pt-4">
-                    <div className="flex justify-between text-2xl font-bold text-amber-800">
+                  <div className="border-t-3 border-amber-300 pt-3">
+                    <div className="flex justify-between text-xl font-bold text-amber-800">
                       <span>TOTAL</span>
                       <span>{currencySymbol}{totals.total.toFixed(2)}</span>
                     </div>
@@ -225,24 +227,24 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
           {/* Payment QR Code */}
           {invoice.paymentInfo?.qrCode && (
-            <div className="flex justify-center mb-12">
-              <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-amber-200 text-center">
-                <h3 className="text-xl font-bold text-amber-700 mb-4">Scan to Pay</h3>
+            <div className="flex justify-center mb-8">
+              <div className="bg-white p-5 rounded-2xl shadow-xl border-2 border-amber-200 text-center">
+                <h3 className="text-lg font-bold text-amber-700 mb-3">Scan to Pay</h3>
                 <img
                   src={invoice.paymentInfo.qrCode}
                   alt="Payment QR Code"
-                  className="w-32 h-32 mx-auto mb-4"
+                  className="w-28 h-28 mx-auto mb-3"
                 />
-                <p className="text-gray-600">{invoice.paymentInfo.method}</p>
+                <p className="text-gray-600 text-sm">{invoice.paymentInfo.method}</p>
               </div>
             </div>
           )}
 
           {invoice.notes && (
-            <div className="bg-gradient-to-r from-amber-50 to-white p-8 rounded-2xl shadow-xl border-2 border-amber-100 mb-12 relative">
+            <div className="bg-gradient-to-r from-amber-50 to-white p-5 rounded-2xl shadow-xl border-2 border-amber-100 mb-8 relative">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-300 to-amber-400"></div>
-              <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-200 pb-3">Notes</h3>
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed text-lg">{invoice.notes}</p>
+              <h3 className="text-xl font-bold mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">Notes</h3>
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed break-words">{invoice.notes}</p>
             </div>
           )}
 
@@ -328,10 +330,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
         <div className="p-8 relative z-10">
           {/* Modern Grid Layout */}
-          <div className="grid grid-cols-12 gap-8 mb-12">
+          <div className="grid grid-cols-12 gap-4 mb-12">
             {/* Left Column - Client Info */}
             <div className="col-span-7 space-y-8">
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 rounded-2xl border-l-4" style={{ borderColor: styles.accentColor }}>
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-5 rounded-2xl border-l-4" style={{ borderColor: styles.accentColor }}>
                 <h3 className="text-2xl font-bold mb-6" style={{ color: styles.accentColor }}>
                   Bill To
                 </h3>
@@ -343,7 +345,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               </div>
 
               {invoice.notes && (
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-2xl border-l-4 border-blue-400">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-2xl border-l-4 border-blue-400">
                   <h3 className="text-2xl font-bold mb-6 text-blue-700">
                     Notes
                   </h3>
@@ -354,7 +356,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
             {/* Right Column - Details & Summary */}
             <div className="col-span-5 space-y-8">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-2xl">
                 <h3 className="text-2xl font-bold mb-6" style={{ color: styles.accentColor }}>
                   Invoice Details
                 </h3>
@@ -376,7 +378,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
               {/* Modern Summary Card */}
               <div 
-                className="p-8 rounded-2xl text-white relative overflow-hidden"
+                className="p-5 rounded-2xl text-white relative overflow-hidden"
                 style={{ backgroundColor: styles.accentColor }}
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white bg-opacity-10 rounded-full transform translate-x-16 -translate-y-16"></div>
@@ -470,11 +472,13 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
   // CORPORATE TEMPLATE - Professional executive design
   if (invoice.template === 'corporate') {
     return (
-      <div className="bg-white" style={{ 
+      <div className="bg-white" style={{
         fontFamily: styles.fontFamily,
         minHeight: '297mm',
         width: '210mm',
+        maxWidth: '210mm',
         margin: '0 auto',
+        boxSizing: 'border-box',
       }}>
         {/* Executive Header */}
         <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
@@ -482,30 +486,30 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600 to-purple-700"></div>
           </div>
           
-          <div className="relative z-10 p-10">
-            <div className="flex justify-between items-start">
-              <div className="flex items-center space-x-6">
+          <div className="relative z-10 p-6">
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex items-center space-x-4 flex-shrink min-w-0">
                 {invoice.company.logo && (
-                  <div className="bg-white p-4 rounded-xl shadow-lg">
+                  <div className="bg-white p-3 rounded-xl shadow-lg flex-shrink-0">
                     <img
                       src={invoice.company.logo}
                       alt="Company logo"
-                      className="h-16 object-contain"
+                      className="h-12 object-contain"
                     />
                   </div>
                 )}
-                <div>
-                  <h1 className="text-3xl font-bold tracking-wide">{invoice.company.name || 'Your Company'}</h1>
-                  <div className="text-gray-300 text-sm mt-2 space-y-1">
-                    {invoice.company.email && <div>{invoice.company.email}</div>}
+                <div className="min-w-0">
+                  <h1 className="text-2xl font-bold tracking-wide break-words">{invoice.company.name || 'Your Company'}</h1>
+                  <div className="text-gray-300 text-xs mt-1 space-y-0.5">
+                    {invoice.company.email && <div className="break-words">{invoice.company.email}</div>}
                     {invoice.company.phone && <div>{invoice.company.phone}</div>}
-                    {invoice.company.address && <div className="whitespace-pre-line">{invoice.company.address}</div>}
+                    {invoice.company.address && <div className="whitespace-pre-line text-xs break-words">{invoice.company.address}</div>}
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <h2 className="text-4xl font-bold mb-3 tracking-wider">INVOICE</h2>
-                <div className="bg-white text-gray-900 px-6 py-3 rounded-lg font-bold text-xl shadow-lg">
+              <div className="text-right flex-shrink-0">
+                <h2 className="text-3xl font-bold mb-2 tracking-wider">INVOICE</h2>
+                <div className="bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-lg shadow-lg">
                   #{invoice.number}
                 </div>
               </div>
@@ -513,61 +517,63 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
         </div>
 
-        <div className="p-10">
+        <div className="p-6">
           {/* Executive Info Grid */}
-          <div className="grid grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2 bg-gray-50 p-8 rounded-xl border-l-4 border-gray-900 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-4 uppercase tracking-wide text-lg">Bill To</h3>
-              <div className="space-y-2">
-                {invoice.client.name && <p className="font-bold text-xl text-gray-900">{invoice.client.name}</p>}
-                {invoice.client.email && <p className="text-gray-600">{invoice.client.email}</p>}
-                {invoice.client.address && <p className="text-gray-600 whitespace-pre-line leading-relaxed">{invoice.client.address}</p>}
+          <div className="grid grid-cols-2 gap-4 mb-8" style={{ minWidth: 0 }}>
+            <div className="bg-gray-50 p-5 rounded-xl border-l-4 border-gray-900 shadow-sm" style={{ minWidth: 0 }}>
+              <h3 className="font-bold text-gray-900 mb-3 uppercase tracking-wide">Bill To</h3>
+              <div className="space-y-1.5">
+                {invoice.client.name && <p className="font-bold text-lg text-gray-900 break-words">{invoice.client.name}</p>}
+                {invoice.client.email && <p className="text-gray-600 text-sm break-words">{invoice.client.email}</p>}
+                {invoice.client.address && <p className="text-gray-600 whitespace-pre-line leading-relaxed text-sm break-words">{invoice.client.address}</p>}
               </div>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-xl border-l-4 border-gray-900 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-4 uppercase tracking-wide text-lg">Invoice Details</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-gray-600 text-sm font-medium">Issue Date:</span>
-                  <p className="font-bold text-gray-900">{formatDate(invoice.issueDate)}</p>
-                </div>
-                <div>
-                  <span className="text-gray-600 text-sm font-medium">Due Date:</span>
-                  <p className="font-bold text-gray-900">{formatDate(invoice.dueDate)}</p>
+            <div className="space-y-4" style={{ minWidth: 0 }}>
+              <div className="bg-gray-50 p-5 rounded-xl border-l-4 border-gray-900 shadow-sm">
+                <h3 className="font-bold text-gray-900 mb-3 uppercase tracking-wide">Invoice Details</h3>
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-gray-600 text-xs font-medium">Issue Date:</span>
+                    <p className="font-bold text-gray-900 text-sm">{formatDate(invoice.issueDate)}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 text-xs font-medium">Due Date:</span>
+                    <p className="font-bold text-gray-900 text-sm">{formatDate(invoice.dueDate)}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 rounded-xl shadow-lg">
-              <h3 className="font-bold mb-4 uppercase tracking-wide text-lg">Total Amount</h3>
-              <div className="text-4xl font-bold mb-2">
-                {currencySymbol}{totals.total.toFixed(2)}
-              </div>
-              <div className="text-gray-300 text-sm">
-                {invoice.currency || 'USD'}
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-5 rounded-xl shadow-lg">
+                <h3 className="font-bold mb-2 uppercase tracking-wide text-sm">Total Amount</h3>
+                <div className="text-3xl font-bold mb-1">
+                  {currencySymbol}{totals.total.toFixed(2)}
+                </div>
+                <div className="text-gray-300 text-xs">
+                  {invoice.currency || 'USD'}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Executive Table */}
-          <div className="border-2 border-gray-300 rounded-xl overflow-hidden shadow-lg mb-12">
-            <table className="w-full">
+          <div className="border-2 border-gray-300 rounded-xl overflow-hidden shadow-lg mb-8">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-gray-900 to-gray-800 text-white">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold uppercase tracking-wide text-lg">Description</th>
-                  <th className="text-center py-6 px-8 font-bold uppercase tracking-wide text-lg">Qty</th>
-                  <th className="text-right py-6 px-8 font-bold uppercase tracking-wide text-lg">Rate</th>
-                  <th className="text-right py-6 px-8 font-bold uppercase tracking-wide text-lg">Amount</th>
+                  <th className="text-left py-4 px-4 font-bold uppercase tracking-wide" style={{ width: '45%' }}>Description</th>
+                  <th className="text-center py-4 px-2 font-bold uppercase tracking-wide" style={{ width: '15%' }}>Qty</th>
+                  <th className="text-right py-4 px-2 font-bold uppercase tracking-wide" style={{ width: '20%' }}>Rate</th>
+                  <th className="text-right py-4 px-4 font-bold uppercase tracking-wide" style={{ width: '20%' }}>Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, index) => (
                   <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-200`}>
-                    <td className="py-6 px-8 border-r border-gray-200 font-medium text-gray-900">{item.description || 'Item description'}</td>
-                    <td className="py-6 px-8 text-center border-r border-gray-200 font-semibold text-gray-700">{item.quantity}</td>
-                    <td className="py-6 px-8 text-right border-r border-gray-200 font-semibold text-gray-700">{currencySymbol}{item.rate.toFixed(2)}</td>
-                    <td className="py-6 px-8 text-right font-bold text-gray-900 text-lg">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="py-4 px-4 border-r border-gray-200 font-medium text-gray-900 break-words">{item.description || 'Item description'}</td>
+                    <td className="py-4 px-2 text-center border-r border-gray-200 font-semibold text-gray-700">{item.quantity}</td>
+                    <td className="py-4 px-2 text-right border-r border-gray-200 font-semibold text-gray-700">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-gray-900">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -575,37 +581,37 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Executive Totals & Payment */}
-          <div className="grid grid-cols-3 gap-8 mb-12">
-            <div className="col-span-2">
+          <div className="grid grid-cols-2 gap-4 mb-8" style={{ minWidth: 0 }}>
+            <div style={{ minWidth: 0 }}>
               {invoice.notes && (
-                <div className="bg-gray-50 p-8 rounded-xl border-l-4 border-gray-900 shadow-sm">
-                  <h3 className="font-bold text-gray-900 mb-4 uppercase tracking-wide text-lg">Notes</h3>
-                  <p className="text-gray-700 whitespace-pre-line leading-relaxed">{invoice.notes}</p>
+                <div className="bg-gray-50 p-5 rounded-xl border-l-4 border-gray-900 shadow-sm">
+                  <h3 className="font-bold text-gray-900 mb-3 uppercase tracking-wide">Notes</h3>
+                  <p className="text-gray-700 whitespace-pre-line leading-relaxed text-sm break-words">{invoice.notes}</p>
                 </div>
               )}
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-gray-50 p-8 rounded-xl border-2 border-gray-300 shadow-sm">
-                <div className="space-y-4">
-                  <div className="flex justify-between text-lg">
-                    <span className="font-medium text-gray-700">Subtotal</span>
+            <div className="space-y-4" style={{ minWidth: 0 }}>
+              <div className="bg-gray-50 p-5 rounded-xl border-2 border-gray-300 shadow-sm">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-700 text-sm">Subtotal</span>
                     <span className="font-bold text-gray-900">{currencySymbol}{totals.subtotal.toFixed(2)}</span>
                   </div>
                   {totals.discountAmount > 0 && (
-                    <div className="flex justify-between text-red-600 text-lg">
-                      <span className="font-medium">Discount</span>
+                    <div className="flex justify-between text-red-600">
+                      <span className="font-medium text-sm">Discount</span>
                       <span className="font-bold">-{currencySymbol}{totals.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   {totals.taxAmount > 0 && (
-                    <div className="flex justify-between text-lg">
-                      <span className="font-medium text-gray-700">Tax</span>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-700 text-sm">Tax</span>
                       <span className="font-bold text-gray-900">{currencySymbol}{totals.taxAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="border-t-3 border-gray-900 pt-4">
-                    <div className="flex justify-between text-2xl font-bold text-gray-900">
+                  <div className="border-t-3 border-gray-900 pt-3">
+                    <div className="flex justify-between text-xl font-bold text-gray-900">
                       <span>TOTAL</span>
                       <span>{currencySymbol}{totals.total.toFixed(2)}</span>
                     </div>
@@ -700,11 +706,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Creative Asymmetric Layout */}
-          <div className="grid grid-cols-12 gap-8 mb-12">
+          <div className="grid grid-cols-12 gap-4 mb-12">
             {/* Diagonal Client Info */}
             <div className="col-span-5">
               <div 
-                className="p-8 rounded-3xl text-white transform -rotate-2 shadow-2xl"
+                className="p-5 rounded-3xl text-white transform -rotate-2 shadow-2xl"
                 style={{ backgroundColor: styles.accentColor }}
               >
                 <h3 className="text-2xl font-bold mb-6">Bill To</h3>
@@ -728,7 +734,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             {/* Diagonal Invoice Details */}
             <div className="col-span-5">
               <div 
-                className="p-8 rounded-3xl bg-gray-100 transform rotate-2 shadow-2xl border-4"
+                className="p-5 rounded-3xl bg-gray-100 transform rotate-2 shadow-2xl border-4"
                 style={{ borderColor: styles.accentColor }}
               >
                 <h3 className="text-2xl font-bold mb-6" style={{ color: styles.accentColor }}>
@@ -778,11 +784,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Creative Totals & Payment */}
-          <div className="grid grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-2 gap-4 mb-12">
             <div className="col-span-2">
               {invoice.notes && (
                 <div 
-                  className="p-8 rounded-3xl bg-gray-100 transform -rotate-1 shadow-2xl border-4"
+                  className="p-5 rounded-3xl bg-gray-100 transform -rotate-1 shadow-2xl border-4"
                   style={{ borderColor: styles.accentColor }}
                 >
                   <h3 className="text-2xl font-bold mb-6" style={{ color: styles.accentColor }}>
@@ -795,7 +801,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
             <div>
               <div 
-                className="p-8 rounded-3xl text-white shadow-2xl transform rotate-1 mb-6"
+                className="p-5 rounded-3xl text-white shadow-2xl transform rotate-1 mb-6"
                 style={{ backgroundColor: styles.accentColor }}
               >
                 <h3 className="text-2xl font-bold mb-6">Summary</h3>
@@ -954,7 +960,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           {/* Boutique Table */}
           <div className="bg-white rounded-3xl shadow-2xl border-3 border-rose-100 overflow-hidden mb-16 relative">
             <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-rose-300 via-rose-400 to-rose-300"></div>
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-rose-50 via-rose-100 to-rose-50">
                 <tr>
                   <th className="text-left py-8 px-10 font-bold text-rose-800 text-xl">Description</th>
@@ -977,7 +983,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Boutique Totals & Payment */}
-          <div className="grid grid-cols-3 gap-12 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div className="col-span-2">
               {invoice.notes && (
                 <div className="bg-gradient-to-r from-rose-50 to-white p-10 rounded-3xl shadow-2xl border-3 border-rose-100 relative">
@@ -1022,7 +1028,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
               {/* Payment QR Code */}
               {invoice.paymentInfo?.qrCode && (
-                <div className="bg-white p-8 rounded-3xl shadow-2xl border-3 border-rose-200 text-center">
+                <div className="bg-white p-5 rounded-3xl shadow-2xl border-3 border-rose-200 text-center">
                   <h3 className="text-xl font-bold text-rose-600 mb-6">Scan to Pay</h3>
                   <img
                     src={invoice.paymentInfo.qrCode}
@@ -1081,7 +1087,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Minimal Content */}
-          <div className="grid grid-cols-2 gap-16 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div>
               <h3 className="text-lg font-medium mb-6 text-gray-900 uppercase tracking-wide">Bill To</h3>
               <div className="space-y-2">
@@ -1112,7 +1118,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
           {/* Minimal Table */}
           <div className="mb-16">
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead>
                 <tr className="border-b-2 border-gray-900">
                   <th className="text-left py-4 font-medium text-gray-900 uppercase tracking-wide">Description</th>
@@ -1135,7 +1141,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Minimal Totals & Payment */}
-          <div className="grid grid-cols-3 gap-16 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div className="col-span-2">
               {invoice.notes && (
                 <div>
@@ -1256,11 +1262,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             </div>
           </div>
 
-          <div className="p-12">
+          <div className="p-6">
             {/* Dynamic Content */}
-            <div className="grid grid-cols-12 gap-8 mb-12">
+            <div className="grid grid-cols-12 gap-4 mb-12">
               <div className="col-span-8 space-y-8">
-                <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8" style={{ borderColor: styles.accentColor }}>
+                <div className="bg-white p-5 rounded-3xl shadow-xl border-l-8" style={{ borderColor: styles.accentColor }}>
                   <h3 className="text-3xl font-bold mb-6" style={{ color: styles.accentColor }}>
                     Bill To
                   </h3>
@@ -1272,7 +1278,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
                 </div>
 
                 {invoice.notes && (
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-3xl shadow-xl border-l-8 border-blue-400">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-3xl shadow-xl border-l-8 border-blue-400">
                     <h3 className="text-3xl font-bold mb-6 text-blue-700">
                       Notes
                     </h3>
@@ -1282,7 +1288,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               </div>
 
               <div className="col-span-4 space-y-8">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-3xl shadow-xl">
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-3xl shadow-xl">
                   <h3 className="text-2xl font-bold mb-6" style={{ color: styles.accentColor }}>
                     Invoice Details
                   </h3>
@@ -1299,7 +1305,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
                 </div>
 
                 <div 
-                  className="p-8 rounded-3xl text-white shadow-xl transform rotate-2"
+                  className="p-5 rounded-3xl text-white shadow-xl transform rotate-2"
                   style={{ backgroundColor: styles.accentColor }}
                 >
                   <h3 className="text-2xl font-bold mb-6">Total Amount</h3>
@@ -1329,7 +1335,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             </div>
 
             {/* Dynamic Table */}
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-12">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
               <div 
                 className="px-8 py-6"
                 style={{ background: `linear-gradient(135deg, ${styles.accentColor} 0%, ${styles.accentColor}dd 100%)` }}
@@ -1359,7 +1365,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
             {/* Dynamic Totals */}
             <div className="flex justify-end">
-              <div className="w-96 bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-3xl shadow-xl border-4" style={{ borderColor: styles.accentColor }}>
+              <div className="w-96 bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-3xl shadow-xl border-4" style={{ borderColor: styles.accentColor }}>
                 <div className="space-y-4">
                   <div className="flex justify-between text-lg">
                     <span className="font-medium text-gray-700">Subtotal</span>
@@ -1477,13 +1483,13 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             </div>
           </div>
 
-          <div className="p-12">
+          <div className="p-6">
             {/* Tech Grid Layout */}
-            <div className="grid grid-cols-12 gap-8 mb-12">
+            <div className="grid grid-cols-12 gap-4 mb-12">
               <div className="col-span-8 space-y-8">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl"></div>
-                  <div className="relative bg-gray-800 p-8 rounded-2xl border border-cyan-400/30">
+                  <div className="relative bg-gray-800 p-5 rounded-2xl border border-cyan-400/30">
                     <h3 className="text-2xl font-bold mb-6 text-cyan-400 font-mono uppercase tracking-wider">
                       &gt; Bill To
                     </h3>
@@ -1498,7 +1504,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
                 {invoice.notes && (
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl"></div>
-                    <div className="relative bg-gray-800 p-8 rounded-2xl border border-purple-400/30">
+                    <div className="relative bg-gray-800 p-5 rounded-2xl border border-purple-400/30">
                       <h3 className="text-2xl font-bold mb-6 text-purple-400 font-mono uppercase tracking-wider">
                         &gt; Notes
                       </h3>
@@ -1511,7 +1517,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               <div className="col-span-4 space-y-8">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl"></div>
-                  <div className="relative bg-gray-800 p-8 rounded-2xl border border-blue-400/30">
+                  <div className="relative bg-gray-800 p-5 rounded-2xl border border-blue-400/30">
                     <h3 className="text-xl font-bold mb-6 text-blue-400 font-mono uppercase tracking-wider">
                       &gt; System Info
                     </h3>
@@ -1534,7 +1540,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
                 <div className="relative">
                   <div className="absolute inset-0 bg-cyan-400 rounded-2xl blur opacity-20"></div>
-                  <div className="relative bg-gray-800 p-8 rounded-2xl border border-cyan-400">
+                  <div className="relative bg-gray-800 p-5 rounded-2xl border border-cyan-400">
                     <h3 className="text-xl font-bold mb-6 text-cyan-400 font-mono uppercase tracking-wider">
                       &gt; Total_Amount
                     </h3>
@@ -1600,7 +1606,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             <div className="flex justify-end">
               <div className="w-96 relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-2xl"></div>
-                <div className="relative bg-gray-800 p-8 rounded-2xl border border-cyan-400/30">
+                <div className="relative bg-gray-800 p-5 rounded-2xl border border-cyan-400/30">
                   <div className="space-y-4 font-mono">
                     <div className="flex justify-between text-gray-300">
                       <span>SUBTOTAL:</span>
@@ -1703,11 +1709,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Vintage Content Layout */}
-          <div className="grid grid-cols-2 gap-16 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-8 h-8 border-l-4 border-t-4 border-amber-600"></div>
               <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-4 border-b-4 border-amber-600"></div>
-              <div className="bg-white p-8 rounded-lg shadow-lg border-2 border-amber-200">
+              <div className="bg-white p-5 rounded-lg shadow-lg border-2 border-amber-200">
                 <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-300 pb-3">
                   Billed To
                 </h3>
@@ -1722,7 +1728,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             <div className="relative">
               <div className="absolute -top-4 -right-4 w-8 h-8 border-r-4 border-t-4 border-amber-600"></div>
               <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-4 border-b-4 border-amber-600"></div>
-              <div className="bg-white p-8 rounded-lg shadow-lg border-2 border-amber-200">
+              <div className="bg-white p-5 rounded-lg shadow-lg border-2 border-amber-200">
                 <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-300 pb-3">
                   Invoice Details
                 </h3>
@@ -1742,22 +1748,22 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
           {/* Vintage Table */}
           <div className="bg-white rounded-lg shadow-lg border-4 border-double border-amber-600 overflow-hidden mb-16">
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-amber-100 to-amber-200">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold text-amber-800 text-lg border-r border-amber-300">Description</th>
-                  <th className="text-center py-6 px-8 font-bold text-amber-800 text-lg border-r border-amber-300">Qty</th>
-                  <th className="text-right py-6 px-8 font-bold text-amber-800 text-lg border-r border-amber-300">Rate</th>
-                  <th className="text-right py-6 px-8 font-bold text-amber-800 text-lg">Amount</th>
+                  <th className="text-left py-4 px-4 font-bold text-amber-800 text-lg border-r border-amber-300">Description</th>
+                  <th className="text-center py-4 px-4 font-bold text-amber-800 text-lg border-r border-amber-300">Qty</th>
+                  <th className="text-right py-4 px-4 font-bold text-amber-800 text-lg border-r border-amber-300">Rate</th>
+                  <th className="text-right py-4 px-4 font-bold text-amber-800 text-lg">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, index) => (
                   <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-amber-25'} border-b border-amber-200`}>
-                    <td className="py-6 px-8 text-gray-800 border-r border-amber-200">{item.description || 'Item description'}</td>
-                    <td className="py-6 px-8 text-center text-gray-700 border-r border-amber-200">{item.quantity}</td>
-                    <td className="py-6 px-8 text-right text-gray-700 border-r border-amber-200">{currencySymbol}{item.rate.toFixed(2)}</td>
-                    <td className="py-6 px-8 text-right font-bold text-gray-800">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="py-4 px-4 text-gray-800 border-r border-amber-200">{item.description || 'Item description'}</td>
+                    <td className="py-4 px-4 text-center text-gray-700 border-r border-amber-200">{item.quantity}</td>
+                    <td className="py-4 px-4 text-right text-gray-700 border-r border-amber-200">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-gray-800">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1765,10 +1771,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Vintage Totals & Payment */}
-          <div className="grid grid-cols-3 gap-12 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div className="col-span-2">
               {invoice.notes && (
-                <div className="bg-white p-8 rounded-lg shadow-lg border-2 border-amber-200 relative">
+                <div className="bg-white p-5 rounded-lg shadow-lg border-2 border-amber-200 relative">
                   <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-300 to-amber-400"></div>
                   <h3 className="text-2xl font-bold mb-6 text-amber-700 border-b-2 border-amber-300 pb-3">Notes</h3>
                   <p className="text-gray-700 whitespace-pre-line leading-relaxed italic">{invoice.notes}</p>
@@ -1952,7 +1958,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-3xl transform rotate-1 scale-105"></div>
             <div className="relative bg-white rounded-3xl shadow-2xl border-4 border-purple-200 overflow-hidden">
               <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 p-2"></div>
-              <table className="w-full">
+              <table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <thead className="bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50">
                   <tr>
                     <th className="text-left py-8 px-10 font-bold text-purple-800 text-xl">Description</th>
@@ -1976,7 +1982,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Artistic Totals & Payment */}
-          <div className="grid grid-cols-3 gap-12 mb-16">
+          <div className="grid grid-cols-2 gap-6 mb-16">
             <div className="col-span-2">
               {invoice.notes && (
                 <div className="relative">
@@ -2026,7 +2032,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
               {/* Payment QR Code */}
               {invoice.paymentInfo?.qrCode && (
-                <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-purple-200 text-center">
+                <div className="bg-white p-5 rounded-3xl shadow-2xl border-4 border-purple-200 text-center">
                   <h3 className="text-xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     Scan to Pay
                   </h3>
@@ -2095,10 +2101,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
         </div>
 
-        <div className="p-12">
+        <div className="p-6">
           {/* Professional Info Grid */}
-          <div className="grid grid-cols-4 gap-8 mb-12">
-            <div className="col-span-2 bg-slate-50 p-8 rounded-xl border-l-4 border-slate-700 shadow-sm">
+          <div className="grid grid-cols-2 gap-4 mb-12">
+            <div className="col-span-2 bg-slate-50 p-5 rounded-xl border-l-4 border-slate-700 shadow-sm">
               <h3 className="font-bold text-slate-800 mb-4 uppercase tracking-wide text-lg flex items-center">
                 <span className="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
                 Bill To
@@ -2110,7 +2116,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               </div>
             </div>
 
-            <div className="bg-slate-50 p-8 rounded-xl border-l-4 border-slate-700 shadow-sm">
+            <div className="bg-slate-50 p-5 rounded-xl border-l-4 border-slate-700 shadow-sm">
               <h3 className="font-bold text-slate-800 mb-4 uppercase tracking-wide text-lg flex items-center">
                 <span className="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
                 Invoice Details
@@ -2127,7 +2133,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-800 to-slate-700 text-white p-8 rounded-xl shadow-lg">
+            <div className="bg-gradient-to-br from-slate-800 to-slate-700 text-white p-5 rounded-xl shadow-lg">
               <h3 className="font-bold mb-4 uppercase tracking-wide text-lg flex items-center">
                 <span className="w-3 h-3 bg-yellow-400 rounded-full mr-3"></span>
                 Total Amount
@@ -2143,22 +2149,22 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
           {/* Professional Table */}
           <div className="border-2 border-slate-300 rounded-xl overflow-hidden shadow-lg mb-12">
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold uppercase tracking-wide text-lg">Description</th>
-                  <th className="text-center py-6 px-8 font-bold uppercase tracking-wide text-lg">Qty</th>
-                  <th className="text-right py-6 px-8 font-bold uppercase tracking-wide text-lg">Rate</th>
-                  <th className="text-right py-6 px-8 font-bold uppercase tracking-wide text-lg">Amount</th>
+                  <th className="text-left py-4 px-4 font-bold uppercase tracking-wide text-lg">Description</th>
+                  <th className="text-center py-4 px-4 font-bold uppercase tracking-wide text-lg">Qty</th>
+                  <th className="text-right py-4 px-4 font-bold uppercase tracking-wide text-lg">Rate</th>
+                  <th className="text-right py-4 px-4 font-bold uppercase tracking-wide text-lg">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, index) => (
                   <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'} border-b border-slate-200`}>
-                    <td className="py-6 px-8 border-r border-slate-200 font-medium text-slate-900">{item.description || 'Item description'}</td>
-                    <td className="py-6 px-8 text-center border-r border-slate-200 font-semibold text-slate-700">{item.quantity}</td>
-                    <td className="py-6 px-8 text-right border-r border-slate-200 font-semibold text-slate-700">{currencySymbol}{item.rate.toFixed(2)}</td>
-                    <td className="py-6 px-8 text-right font-bold text-slate-900 text-lg">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="py-4 px-4 border-r border-slate-200 font-medium text-slate-900">{item.description || 'Item description'}</td>
+                    <td className="py-4 px-4 text-center border-r border-slate-200 font-semibold text-slate-700">{item.quantity}</td>
+                    <td className="py-4 px-4 text-right border-r border-slate-200 font-semibold text-slate-700">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-slate-900 text-lg">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2166,10 +2172,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Professional Totals & Payment */}
-          <div className="grid grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-2 gap-4 mb-12">
             <div className="col-span-2">
               {invoice.notes && (
-                <div className="bg-slate-50 p-8 rounded-xl border-l-4 border-slate-700 shadow-sm">
+                <div className="bg-slate-50 p-5 rounded-xl border-l-4 border-slate-700 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 uppercase tracking-wide text-lg flex items-center">
                     <span className="w-3 h-3 bg-purple-500 rounded-full mr-3"></span>
                     Notes
@@ -2180,7 +2186,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-slate-50 p-8 rounded-xl border-2 border-slate-300 shadow-sm">
+              <div className="bg-slate-50 p-5 rounded-xl border-2 border-slate-300 shadow-sm">
                 <div className="space-y-4">
                   <div className="flex justify-between text-lg">
                     <span className="font-medium text-slate-700">Subtotal</span>
@@ -2298,10 +2304,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Startup Content Layout */}
-          <div className="grid grid-cols-2 gap-12 mb-12">
+          <div className="grid grid-cols-2 gap-6 mb-12">
             <div className="relative">
               <div className="absolute -top-3 -left-3 w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-30"></div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-blue-100 relative overflow-hidden">
+              <div className="bg-white p-5 rounded-2xl shadow-xl border-2 border-blue-100 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-100 to-purple-100 rounded-full transform translate-x-12 -translate-y-12"></div>
                 <h3 className="text-2xl font-bold mb-6 text-blue-600 border-b-2 border-blue-200 pb-3">
                   Bill To
@@ -2316,7 +2322,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
 
             <div className="relative">
               <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-bl from-purple-400 to-blue-500 rounded-full opacity-30"></div>
-              <div className="bg-white p-8 rounded-2xl shadow-xl border-2 border-purple-100 relative overflow-hidden">
+              <div className="bg-white p-5 rounded-2xl shadow-xl border-2 border-purple-100 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full transform -translate-x-12 -translate-y-12"></div>
                 <h3 className="text-2xl font-bold mb-6 text-purple-600 border-b-2 border-purple-200 pb-3">
                   Invoice Details
@@ -2336,24 +2342,24 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Startup Table */}
-          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 overflow-hidden mb-12">
+          <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 overflow-hidden mb-8">
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-1"></div>
-            <table className="w-full">
+            <table className="w-full" style={{ tableLayout: 'fixed' }}>
               <thead className="bg-gradient-to-r from-blue-50 to-purple-50">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold text-gray-800 text-lg">Description</th>
-                  <th className="text-center py-6 px-8 font-bold text-gray-800 text-lg">Qty</th>
-                  <th className="text-right py-6 px-8 font-bold text-gray-800 text-lg">Rate</th>
-                  <th className="text-right py-6 px-8 font-bold text-gray-800 text-lg">Amount</th>
+                  <th className="text-left py-4 px-4 font-bold text-gray-800 text-lg">Description</th>
+                  <th className="text-center py-4 px-4 font-bold text-gray-800 text-lg">Qty</th>
+                  <th className="text-right py-4 px-4 font-bold text-gray-800 text-lg">Rate</th>
+                  <th className="text-right py-4 px-4 font-bold text-gray-800 text-lg">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, index) => (
                   <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'} border-b border-gray-100`}>
-                    <td className="py-6 px-8 text-gray-800 font-medium">{item.description || 'Item description'}</td>
-                    <td className="py-6 px-8 text-center text-gray-700 font-semibold">{item.quantity}</td>
-                    <td className="py-6 px-8 text-right text-gray-700 font-semibold">{currencySymbol}{item.rate.toFixed(2)}</td>
-                    <td className="py-6 px-8 text-right font-bold text-gray-800">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
+                    <td className="py-4 px-4 text-gray-800 font-medium">{item.description || 'Item description'}</td>
+                    <td className="py-4 px-4 text-center text-gray-700 font-semibold">{item.quantity}</td>
+                    <td className="py-4 px-4 text-right text-gray-700 font-semibold">{currencySymbol}{item.rate.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-gray-800">{currencySymbol}{(item.quantity * item.rate).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2361,10 +2367,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
           </div>
 
           {/* Startup Totals & Payment */}
-          <div className="grid grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-2 gap-4 mb-12">
             <div className="col-span-2">
               {invoice.notes && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-2xl shadow-xl border-2 border-blue-100">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-2xl shadow-xl border-2 border-blue-100">
                   <div className="bg-gradient-to-r from-blue-400 to-purple-500 h-1 w-full mb-6 rounded-full"></div>
                   <h3 className="text-2xl font-bold mb-6 text-blue-600 border-b-2 border-blue-200 pb-3">Notes</h3>
                   <p className="text-gray-700 whitespace-pre-line leading-relaxed">{invoice.notes}</p>
@@ -2455,7 +2461,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 mb-12">
+      <div className="grid grid-cols-2 gap-4 mb-12">
         <div className="mb-8">
           <h3 className="text-lg font-medium mb-4" style={{ color: styles.accentColor }}>
             Billed To
@@ -2485,7 +2491,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
       </div>
 
       <div className="mb-8">
-        <table className="w-full">
+        <table className="w-full" style={{ tableLayout: 'fixed' }}>
           <thead>
             <tr className="border-b-2 border-gray-200 pb-2">
               <th className="text-left py-2 w-2/5">Description</th>

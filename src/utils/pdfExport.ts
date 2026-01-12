@@ -57,19 +57,23 @@ export const exportToPDF = async (
         if (clonedElement) {
           // Ensure the cloned element has proper dimensions
           (clonedElement as HTMLElement).style.width = '210mm';
+          (clonedElement as HTMLElement).style.maxWidth = '210mm';
           (clonedElement as HTMLElement).style.height = 'auto';
           (clonedElement as HTMLElement).style.margin = '0';
-          (clonedElement as HTMLElement).style.padding = '20mm';
+          (clonedElement as HTMLElement).style.padding = '10mm';
           (clonedElement as HTMLElement).style.boxSizing = 'border-box';
           (clonedElement as HTMLElement).style.display = 'block';
           (clonedElement as HTMLElement).style.visibility = 'visible';
-          
-          // Ensure all child elements are visible
+          (clonedElement as HTMLElement).style.overflow = 'hidden';
+          (clonedElement as HTMLElement).style.wordBreak = 'break-word';
+
+          // Ensure all child elements are visible and have proper box-sizing
           const allElements = clonedElement.querySelectorAll('*');
           allElements.forEach((el: any) => {
             if (el.style) {
               el.style.visibility = 'visible';
               el.style.display = el.style.display === 'none' ? 'block' : el.style.display;
+              el.style.boxSizing = 'border-box';
             }
           });
         }
