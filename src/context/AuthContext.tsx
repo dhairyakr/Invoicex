@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
-  signUp: (email: string, password: string) => Promise<{ data: any; error: any }>;
+  signUp: (email: string, password: string, fullName?: string) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
 }
 
@@ -109,12 +109,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Enhanced signUp with better error handling and debugging
-  const handleSignUp = async (email: string, password: string) => {
+  const handleSignUp = async (email: string, password: string, fullName?: string) => {
     try {
       console.log('📝 Attempting sign up for:', email);
-      
+
       // Check if email confirmation is disabled in Supabase
-      const result = await signUp(email, password);
+      const result = await signUp(email, password, fullName);
       
       console.log('📝 Sign up result:', result);
       

@@ -89,14 +89,17 @@ export const testConnection = async () => {
 }
 
 // Auth functions with enhanced error handling
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (email: string, password: string, fullName?: string) => {
   try {
     console.log('🔐 Supabase signUp called for:', email);
-    
+
     const result = await supabase.auth.signUp({
       email,
       password,
       options: {
+        data: {
+          full_name: fullName || ''
+        },
         emailRedirectTo: `${window.location.origin}/auth`
       }
     });

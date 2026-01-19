@@ -107,7 +107,7 @@ const SignUpPage: React.FC = () => {
     }
 
     try {
-      const result = await signUp(email.trim(), password);
+      const result = await signUp(email.trim(), password, name.trim());
 
       if (result.error) {
         setError(result.error.message);
